@@ -7,7 +7,7 @@ import { BOSS_XP, getLevelProgress, isoDateLocal, startOfWeekLocal, XP_OPTIONS }
 import type { Chain, ChainCheckin, Quest, QuestStep, Reward, WeeklyBoss } from "@/lib/types";
 
 type Lang = "ru" | "en";
-type Tab = "today" | "quests" | "chain" | "rewards";
+type Tab = "today" | "quests" | "chain" | "rewards" | "help";
 
 type DashboardProps = {
   userId: string;
@@ -18,8 +18,9 @@ const copy = {
   ru: {
     today: "Сегодня",
     quests: "Квесты",
-    chain: "Цепочки",
+    chain: "Серии",
     rewards: "Награды",
+    help: "Справка",
     level: "Уровень",
     totalXp: "Всего XP",
     activeQuests: "Активные квесты",
@@ -62,24 +63,30 @@ const copy = {
     reopenQuest: "Вернуть в активные",
     completed: "Завершён",
     emptyQuest: "Добавь первый конкретный шаг — без огромного списка дел.",
+    questActionsEyebrow: "ДЕЙСТВИЯ КВЕСТОВ",
+    dailyLoopEyebrow: "ПОВТОРЯЕМЫЕ ДЕЙСТВИЯ",
+    questLogEyebrow: "ЖУРНАЛ КВЕСТОВ",
+    chainEyebrow: "БЕЗ ОБНУЛЕНИЯ",
+    rewardsEyebrow: "НАГРАДЫ",
+    helpEyebrow: "КАК ЭТО РАБОТАЕТ",
     quickSteps: "Быстрые шаги",
     quickStepsLead: "Отмечай шаги активных квестов прямо с главной страницы.",
     noQuickSteps: "В активных квестах пока нет шагов для отметки.",
     openAllQuests: "Открыть все квесты",
-    repeatingGoals: "Повторяемые цели",
-    repeatingGoalsLead: "Ежедневные действия можно отмечать одним нажатием.",
-    manageChains: "Управлять цепочками",
-    noRepeatingGoals: "Пока нет повторяемых целей.",
-    chainTitle: "Непрерывные цепочки",
-    chainLead: "Добавляй несколько повторяемых действий. Пропуск не обнуляет прогресс — на следующий день просто продолжаешь.",
-    chainPlaceholder: "Например: просыпаться в 5:45",
-    startChain: "Добавить цепочку",
-    addAnotherChain: "Добавить повторяемую цель",
-    linkToday: "Выполнено сегодня",
-    linkedToday: "Сегодня уже выполнено",
-    links: "звеньев",
-    finishChain: "Завершить цепочку",
-    chainEmpty: "Активных цепочек пока нет. Добавь первую повторяемую цель.",
+    repeatingGoals: "Повторяемые действия",
+    repeatingGoalsLead: "То, что хочется делать регулярно, отмечается одним нажатием.",
+    manageChains: "Управлять сериями",
+    noRepeatingGoals: "Пока нет повторяемых действий.",
+    chainTitle: "Серии",
+    chainLead: "Каждая серия хранит историю выполнений. Пропущенный день ничего не обнуляет — просто продолжай дальше.",
+    chainPlaceholder: "Например: польский каждый день",
+    startChain: "Добавить серию",
+    addAnotherChain: "Добавить серию",
+    linkToday: "Отметить сегодня",
+    linkedToday: "Сегодня отмечено",
+    links: "выполнено",
+    finishChain: "Завершить серию",
+    chainEmpty: "Активных серий пока нет. Добавь первое повторяемое действие.",
     lastDays: "Последние 7 дней",
     rewardTitle: "Награды за путь",
     rewardLead: "Награда открывается по общему XP и не списывает прогресс.",
@@ -99,7 +106,21 @@ const copy = {
     xpGuide: "Система XP",
     xpGuideText: "Награждаем не только результат, но и сложность самого действия.",
     noPunishment: "Без наказания за пропуск",
-    noPunishmentText: "Каждая цепочка считает выполненные дни, но никогда не сбрасывается в ноль.",
+    noPunishmentText: "Серия хранит историю выполнений, но пропуск дня никогда не сбрасывает прогресс в ноль.",
+    helpTitle: "Справка",
+    helpLead: "Коротко о механиках QuestFrame — без лишнего текста на главной странице.",
+    xpHelpTitle: "Как начисляется XP",
+    xpRegularHelp: "Обычный шаг",
+    xpPromiseHelp: "Сдержала обещание перед собой",
+    xpHardHelp: "Сделала самое сложное или страшное",
+    xpDelayHelp: "Сделала то, что откладывала",
+    bossHelpTitle: "Босс недели",
+    bossHelpText: "Выбирай одно дело, которого избегаешь сильнее всего. Победа над боссом даёт +25 XP.",
+    rewardHelpTitle: "Награды",
+    rewardHelpText: "Награды открываются по общему XP. Получение награды не отнимает XP и не уменьшает уровень.",
+    contactsEyebrow: "КОНТАКТЫ",
+    contactsTitle: "Контакты автора",
+    contactsLead: "Вопросы, идеи и сообщения об ошибках можно отправить через мои публичные профили.",
     archive: "Архивировать",
     archived: "Квест архивирован.",
     active: "Активные",
@@ -112,8 +133,9 @@ const copy = {
   en: {
     today: "Today",
     quests: "Quests",
-    chain: "Chains",
+    chain: "Streaks",
     rewards: "Rewards",
+    help: "Help",
     level: "Level",
     totalXp: "Total XP",
     activeQuests: "Active quests",
@@ -156,24 +178,30 @@ const copy = {
     reopenQuest: "Reopen quest",
     completed: "Completed",
     emptyQuest: "Add the first concrete step — not a giant to-do list.",
+    questActionsEyebrow: "QUEST ACTIONS",
+    dailyLoopEyebrow: "REPEATING ACTIONS",
+    questLogEyebrow: "QUEST LOG",
+    chainEyebrow: "NO RESET",
+    rewardsEyebrow: "REWARDS",
+    helpEyebrow: "HOW IT WORKS",
     quickSteps: "Quick steps",
     quickStepsLead: "Check off active quest steps directly from your home page.",
     noQuickSteps: "There are no active quest steps to check off yet.",
     openAllQuests: "Open all quests",
-    repeatingGoals: "Repeating goals",
-    repeatingGoalsLead: "Check off daily actions in one tap.",
-    manageChains: "Manage chains",
-    noRepeatingGoals: "No repeating goals yet.",
-    chainTitle: "Continuous chains",
-    chainLead: "Add several repeating actions. Missing a day never resets progress — just continue tomorrow.",
-    chainPlaceholder: "For example: wake up at 5:45",
-    startChain: "Add chain",
-    addAnotherChain: "Add repeating goal",
-    linkToday: "Done today",
-    linkedToday: "Done for today",
-    links: "links",
-    finishChain: "Finish chain",
-    chainEmpty: "No active chains yet. Add your first repeating goal.",
+    repeatingGoals: "Repeating actions",
+    repeatingGoalsLead: "Anything you want to do regularly can be checked off in one tap.",
+    manageChains: "Manage streaks",
+    noRepeatingGoals: "No repeating actions yet.",
+    chainTitle: "Streaks",
+    chainLead: "Each streak keeps its completion history. Missing a day never resets anything — just continue.",
+    chainPlaceholder: "For example: practice Polish every day",
+    startChain: "Add streak",
+    addAnotherChain: "Add streak",
+    linkToday: "Mark today",
+    linkedToday: "Marked today",
+    links: "completed",
+    finishChain: "Finish streak",
+    chainEmpty: "No active streaks yet. Add your first repeating action.",
     lastDays: "Last 7 days",
     rewardTitle: "Rewards for the path",
     rewardLead: "A reward unlocks at total XP and never spends your progress.",
@@ -193,7 +221,21 @@ const copy = {
     xpGuide: "XP system",
     xpGuideText: "Reward the difficulty of the action, not only the final result.",
     noPunishment: "No punishment for a missed day",
-    noPunishmentText: "Each chain counts completed days and never resets to zero.",
+    noPunishmentText: "A streak keeps your completion history, but missing a day never resets progress to zero.",
+    helpTitle: "Help",
+    helpLead: "A short guide to QuestFrame mechanics without cluttering the home page.",
+    xpHelpTitle: "How XP works",
+    xpRegularHelp: "Regular step",
+    xpPromiseHelp: "Kept a promise to myself",
+    xpHardHelp: "Did the hardest or scariest thing",
+    xpDelayHelp: "Did what I was putting off",
+    bossHelpTitle: "Weekly boss",
+    bossHelpText: "Choose one task you are avoiding the most. Defeating the boss earns +25 XP.",
+    rewardHelpTitle: "Rewards",
+    rewardHelpText: "Rewards unlock from total XP. Claiming one never spends XP or lowers your level.",
+    contactsEyebrow: "CONTACTS",
+    contactsTitle: "Author contacts",
+    contactsLead: "Questions, ideas and bug reports can be sent through my public profiles.",
     archive: "Archive",
     archived: "Quest archived.",
     active: "Active",
@@ -234,12 +276,16 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const t = copy[lang];
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("questframe-lang");
-    if (saved === "en" || saved === "ru") setLang(saved);
+    const timer = window.setTimeout(() => {
+      const saved = window.localStorage.getItem("questframe-lang");
+      if (saved === "en" || saved === "ru") setLang(saved);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     document.documentElement.lang = lang;
+    document.title = lang === "ru" ? "QuestFrame — квесты и прогресс" : "QuestFrame — quests and progress";
   }, [lang]);
 
   function toggleLanguage() {
@@ -276,7 +322,10 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }, [supabase, t.error]);
 
   useEffect(() => {
-    void loadData(true);
+    const timer = window.setTimeout(() => {
+      void loadData(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [loadData]);
 
   const weekStart = isoDateLocal(startOfWeekLocal());
@@ -548,7 +597,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
           <span className="brand-lockup compact"><span className="brand-mark">QF</span><span>QuestFrame</span></span>
         </button>
         <nav className="desktop-tabs" aria-label="Main navigation">
-          {(["today", "quests", "chain", "rewards"] as Tab[]).map((item) => (
+          {(["today", "quests", "chain", "rewards", "help"] as Tab[]).map((item) => (
             <button key={item} className={tab === item ? "nav-tab active" : "nav-tab"} onClick={() => setTab(item)}>{t[item]}</button>
           ))}
         </nav>
@@ -607,7 +656,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
             <section className="quick-panel">
               <div className="section-heading compact-heading">
-                <div><p className="eyebrow">QUEST ACTIONS</p><h2>{t.quickSteps}</h2><p>{t.quickStepsLead}</p></div>
+                <div><p className="eyebrow">{t.questActionsEyebrow}</p><h2>{t.quickSteps}</h2><p>{t.quickStepsLead}</p></div>
                 <button className="text-button" onClick={() => setTab("quests")}>{t.openAllQuests}</button>
               </div>
               {quickSteps.length === 0 ? <p className="empty-inline">{t.noQuickSteps}</p> : (
@@ -627,7 +676,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
             <section className="quick-panel">
               <div className="section-heading compact-heading">
-                <div><p className="eyebrow">DAILY LOOP</p><h2>{t.repeatingGoals}</h2><p>{t.repeatingGoalsLead}</p></div>
+                <div><p className="eyebrow">{t.dailyLoopEyebrow}</p><h2>{t.repeatingGoals}</h2><p>{t.repeatingGoalsLead}</p></div>
                 <button className="text-button" onClick={() => setTab("chain")}>{t.manageChains}</button>
               </div>
               {activeChains.length === 0 ? <p className="empty-inline">{t.noRepeatingGoals}</p> : (
@@ -655,16 +704,12 @@ export default function Dashboard({ userId, email }: DashboardProps) {
               )}
             </section>
 
-            <section className="principles-grid">
-              <article><span className="principle-number">+10</span><h3>{t.xpGuide}</h3><p>{t.xpGuideText}</p></article>
-              <article><span className="principle-number">∞</span><h3>{t.noPunishment}</h3><p>{t.noPunishmentText}</p></article>
-            </section>
           </div>
         )}
 
         {tab === "quests" && (
           <div className="page-stack">
-            <div className="section-heading"><div><p className="eyebrow">QUEST LOG</p><h1>{t.quests}</h1></div><button className="button button-primary" onClick={() => setShowQuestForm((value) => !value)}>+ {t.newQuest}</button></div>
+            <div className="section-heading"><div><p className="eyebrow">{t.questLogEyebrow}</p><h1>{t.quests}</h1></div><button className="button button-primary" onClick={() => setShowQuestForm((value) => !value)}>+ {t.newQuest}</button></div>
 
             {showQuestForm && (
               <form className="create-panel" onSubmit={createQuest}>
@@ -672,7 +717,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                   <label className="wide"><span>{t.questTitle}</span><input required maxLength={120} name="title" placeholder={t.questTitle} /></label>
                   <label className="wide"><span>{t.questDescription}</span><textarea maxLength={600} name="description" rows={2} placeholder={t.questDescription} /></label>
                   <label><span>{t.questCategory}</span><input maxLength={50} name="category" placeholder={t.questCategoryPlaceholder} /></label>
-                  <label><span>{t.targetDate}</span><input type="text" inputMode="numeric" autoComplete="off" maxLength={10} name="target_date" placeholder={t.targetDatePlaceholder} /></label>
+                  <label><span>{t.targetDate}</span><input type="text" inputMode="numeric" autoComplete="off" maxLength={10} name="target_date" placeholder={t.targetDatePlaceholder} onInput={(event) => { event.currentTarget.value = maskLocalizedDate(event.currentTarget.value, lang); }} /></label>
                   <label><span>{t.accent}</span><input className="color-input" type="color" name="accent" defaultValue="#7a3d5c" /></label>
                 </div>
                 <div className="form-actions"><button className="button button-primary" disabled={working} type="submit">{t.createQuest}</button><button type="button" className="button button-ghost" onClick={() => setShowQuestForm(false)}>{t.cancel}</button></div>
@@ -743,26 +788,39 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
         {tab === "chain" && (
           <div className="page-stack narrow-stack">
-            <div className="section-heading"><div><p className="eyebrow">NO RESET</p><h1>{t.chainTitle}</h1><p>{t.chainLead}</p></div></div>
-            <section className="create-panel chain-create">
-              <form className="stacked-form" onSubmit={createChain}><input name="title" required maxLength={180} placeholder={t.chainPlaceholder} /><button className="button button-primary" disabled={working} type="submit">{activeChains.length ? t.addAnotherChain : t.startChain}</button></form>
+            <div className="section-heading"><div><p className="eyebrow">{t.chainEyebrow}</p><h1>{t.chainTitle}</h1><p>{t.chainLead}</p></div></div>
+            <section className="create-panel series-create">
+              <form className="series-create-form" onSubmit={createChain}>
+                <input name="title" required maxLength={180} placeholder={t.chainPlaceholder} />
+                <button className="button button-primary" disabled={working} type="submit">{activeChains.length ? t.addAnotherChain : t.startChain}</button>
+              </form>
             </section>
 
             {activeChains.length === 0 ? <div className="empty-card"><p>{t.chainEmpty}</p></div> : (
-              <div className="chain-grid">
+              <div className="series-list">
                 {activeChains.map((chain) => {
                   const checked = isChainCheckedToday(chain.id);
                   const links = chainLinks(chain.id);
                   return (
-                    <section className="chain-card" key={chain.id}>
-                      <div className="chain-count"><strong>{links}</strong><span>{t.links}</span></div>
-                      <h2>{chain.title}</h2>
-                      <div className="week-strip" aria-label={t.lastDays}>
-                        {lastSevenDaysForChain(chain.id).map((day) => <div key={day.iso} className={day.hit ? "day-dot hit" : "day-dot"}><span>{day.label}</span><b>{day.hit ? "✓" : "·"}</b></div>)}
+                    <article className={checked ? "series-row checked" : "series-row"} key={chain.id}>
+                      <div className="series-copy">
+                        <div className="series-title-row">
+                          <h2>{chain.title}</h2>
+                          <span className="series-count">{links} {t.links}</span>
+                        </div>
+                        <div className="series-week" aria-label={t.lastDays}>
+                          {lastSevenDaysForChain(chain.id).map((day) => (
+                            <div key={day.iso} className={day.hit ? "series-day hit" : "series-day"} title={day.iso}>
+                              <span>{day.label}</span><b>{day.hit ? "✓" : "·"}</b>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <button className={checked ? "button button-ghost full-width" : "button button-primary full-width"} onClick={() => checkInChain(chain)} disabled={working || checked}>{checked ? t.linkedToday : t.linkToday}</button>
-                      <button className="text-button danger-text centered" onClick={() => finishChain(chain)} disabled={working}>{t.finishChain}</button>
-                    </section>
+                      <div className="series-actions">
+                        <button className={checked ? "button button-ghost" : "button button-secondary"} onClick={() => checkInChain(chain)} disabled={working || checked}>{checked ? t.linkedToday : t.linkToday}</button>
+                        <button className="text-button danger-text" onClick={() => finishChain(chain)} disabled={working}>{t.finishChain}</button>
+                      </div>
+                    </article>
                   );
                 })}
               </div>
@@ -772,7 +830,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
         {tab === "rewards" && (
           <div className="page-stack narrow-stack">
-            <div className="section-heading"><div><p className="eyebrow">MILESTONES</p><h1>{t.rewardTitle}</h1><p>{t.rewardLead}</p></div></div>
+            <div className="section-heading"><div><p className="eyebrow">{t.rewardsEyebrow}</p><h1>{t.rewardTitle}</h1><p>{t.rewardLead}</p></div></div>
             <form className="create-panel reward-form" onSubmit={addReward}>
               <input name="title" required maxLength={180} placeholder={t.rewardPlaceholder} />
               <input name="xp_required" required type="number" min={1} max={1000000} placeholder={t.xpNeeded} />
@@ -795,11 +853,39 @@ export default function Dashboard({ userId, email }: DashboardProps) {
             )}
           </div>
         )}
+
+        {tab === "help" && (
+          <div className="page-stack narrow-stack">
+            <div className="section-heading"><div><p className="eyebrow">{t.helpEyebrow}</p><h1>{t.helpTitle}</h1><p>{t.helpLead}</p></div></div>
+            <div className="help-grid">
+              <article className="help-card xp-help-card">
+                <span className="principle-number">XP</span>
+                <h2>{t.xpHelpTitle}</h2>
+                <div className="xp-help-list">
+                  <div><strong>+1 XP</strong><span>{t.xpRegularHelp}</span></div>
+                  <div><strong>+5 XP</strong><span>{t.xpPromiseHelp}</span></div>
+                  <div><strong>+7 XP</strong><span>{t.xpHardHelp}</span></div>
+                  <div><strong>+10 XP</strong><span>{t.xpDelayHelp}</span></div>
+                </div>
+              </article>
+              <article className="help-card"><span className="principle-number">∞</span><h2>{t.noPunishment}</h2><p>{t.noPunishmentText}</p></article>
+              <article className="help-card"><span className="principle-number">◆</span><h2>{t.bossHelpTitle}</h2><p>{t.bossHelpText}</p></article>
+              <article className="help-card"><span className="principle-number">☆</span><h2>{t.rewardHelpTitle}</h2><p>{t.rewardHelpText}</p></article>
+              <article className="help-card contacts-card">
+                <div><p className="eyebrow">{t.contactsEyebrow}</p><h2>{t.contactsTitle}</h2><p>{t.contactsLead}</p></div>
+                <div className="contact-links">
+                  <a className="button button-secondary" href="https://github.com/bubaleh1337" target="_blank" rel="noreferrer">GitHub · bubaleh1337</a>
+                  <a className="button button-secondary" href="https://www.linkedin.com/in/ekaterina-pupykina/" target="_blank" rel="noreferrer">LinkedIn</a>
+                </div>
+              </article>
+            </div>
+          </div>
+        )}
       </section>
 
       <nav className="mobile-tabs" aria-label="Mobile navigation">
-        {(["today", "quests", "chain", "rewards"] as Tab[]).map((item) => (
-          <button key={item} className={tab === item ? "active" : ""} onClick={() => setTab(item)}><span>{item === "today" ? "⌂" : item === "quests" ? "◇" : item === "chain" ? "∞" : "☆"}</span>{t[item]}</button>
+        {(["today", "quests", "chain", "rewards", "help"] as Tab[]).map((item) => (
+          <button key={item} className={tab === item ? "active" : ""} onClick={() => setTab(item)}><span>{item === "today" ? "⌂" : item === "quests" ? "◇" : item === "chain" ? "∞" : item === "rewards" ? "☆" : "?"}</span>{t[item]}</button>
         ))}
       </nav>
     </main>
@@ -818,6 +904,14 @@ function QuestSummary({ quest, steps, lang, onOpen }: { quest: Quest; steps: Que
       <span className="summary-progress"><span><i style={{ width: `${percent}%`, background: quest.accent }} /></span><b>{percent}%</b></span>
     </button>
   );
+}
+
+function maskLocalizedDate(value: string, lang: Lang) {
+  const digits = value.replace(/\D/g, "").slice(0, 8);
+  const separator = lang === "ru" ? "." : "/";
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}${separator}${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}${separator}${digits.slice(2, 4)}${separator}${digits.slice(4)}`;
 }
 
 function parseLocalizedDate(value: string, lang: Lang) {

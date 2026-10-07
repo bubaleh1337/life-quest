@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0 — 2026-10-07
+
+- Added automatic date masking while typing: `11102026` becomes `11.10.2026` in Russian and `10112026` becomes `10/11/2026` in English.
+- Renamed the repeating-action area from Chains / «Цепочки» to Streaks / «Серии».
+- Reworked streak management into compact rows instead of one large card per repeating action.
+- Localized all visible section eyebrow labels in the authenticated app.
+- Moved XP/no-reset explanations off the Today page into a separate Help / «Справка» tab.
+- Added Help sections for XP, streaks, weekly boss, rewards and author contacts.
+- Explicitly sets the QuestFrame browser title in app metadata and client state to eliminate stale copied project titles.
+- Adjusted the mobile navigation for five tabs.
+- Fixed the two React lint errors caused by synchronous state updates from effects.
+- No Supabase migration is required for this release.
+
 ## 0.2.0 — 2026-10-07
 
 - Localized quest category examples for RU/EN.

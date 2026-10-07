@@ -10,7 +10,7 @@ QuestFrame turns vague self-improvement goals into a small game loop without tur
 2. **Progress without punishment.** Missed days do not erase historical progress.
 3. **Low cognitive load.** No inventories, currencies, skill trees, badges or dozens of score types.
 4. **One scary thing at a time.** One weekly boss per user and week.
-5. **Several simple routines are allowed.** Multiple continuous chains can run in parallel, each with one daily check-in.
+5. **Several simple routines are allowed.** Multiple streaks can run in parallel, each with one daily check-in.
 6. **Fast daily interaction.** Quest steps and repeating goals can be checked off from Today.
 7. **Transparent XP.** XP comes only from completed quest steps and defeated weekly bosses.
 
@@ -46,9 +46,9 @@ Rewards unlock at a chosen lifetime-XP threshold. Claiming a reward does not spe
 
 ## Chain semantics
 
-Continuous chains intentionally are **not** traditional streaks:
+Streaks intentionally are **not** traditional streaks:
 
-- multiple active chains are allowed;
+- multiple active streaks are allowed;
 - each chain represents one repeatable action;
 - only one check-in per chain per calendar day is allowed;
 - a missed day creates a gap but does not reset the count;

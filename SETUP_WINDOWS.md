@@ -1,4 +1,4 @@
-# QuestFrame 0.2.0 — Windows 11 setup
+# QuestFrame 0.3.0 — Windows 11 setup
 
 These instructions assume PowerShell and a project folder such as `P:\Projects\questframe`.
 
@@ -116,7 +116,7 @@ Test in this order:
 4. Complete one step and verify XP changes.
 5. Undo it and verify XP goes back.
 6. Set the weekly boss and defeat it; verify +25 XP.
-7. Create at least two chains, check both in for today and refresh the page; both links must remain.
+7. Create at least two streaks, check both in for today and refresh the page; both completion histories must remain.
 8. Add a reward with a reachable XP threshold and claim it after it unlocks.
 9. Sign out and sign in again; all data must remain.
 
@@ -141,7 +141,7 @@ Then:
 ```powershell
 git init
 git add .
-git commit -m "feat: launch QuestFrame 0.2.0"
+git commit -m "feat: launch QuestFrame 0.3.0"
 git branch -M main
 git remote add origin https://github.com/YOUR_GITHUB_USERNAME/questframe.git
 git push -u origin main
