@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.0 — 2026-10-07
+
+- Rebuilt the authenticated Today page into a denser modern bento dashboard to remove large unused horizontal areas.
+- Reworked the header into three intentional floating glass islands instead of one visually detached full-width strip.
+- Replaced the old serif display treatment with modern variable/system sans typography across the app.
+- Added a Today heading, localized date and compact status pills for pending quest steps and today's chains.
+- Moved level and weekly boss into a balanced two-card overview row.
+- Moved quick quest actions and repeating actions into a responsive two-column action grid.
+- Restyled action rows as tactile compact cards instead of legacy table-like separators.
+- Reworked the level badge into a circular progress ring.
+- Increased active quest density to up to six compact cards and three desktop columns.
+- Refined backgrounds, borders, glass surfaces, shadows, buttons and form controls for a more contemporary Glossy Game look.
+- Fixed `react-hooks/purity` lint failure in XP burst feedback by replacing `Date.now()` with a stable `useRef` counter.
+- No Supabase migration is required for this release.
 ## 0.6.0 — 2026-10-07
 
 - Introduced the **Glossy Game** art direction: elegant glassy surfaces, wine/champagne accents and restrained game feedback.

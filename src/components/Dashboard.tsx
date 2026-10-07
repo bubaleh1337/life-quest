@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/browser";
 import { BOSS_XP, getLevelProgress, isoDateLocal, startOfWeekLocal, XP_OPTIONS } from "@/lib/game";
@@ -32,6 +32,11 @@ const copy = {
     rewards: "Награды",
     help: "Гид игрока",
     helpShort: "Гид",
+    dashboardEyebrow: "ТВОЯ ИГРОВАЯ ПАНЕЛЬ",
+    dashboardTitle: "Сегодня",
+    dashboardLead: "Небольшие действия складываются в заметный прогресс.",
+    pendingActions: "шагов осталось",
+    chainsToday: "цепочек сегодня",
     level: "Уровень",
     totalXp: "Всего XP",
     activeQuests: "Активные квесты",
@@ -188,6 +193,11 @@ const copy = {
     rewards: "Rewards",
     help: "Player Guide",
     helpShort: "Guide",
+    dashboardEyebrow: "YOUR GAME BOARD",
+    dashboardTitle: "Today",
+    dashboardLead: "Small actions add up to visible progress.",
+    pendingActions: "steps left",
+    chainsToday: "chains today",
     level: "Level",
     totalXp: "Total XP",
     activeQuests: "Active quests",
@@ -359,6 +369,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [xpBurst, setXpBurst] = useState<{ id: number; amount: number } | null>(null);
+  const xpBurstCounter = useRef(0);
   const [chainCelebration, setChainCelebration] = useState<string | null>(null);
   const [rewardCelebration, setRewardCelebration] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
@@ -420,7 +431,8 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   function showXpBurst(amount: number) {
-    const id = Date.now();
+    xpBurstCounter.current += 1;
+    const id = xpBurstCounter.current;
     setXpBurst({ id, amount });
     window.setTimeout(() => {
       setXpBurst((current) => current?.id === id ? null : current);
@@ -484,6 +496,12 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       .sort((a, b) => Number(Boolean(a.completed_at)) - Number(Boolean(b.completed_at)))
       .slice(0, 8);
   }, [steps, activeQuestIds]);
+
+  const pendingQuickSteps = quickSteps.filter((step) => !step.completed_at).length;
+  const checkedChainsToday = activeChains.filter((chain) => isChainCheckedToday(chain.id)).length;
+  const todayLabel = new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-US", {
+    weekday: "long", day: "numeric", month: "long"
+  }).format(new Date());
 
   const visibleQuests = questFilter === "active" ? activeQuests : questFilter === "completed" ? completedQuests : archivedQuests;
   const emptyQuestFilterMessage = questFilter === "active" ? t.noQuests : questFilter === "completed" ? t.noFinished : t.noArchived;
@@ -930,99 +948,117 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
       <section className="content-shell">
         {tab === "today" && (
-          <div className="page-stack">
-            <section className="hero-panel">
-              <div className="level-orb"><span>{t.level}</span><strong>{level.level}</strong></div>
-              <div className="level-main">
-                <div className="level-row"><strong>{totalXp} XP</strong><span>{level.current} / {level.needed} XP {t.nextLevel}</span></div>
-                <div className="progress-track large"><span style={{ width: `${level.percent}%` }} /></div>
+          <div className="page-stack today-page">
+            <section className="today-heading">
+              <div>
+                <p className="eyebrow">{t.dashboardEyebrow}</p>
+                <h1>{t.dashboardTitle}</h1>
+                <p>{t.dashboardLead}</p>
               </div>
-              <div className="hero-stats">
-                <div><span>{t.activeQuests}</span><strong>{activeQuests.length}</strong></div>
-                <div><span>{t.totalXp}</span><strong>{totalXp}</strong></div>
+              <div className="today-status">
+                <span className="today-date">{todayLabel}</span>
+                <div className="today-stat-pills">
+                  <span><strong>{pendingQuickSteps}</strong>{t.pendingActions}</span>
+                  <span><strong>{checkedChainsToday}/{activeChains.length}</strong>{t.chainsToday}</span>
+                </div>
               </div>
             </section>
 
-            <section className={currentBoss?.completed_at ? "boss-card defeated" : "boss-card"}>
-              <div className="boss-icon" aria-hidden="true">◆</div>
-              <div className="boss-copy">
-                <div className="card-heading-row">
-                  <div><p className="eyebrow">{t.weeklyBoss} · +{BOSS_XP} XP</p><h2>{currentBoss?.title ?? t.weeklyBoss}</h2></div>
-                  {currentBoss && <button className="text-button" type="button" onClick={() => setShowBossForm((value) => !value)}>{t.replaceBoss}</button>}
+            <div className="today-overview-grid">
+              <section className="hero-panel compact-hero">
+                <div className="level-orb" style={{ "--level-progress": `${level.percent}%` } as React.CSSProperties}><span>{t.level}</span><strong>{level.level}</strong></div>
+                <div className="level-main">
+                  <div className="level-row"><strong>{totalXp} XP</strong><span>{level.current} / {level.needed} XP {t.nextLevel}</span></div>
+                  <div className="progress-track large"><span style={{ width: `${level.percent}%` }} /></div>
+                  <div className="hero-stats">
+                    <div><span>{t.activeQuests}</span><strong>{activeQuests.length}</strong></div>
+                    <div><span>{t.totalXp}</span><strong>{totalXp}</strong></div>
+                  </div>
                 </div>
-                {currentBoss ? (
-                  <>
-                    {currentBoss.notes && <p>{currentBoss.notes}</p>}
-                    <button className={currentBoss.completed_at ? "button button-ghost" : "button button-primary"} type="button" onClick={toggleBoss} disabled={working}>
-                      {currentBoss.completed_at ? t.undoBoss : t.defeatBoss}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p>{t.bossHint}</p>
-                    <button className="button button-primary" type="button" onClick={() => setShowBossForm(true)}>{t.setBoss}</button>
-                  </>
+              </section>
+
+              <section className={currentBoss?.completed_at ? "boss-card defeated" : "boss-card"}>
+                <div className="boss-icon" aria-hidden="true">◆</div>
+                <div className="boss-copy">
+                  <div className="card-heading-row">
+                    <div><p className="eyebrow">{t.weeklyBoss} · +{BOSS_XP} XP</p><h2>{currentBoss?.title ?? t.weeklyBoss}</h2></div>
+                    {currentBoss && <button className="text-button" type="button" onClick={() => setShowBossForm((value) => !value)}>{t.replaceBoss}</button>}
+                  </div>
+                  {currentBoss ? (
+                    <>
+                      {currentBoss.notes && <p>{currentBoss.notes}</p>}
+                      <button className={currentBoss.completed_at ? "button button-ghost" : "button button-primary"} type="button" onClick={toggleBoss} disabled={working}>
+                        {currentBoss.completed_at ? t.undoBoss : t.defeatBoss}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p>{t.bossHint}</p>
+                      <button className="button button-primary" type="button" onClick={() => setShowBossForm(true)}>{t.setBoss}</button>
+                    </>
+                  )}
+                  {showBossForm && (
+                    <form className="inline-form boss-form" onSubmit={saveBoss}>
+                      <input name="title" required maxLength={180} defaultValue={currentBoss?.title ?? ""} placeholder={t.bossPlaceholder} />
+                      <textarea name="notes" maxLength={600} defaultValue={currentBoss?.notes ?? ""} placeholder={t.bossNotes} rows={2} />
+                      <div className="form-actions"><button className="button button-primary" disabled={working} type="submit">{t.setBoss}</button><button className="button button-ghost" type="button" onClick={() => setShowBossForm(false)}>{t.cancel}</button></div>
+                    </form>
+                  )}
+                </div>
+              </section>
+            </div>
+
+            <div className="today-action-grid">
+              <section className="quick-panel action-panel">
+                <div className="section-heading compact-heading">
+                  <div><p className="eyebrow">{t.questActionsEyebrow}</p><h2>{t.quickSteps}</h2><p>{t.quickStepsLead}</p></div>
+                  <button className="text-button" type="button" onClick={() => setTab("quests")}>{t.openAllQuests}</button>
+                </div>
+                {quickSteps.length === 0 ? <p className="empty-inline">{t.noQuickSteps}</p> : (
+                  <div className="quick-step-list">
+                    {quickSteps.map((step) => {
+                      const quest = activeQuests.find((item) => item.id === step.quest_id);
+                      return (
+                        <div key={step.id} className={step.completed_at ? "quick-step-row completed" : "quick-step-row"}>
+                          <button className="check-button" type="button" onClick={() => toggleStep(step)} disabled={working} aria-label={step.completed_at ? t.undo : t.done}>{step.completed_at ? "✓" : ""}</button>
+                          <div className="quick-step-copy"><strong>{step.title}</strong><span>{quest?.title ?? t.quests} · +{step.xp_value} XP</span></div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
-                {showBossForm && (
-                  <form className="inline-form boss-form" onSubmit={saveBoss}>
-                    <input name="title" required maxLength={180} defaultValue={currentBoss?.title ?? ""} placeholder={t.bossPlaceholder} />
-                    <textarea name="notes" maxLength={600} defaultValue={currentBoss?.notes ?? ""} placeholder={t.bossNotes} rows={2} />
-                    <div className="form-actions"><button className="button button-primary" disabled={working} type="submit">{t.setBoss}</button><button className="button button-ghost" type="button" onClick={() => setShowBossForm(false)}>{t.cancel}</button></div>
-                  </form>
+              </section>
+
+              <section className="quick-panel action-panel">
+                <div className="section-heading compact-heading">
+                  <div><p className="eyebrow">{t.dailyLoopEyebrow}</p><h2>{t.repeatingGoals}</h2><p>{t.repeatingGoalsLead}</p></div>
+                  <button className="text-button" type="button" onClick={() => setTab("chain")}>{t.manageChains}</button>
+                </div>
+                {activeChains.length === 0 ? <p className="empty-inline">{t.noRepeatingGoals}</p> : (
+                  <div className="daily-chain-list">
+                    {activeChains.map((chain) => {
+                      const checked = isChainCheckedToday(chain.id);
+                      return (
+                        <div key={chain.id} className={checked ? "daily-chain-row completed" : "daily-chain-row"}>
+                          <button className="check-button" type="button" onClick={() => checked ? undoChainCheckIn(chain) : checkInChain(chain)} disabled={working} aria-label={checked ? t.undo : t.linkToday}>{checked ? "✓" : ""}</button>
+                          <div><strong>{chain.title}</strong><span>{formatLinkCount(chainLinks(chain.id), lang)}</span></div>
+                          <span className="daily-status">{checked ? t.undo : t.linkToday}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
-              </div>
-            </section>
+              </section>
+            </div>
 
-            <section className="quick-panel">
-              <div className="section-heading compact-heading">
-                <div><p className="eyebrow">{t.questActionsEyebrow}</p><h2>{t.quickSteps}</h2><p>{t.quickStepsLead}</p></div>
-                <button className="text-button" type="button" onClick={() => setTab("quests")}>{t.openAllQuests}</button>
-              </div>
-              {quickSteps.length === 0 ? <p className="empty-inline">{t.noQuickSteps}</p> : (
-                <div className="quick-step-list">
-                  {quickSteps.map((step) => {
-                    const quest = activeQuests.find((item) => item.id === step.quest_id);
-                    return (
-                      <div key={step.id} className={step.completed_at ? "quick-step-row completed" : "quick-step-row"}>
-                        <button className="check-button" type="button" onClick={() => toggleStep(step)} disabled={working} aria-label={step.completed_at ? t.undo : t.done}>{step.completed_at ? "✓" : ""}</button>
-                        <div className="quick-step-copy"><strong>{step.title}</strong><span>{quest?.title ?? t.quests} · +{step.xp_value} XP</span></div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-
-            <section className="quick-panel">
-              <div className="section-heading compact-heading">
-                <div><p className="eyebrow">{t.dailyLoopEyebrow}</p><h2>{t.repeatingGoals}</h2><p>{t.repeatingGoalsLead}</p></div>
-                <button className="text-button" type="button" onClick={() => setTab("chain")}>{t.manageChains}</button>
-              </div>
-              {activeChains.length === 0 ? <p className="empty-inline">{t.noRepeatingGoals}</p> : (
-                <div className="daily-chain-list">
-                  {activeChains.map((chain) => {
-                    const checked = isChainCheckedToday(chain.id);
-                    return (
-                      <div key={chain.id} className={checked ? "daily-chain-row completed" : "daily-chain-row"}>
-                        <button className="check-button" type="button" onClick={() => checked ? undoChainCheckIn(chain) : checkInChain(chain)} disabled={working} aria-label={checked ? t.undo : t.linkToday}>{checked ? "✓" : ""}</button>
-                        <div><strong>{chain.title}</strong><span>{formatLinkCount(chainLinks(chain.id), lang)}</span></div>
-                        <span className="daily-status">{checked ? t.undo : t.linkToday}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-
-            <section>
+            <section className="focus-section">
               <div className="section-heading"><div><p className="eyebrow">{t.focus}</p><h2>{t.activeQuests}</h2></div><button className="button button-secondary" type="button" onClick={() => { setTab("quests"); setShowQuestForm(true); }}>+ {t.newQuest}</button></div>
               {activeQuests.length === 0 ? (
                 <div className="empty-card"><p>{t.noQuests}</p><button className="button button-primary" type="button" onClick={() => { setTab("quests"); setShowQuestForm(true); }}>{t.createFirst}</button></div>
               ) : (
-                <div className="quest-grid compact-grid">{activeQuests.slice(0, 4).map((quest) => <QuestSummary key={quest.id} quest={quest} steps={steps} lang={lang} onOpen={() => setTab("quests")} />)}</div>
+                <div className="quest-grid compact-grid">{activeQuests.slice(0, 6).map((quest) => <QuestSummary key={quest.id} quest={quest} steps={steps} lang={lang} onOpen={() => setTab("quests")} />)}</div>
               )}
             </section>
-
           </div>
         )}
 
