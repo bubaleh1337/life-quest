@@ -27,7 +27,7 @@ export default async function HomePage() {
           <p className="eyebrow">REAL LIFE, GAME LOGIC</p>
           <h1>Turn a goal into a quest you actually want to continue.</h1>
           <p className="hero-lead">
-            Earn XP for real actions, beat one weekly boss, keep a chain without punishment for missed days and unlock rewards as your progress grows.
+            Earn XP for real actions, beat one weekly boss, keep repeating chains without punishment for missed days and unlock rewards as your progress grows.
           </p>
         </div>
 
@@ -64,12 +64,12 @@ export default async function HomePage() {
         <article>
           <span>02</span>
           <h2>XP rewards effort</h2>
-          <p>Normal step +1, something hard +3, kept a promise +5, beat procrastination +10.</p>
+          <p>Normal step +1, hardest/scariest action +7, kept a promise +5, beat procrastination +10.</p>
         </article>
         <article>
           <span>03</span>
           <h2>No punishment loop</h2>
-          <p>A missed day does not erase your chain. You simply continue with the next link.</p>
+          <p>A missed day does not erase a chain. You simply continue with the next link.</p>
         </article>
       </section>
     </main>

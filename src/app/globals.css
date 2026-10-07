@@ -278,6 +278,45 @@ textarea { resize: vertical; }
 .reward-actions > span { color: var(--muted); font-size: 12px; }
 .reward-actions > div { display: flex; gap: 8px; align-items: center; }
 
+
+.brand-home-button {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+}
+.brand-home-button:hover .brand-lockup > span:last-child { color: var(--accent); }
+.brand-home-button:focus-visible { outline: 3px solid rgba(103,43,69,.18); outline-offset: 4px; border-radius: 14px; }
+
+.quick-panel {
+  background: rgba(255,253,249,.78);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+}
+.compact-heading { align-items: flex-start; }
+.quick-step-list, .daily-chain-list { display: grid; border-top: 1px solid #ece5df; }
+.quick-step-row, .daily-chain-row {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ece5df;
+}
+.quick-step-copy, .daily-chain-row > div { display: grid; gap: 3px; min-width: 0; }
+.quick-step-copy strong, .daily-chain-row strong { overflow-wrap: anywhere; }
+.quick-step-copy span, .daily-chain-row span { color: var(--muted); font-size: 11px; }
+.quick-step-row.completed strong, .daily-chain-row.completed strong { text-decoration: line-through; color: var(--muted); }
+.quick-step-row.completed .check-button, .daily-chain-row.completed .check-button { background: var(--success); border-color: var(--success); }
+.daily-status { text-align: right; max-width: 170px; }
+.chain-grid { display: grid; gap: 16px; }
+
 .mobile-tabs { display: none; }
 .loading-screen { min-height: 100vh; display: grid; place-items: center; align-content: center; gap: 12px; color: var(--muted); }
 .spinner { width: 34px; height: 34px; border: 3px solid #d8cec6; border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
@@ -343,6 +382,9 @@ textarea { resize: vertical; }
   .week-strip { gap: 4px; }
   .day-dot b { width: 30px; height: 30px; }
   .reward-head { flex-direction: column; }
+  .quick-panel { padding: 18px 16px; }
+  .quick-step-row, .daily-chain-row { grid-template-columns: 30px minmax(0, 1fr); }
+  .daily-status { grid-column: 2; text-align: left; max-width: none; }
   .reward-actions { flex-direction: column; }
   .reward-actions > div { width: 100%; }
   .reward-actions .button { flex: 1; }

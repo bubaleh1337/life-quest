@@ -1,4 +1,4 @@
--- QuestFrame 0.1.0
+-- QuestFrame 0.2.0
 -- Initial schema for one Supabase project.
 
 create extension if not exists pgcrypto;
@@ -29,7 +29,7 @@ create table if not exists public.quest_steps (
   quest_id uuid not null references public.quests(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
   title text not null check (char_length(title) between 1 and 180),
-  xp_value integer not null check (xp_value in (1,3,5,10)),
+  xp_value integer not null check (xp_value in (1,5,7,10)),
   xp_reason text not null check (xp_reason in ('step','hard','promise','procrastination')),
   sort_order integer not null default 0,
   completed_at timestamptz,
@@ -60,9 +60,6 @@ create table if not exists public.chains (
   updated_at timestamptz not null default now()
 );
 
-create unique index if not exists one_active_chain_per_user
-  on public.chains(user_id)
-  where active = true;
 
 create table if not exists public.chain_checkins (
   id uuid primary key default gen_random_uuid(),

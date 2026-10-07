@@ -18,7 +18,7 @@ const copy = {
   ru: {
     today: "Сегодня",
     quests: "Квесты",
-    chain: "Цепочка",
+    chain: "Цепочки",
     rewards: "Награды",
     level: "Уровень",
     totalXp: "Всего XP",
@@ -39,7 +39,11 @@ const copy = {
     questTitle: "Название квеста",
     questDescription: "Зачем это тебе? (необязательно)",
     questCategory: "Категория (необязательно)",
+    questCategoryPlaceholder: "Например: Карьера / Здоровье / Учёба",
     targetDate: "Дата цели (необязательно)",
+    targetDatePlaceholder: "ДД.ММ.ГГГГ",
+    invalidTargetDate: "Введи дату в формате ДД.ММ.ГГГГ.",
+    accent: "Цвет квеста",
     createQuest: "Создать квест",
     cancel: "Отмена",
     progress: "Прогресс",
@@ -49,7 +53,7 @@ const copy = {
     stepPlaceholder: "Конкретное действие",
     xpType: "За что начислить XP",
     xpStep: "Обычный шаг",
-    xpHard: "Сделала сложное или страшное",
+    xpHard: "Сделала самое сложное или страшное",
     xpPromise: "Сдержала обещание перед собой",
     xpProcrastination: "Сделала то, что откладывала",
     done: "Готово",
@@ -58,15 +62,24 @@ const copy = {
     reopenQuest: "Вернуть в активные",
     completed: "Завершён",
     emptyQuest: "Добавь первый конкретный шаг — без огромного списка дел.",
-    chainTitle: "Непрерывная цепочка",
-    chainLead: "Один повторяемый шаг. Пропуск не обнуляет прогресс — на следующий день просто продолжаешь.",
-    chainPlaceholder: "Например: 30 минут английского",
-    startChain: "Начать цепочку",
-    linkToday: "Добавить звено за сегодня",
+    quickSteps: "Быстрые шаги",
+    quickStepsLead: "Отмечай шаги активных квестов прямо с главной страницы.",
+    noQuickSteps: "В активных квестах пока нет шагов для отметки.",
+    openAllQuests: "Открыть все квесты",
+    repeatingGoals: "Повторяемые цели",
+    repeatingGoalsLead: "Ежедневные действия можно отмечать одним нажатием.",
+    manageChains: "Управлять цепочками",
+    noRepeatingGoals: "Пока нет повторяемых целей.",
+    chainTitle: "Непрерывные цепочки",
+    chainLead: "Добавляй несколько повторяемых действий. Пропуск не обнуляет прогресс — на следующий день просто продолжаешь.",
+    chainPlaceholder: "Например: просыпаться в 5:45",
+    startChain: "Добавить цепочку",
+    addAnotherChain: "Добавить повторяемую цель",
+    linkToday: "Выполнено сегодня",
     linkedToday: "Сегодня уже выполнено",
     links: "звеньев",
-    finishChain: "Завершить эту цепочку",
-    chainEmpty: "Активной цепочки пока нет. Выбери только одно действие.",
+    finishChain: "Завершить цепочку",
+    chainEmpty: "Активных цепочек пока нет. Добавь первую повторяемую цель.",
     lastDays: "Последние 7 дней",
     rewardTitle: "Награды за путь",
     rewardLead: "Награда открывается по общему XP и не списывает прогресс.",
@@ -86,19 +99,20 @@ const copy = {
     xpGuide: "Система XP",
     xpGuideText: "Награждаем не только результат, но и сложность самого действия.",
     noPunishment: "Без наказания за пропуск",
-    noPunishmentText: "Цепочка считает выполненные дни, но никогда не сбрасывается в ноль.",
+    noPunishmentText: "Каждая цепочка считает выполненные дни, но никогда не сбрасывается в ноль.",
     archive: "Архивировать",
     archived: "Квест архивирован.",
     active: "Активные",
     finished: "Завершённые",
     noFinished: "Завершённых квестов пока нет.",
     due: "до",
-    remove: "Удалить"
+    remove: "Удалить",
+    home: "На главную"
   },
   en: {
     today: "Today",
     quests: "Quests",
-    chain: "Chain",
+    chain: "Chains",
     rewards: "Rewards",
     level: "Level",
     totalXp: "Total XP",
@@ -119,7 +133,11 @@ const copy = {
     questTitle: "Quest title",
     questDescription: "Why does this matter? (optional)",
     questCategory: "Category (optional)",
+    questCategoryPlaceholder: "For example: Career / Health / Learning",
     targetDate: "Target date (optional)",
+    targetDatePlaceholder: "MM/DD/YYYY",
+    invalidTargetDate: "Enter the date as MM/DD/YYYY.",
+    accent: "Quest color",
     createQuest: "Create quest",
     cancel: "Cancel",
     progress: "Progress",
@@ -129,7 +147,7 @@ const copy = {
     stepPlaceholder: "One concrete action",
     xpType: "Why this XP is earned",
     xpStep: "Regular step",
-    xpHard: "Did something hard or scary",
+    xpHard: "Did the hardest or scariest thing",
     xpPromise: "Kept a promise to myself",
     xpProcrastination: "Did what I was putting off",
     done: "Done",
@@ -138,15 +156,24 @@ const copy = {
     reopenQuest: "Reopen quest",
     completed: "Completed",
     emptyQuest: "Add the first concrete step — not a giant to-do list.",
-    chainTitle: "Continuous chain",
-    chainLead: "One repeated action. Missing a day never resets progress — just continue tomorrow.",
-    chainPlaceholder: "For example: 30 minutes of English",
-    startChain: "Start chain",
-    linkToday: "Add today's link",
+    quickSteps: "Quick steps",
+    quickStepsLead: "Check off active quest steps directly from your home page.",
+    noQuickSteps: "There are no active quest steps to check off yet.",
+    openAllQuests: "Open all quests",
+    repeatingGoals: "Repeating goals",
+    repeatingGoalsLead: "Check off daily actions in one tap.",
+    manageChains: "Manage chains",
+    noRepeatingGoals: "No repeating goals yet.",
+    chainTitle: "Continuous chains",
+    chainLead: "Add several repeating actions. Missing a day never resets progress — just continue tomorrow.",
+    chainPlaceholder: "For example: wake up at 5:45",
+    startChain: "Add chain",
+    addAnotherChain: "Add repeating goal",
+    linkToday: "Done today",
     linkedToday: "Done for today",
     links: "links",
-    finishChain: "Finish this chain",
-    chainEmpty: "No active chain yet. Pick only one action.",
+    finishChain: "Finish chain",
+    chainEmpty: "No active chains yet. Add your first repeating goal.",
     lastDays: "Last 7 days",
     rewardTitle: "Rewards for the path",
     rewardLead: "A reward unlocks at total XP and never spends your progress.",
@@ -166,14 +193,15 @@ const copy = {
     xpGuide: "XP system",
     xpGuideText: "Reward the difficulty of the action, not only the final result.",
     noPunishment: "No punishment for a missed day",
-    noPunishmentText: "The chain counts completed days and never resets to zero.",
+    noPunishmentText: "Each chain counts completed days and never resets to zero.",
     archive: "Archive",
     archived: "Quest archived.",
     active: "Active",
     finished: "Completed",
     noFinished: "No completed quests yet.",
     due: "due",
-    remove: "Delete"
+    remove: "Delete",
+    home: "Home"
   }
 } as const;
 
@@ -209,6 +237,10 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     const saved = window.localStorage.getItem("questframe-lang");
     if (saved === "en" || saved === "ru") setLang(saved);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   function toggleLanguage() {
     const next: Lang = lang === "ru" ? "en" : "ru";
@@ -249,10 +281,8 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   const weekStart = isoDateLocal(startOfWeekLocal());
   const currentBoss = bosses.find((boss) => boss.week_start === weekStart) ?? null;
-  const activeChain = chains.find((chain) => chain.active) ?? null;
   const today = isoDateLocal(new Date());
-  const todayChecked = activeChain ? checkins.some((checkin) => checkin.chain_id === activeChain.id && checkin.checkin_date === today) : false;
-  const chainLinks = activeChain ? checkins.filter((checkin) => checkin.chain_id === activeChain.id).length : 0;
+  const activeChains = chains.filter((chain) => chain.active);
 
   const totalXp = useMemo(() => {
     const stepXp = steps.filter((step) => step.completed_at).reduce((sum, step) => sum + step.xp_value, 0);
@@ -263,13 +293,20 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const level = getLevelProgress(totalXp);
   const activeQuests = quests.filter((quest) => quest.status === "active");
   const completedQuests = quests.filter((quest) => quest.status === "completed");
+  const activeQuestIds = useMemo(() => new Set(activeQuests.map((quest) => quest.id)), [activeQuests]);
+  const quickSteps = useMemo(() => {
+    return steps
+      .filter((step) => activeQuestIds.has(step.quest_id))
+      .sort((a, b) => Number(Boolean(a.completed_at)) - Number(Boolean(b.completed_at)))
+      .slice(0, 8);
+  }, [steps, activeQuestIds]);
 
   function flash(message: string) {
     setNotice(message);
     window.setTimeout(() => setNotice(""), 2800);
   }
 
-  async function withWork(action: () => Promise<{ error: { message: string } | null } | void>, success = t.saved) {
+  async function withWork(action: () => Promise<{ error: { message: string } | null } | void>, success: string = t.saved) {
     setWorking(true);
     try {
       const result = await action();
@@ -290,9 +327,17 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function createQuest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const title = String(form.get("title") ?? "").trim();
     if (!title) return;
+
+    const rawTargetDate = String(form.get("target_date") ?? "").trim();
+    const targetDate = rawTargetDate ? parseLocalizedDate(rawTargetDate, lang) : null;
+    if (rawTargetDate && !targetDate) {
+      flash(t.invalidTargetDate);
+      return;
+    }
 
     const ok = await withWork(async () => {
       const { error } = await supabase.from("quests").insert({
@@ -300,20 +345,21 @@ export default function Dashboard({ userId, email }: DashboardProps) {
         title,
         description: String(form.get("description") ?? "").trim() || null,
         category: String(form.get("category") ?? "").trim() || null,
-        target_date: String(form.get("target_date") ?? "").trim() || null,
+        target_date: targetDate,
         accent: String(form.get("accent") ?? "#7a3d5c")
       });
       return { error };
     });
     if (ok) {
-      event.currentTarget.reset();
+      formElement.reset();
       setShowQuestForm(false);
     }
   }
 
   async function addStep(event: FormEvent<HTMLFormElement>, questId: string) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const title = String(form.get("title") ?? "").trim();
     const reason = String(form.get("xp_reason") ?? "step");
     const option = XP_OPTIONS.find((item) => item.key === reason) ?? XP_OPTIONS[0];
@@ -331,7 +377,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       });
       return { error };
     });
-    if (ok) event.currentTarget.reset();
+    if (ok) formElement.reset();
   }
 
   async function toggleStep(step: QuestStep) {
@@ -392,7 +438,8 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function createChain(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const title = String(form.get("title") ?? "").trim();
     if (!title) return;
 
@@ -404,14 +451,22 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       });
       return { error };
     });
-    if (ok) event.currentTarget.reset();
+    if (ok) formElement.reset();
   }
 
-  async function checkInChain() {
-    if (!activeChain || todayChecked) return;
+  function isChainCheckedToday(chainId: string) {
+    return checkins.some((checkin) => checkin.chain_id === chainId && checkin.checkin_date === today);
+  }
+
+  function chainLinks(chainId: string) {
+    return checkins.filter((checkin) => checkin.chain_id === chainId).length;
+  }
+
+  async function checkInChain(chain: Chain) {
+    if (isChainCheckedToday(chain.id)) return;
     await withWork(async () => {
       const { error } = await supabase.from("chain_checkins").insert({
-        chain_id: activeChain.id,
+        chain_id: chain.id,
         user_id: userId,
         checkin_date: today
       });
@@ -419,17 +474,17 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     });
   }
 
-  async function finishChain() {
-    if (!activeChain) return;
+  async function finishChain(chain: Chain) {
     await withWork(async () => {
-      const { error } = await supabase.from("chains").update({ active: false }).eq("id", activeChain.id);
+      const { error } = await supabase.from("chains").update({ active: false }).eq("id", chain.id);
       return { error };
     });
   }
 
   async function addReward(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const title = String(form.get("title") ?? "").trim();
     const xpRequired = Number(form.get("xp_required") ?? 0);
     if (!title || !Number.isFinite(xpRequired) || xpRequired < 1) return;
@@ -442,7 +497,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       });
       return { error };
     });
-    if (ok) event.currentTarget.reset();
+    if (ok) formElement.reset();
   }
 
   async function claimReward(reward: Reward) {
@@ -467,7 +522,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     router.refresh();
   }
 
-  const lastSevenDays = useMemo(() => {
+  function lastSevenDaysForChain(chainId: string) {
     const days: { iso: string; label: string; hit: boolean }[] = [];
     for (let offset = 6; offset >= 0; offset -= 1) {
       const date = new Date();
@@ -476,11 +531,11 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       days.push({
         iso,
         label: new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-US", { weekday: "short" }).format(date).replace(".", ""),
-        hit: activeChain ? checkins.some((item) => item.chain_id === activeChain.id && item.checkin_date === iso) : false
+        hit: checkins.some((item) => item.chain_id === chainId && item.checkin_date === iso)
       });
     }
     return days;
-  }, [activeChain, checkins, lang]);
+  }
 
   if (loading) {
     return <main className="loading-screen"><div className="spinner" /><p>{t.loading}</p></main>;
@@ -489,7 +544,9 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   return (
     <main className="app-shell">
       <header className="app-header">
-        <div className="brand-lockup compact"><div className="brand-mark">QF</div><span>QuestFrame</span></div>
+        <button className="brand-home-button" type="button" onClick={() => setTab("today")} aria-label={t.home} title={t.home}>
+          <span className="brand-lockup compact"><span className="brand-mark">QF</span><span>QuestFrame</span></span>
+        </button>
         <nav className="desktop-tabs" aria-label="Main navigation">
           {(["today", "quests", "chain", "rewards"] as Tab[]).map((item) => (
             <button key={item} className={tab === item ? "nav-tab active" : "nav-tab"} onClick={() => setTab(item)}>{t[item]}</button>
@@ -497,7 +554,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
         </nav>
         <div className="header-actions">
           <button className="lang-button" onClick={toggleLanguage}>{lang === "ru" ? "EN" : "RU"}</button>
-          <button className="avatar-button" title={email} onClick={signOut} disabled={working}>{email.slice(0, 1).toUpperCase() || "Q"}</button>
+          <button className="avatar-button" title={`${email} · ${t.signOut}`} onClick={signOut} disabled={working}>{email.slice(0, 1).toUpperCase() || "Q"}</button>
         </div>
       </header>
 
@@ -521,7 +578,8 @@ export default function Dashboard({ userId, email }: DashboardProps) {
             <section className={currentBoss?.completed_at ? "boss-card defeated" : "boss-card"}>
               <div className="boss-icon" aria-hidden="true">◆</div>
               <div className="boss-copy">
-                <div className="card-heading-row"><div><p className="eyebrow">{t.weeklyBoss} · +{BOSS_XP} XP</p><h2>{currentBoss?.title ?? t.weeklyBoss}</h2></div>
+                <div className="card-heading-row">
+                  <div><p className="eyebrow">{t.weeklyBoss} · +{BOSS_XP} XP</p><h2>{currentBoss?.title ?? t.weeklyBoss}</h2></div>
                   {currentBoss && <button className="text-button" onClick={() => setShowBossForm((value) => !value)}>{t.replaceBoss}</button>}
                 </div>
                 {currentBoss ? (
@@ -545,6 +603,47 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                   </form>
                 )}
               </div>
+            </section>
+
+            <section className="quick-panel">
+              <div className="section-heading compact-heading">
+                <div><p className="eyebrow">QUEST ACTIONS</p><h2>{t.quickSteps}</h2><p>{t.quickStepsLead}</p></div>
+                <button className="text-button" onClick={() => setTab("quests")}>{t.openAllQuests}</button>
+              </div>
+              {quickSteps.length === 0 ? <p className="empty-inline">{t.noQuickSteps}</p> : (
+                <div className="quick-step-list">
+                  {quickSteps.map((step) => {
+                    const quest = activeQuests.find((item) => item.id === step.quest_id);
+                    return (
+                      <div key={step.id} className={step.completed_at ? "quick-step-row completed" : "quick-step-row"}>
+                        <button className="check-button" onClick={() => toggleStep(step)} disabled={working} aria-label={step.completed_at ? t.undo : t.done}>{step.completed_at ? "✓" : ""}</button>
+                        <div className="quick-step-copy"><strong>{step.title}</strong><span>{quest?.title ?? t.quests} · +{step.xp_value} XP</span></div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+
+            <section className="quick-panel">
+              <div className="section-heading compact-heading">
+                <div><p className="eyebrow">DAILY LOOP</p><h2>{t.repeatingGoals}</h2><p>{t.repeatingGoalsLead}</p></div>
+                <button className="text-button" onClick={() => setTab("chain")}>{t.manageChains}</button>
+              </div>
+              {activeChains.length === 0 ? <p className="empty-inline">{t.noRepeatingGoals}</p> : (
+                <div className="daily-chain-list">
+                  {activeChains.map((chain) => {
+                    const checked = isChainCheckedToday(chain.id);
+                    return (
+                      <div key={chain.id} className={checked ? "daily-chain-row completed" : "daily-chain-row"}>
+                        <button className="check-button" onClick={() => checkInChain(chain)} disabled={working || checked} aria-label={checked ? t.linkedToday : t.linkToday}>{checked ? "✓" : ""}</button>
+                        <div><strong>{chain.title}</strong><span>{chainLinks(chain.id)} {t.links}</span></div>
+                        <span className="daily-status">{checked ? t.linkedToday : t.linkToday}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </section>
 
             <section>
@@ -572,9 +671,9 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                 <div className="form-grid two-cols">
                   <label className="wide"><span>{t.questTitle}</span><input required maxLength={120} name="title" placeholder={t.questTitle} /></label>
                   <label className="wide"><span>{t.questDescription}</span><textarea maxLength={600} name="description" rows={2} placeholder={t.questDescription} /></label>
-                  <label><span>{t.questCategory}</span><input maxLength={50} name="category" placeholder="Career / Health / Learning" /></label>
-                  <label><span>{t.targetDate}</span><input type="date" name="target_date" /></label>
-                  <label><span>Accent</span><input className="color-input" type="color" name="accent" defaultValue="#7a3d5c" /></label>
+                  <label><span>{t.questCategory}</span><input maxLength={50} name="category" placeholder={t.questCategoryPlaceholder} /></label>
+                  <label><span>{t.targetDate}</span><input type="text" inputMode="numeric" autoComplete="off" maxLength={10} name="target_date" placeholder={t.targetDatePlaceholder} /></label>
+                  <label><span>{t.accent}</span><input className="color-input" type="color" name="accent" defaultValue="#7a3d5c" /></label>
                 </div>
                 <div className="form-actions"><button className="button button-primary" disabled={working} type="submit">{t.createQuest}</button><button type="button" className="button button-ghost" onClick={() => setShowQuestForm(false)}>{t.cancel}</button></div>
               </form>
@@ -645,21 +744,28 @@ export default function Dashboard({ userId, email }: DashboardProps) {
         {tab === "chain" && (
           <div className="page-stack narrow-stack">
             <div className="section-heading"><div><p className="eyebrow">NO RESET</p><h1>{t.chainTitle}</h1><p>{t.chainLead}</p></div></div>
-            {activeChain ? (
-              <section className="chain-card">
-                <div className="chain-count"><strong>{chainLinks}</strong><span>{t.links}</span></div>
-                <h2>{activeChain.title}</h2>
-                <div className="week-strip" aria-label={t.lastDays}>
-                  {lastSevenDays.map((day) => <div key={day.iso} className={day.hit ? "day-dot hit" : "day-dot"}><span>{day.label}</span><b>{day.hit ? "✓" : "·"}</b></div>)}
-                </div>
-                <button className={todayChecked ? "button button-ghost full-width" : "button button-primary full-width"} onClick={checkInChain} disabled={working || todayChecked}>{todayChecked ? t.linkedToday : t.linkToday}</button>
-                <button className="text-button danger-text centered" onClick={finishChain} disabled={working}>{t.finishChain}</button>
-              </section>
-            ) : (
-              <section className="create-panel chain-create">
-                <p>{t.chainEmpty}</p>
-                <form className="stacked-form" onSubmit={createChain}><input name="title" required maxLength={180} placeholder={t.chainPlaceholder} /><button className="button button-primary" disabled={working} type="submit">{t.startChain}</button></form>
-              </section>
+            <section className="create-panel chain-create">
+              <form className="stacked-form" onSubmit={createChain}><input name="title" required maxLength={180} placeholder={t.chainPlaceholder} /><button className="button button-primary" disabled={working} type="submit">{activeChains.length ? t.addAnotherChain : t.startChain}</button></form>
+            </section>
+
+            {activeChains.length === 0 ? <div className="empty-card"><p>{t.chainEmpty}</p></div> : (
+              <div className="chain-grid">
+                {activeChains.map((chain) => {
+                  const checked = isChainCheckedToday(chain.id);
+                  const links = chainLinks(chain.id);
+                  return (
+                    <section className="chain-card" key={chain.id}>
+                      <div className="chain-count"><strong>{links}</strong><span>{t.links}</span></div>
+                      <h2>{chain.title}</h2>
+                      <div className="week-strip" aria-label={t.lastDays}>
+                        {lastSevenDaysForChain(chain.id).map((day) => <div key={day.iso} className={day.hit ? "day-dot hit" : "day-dot"}><span>{day.label}</span><b>{day.hit ? "✓" : "·"}</b></div>)}
+                      </div>
+                      <button className={checked ? "button button-ghost full-width" : "button button-primary full-width"} onClick={() => checkInChain(chain)} disabled={working || checked}>{checked ? t.linkedToday : t.linkToday}</button>
+                      <button className="text-button danger-text centered" onClick={() => finishChain(chain)} disabled={working}>{t.finishChain}</button>
+                    </section>
+                  );
+                })}
+              </div>
             )}
           </div>
         )}
@@ -714,7 +820,23 @@ function QuestSummary({ quest, steps, lang, onOpen }: { quest: Quest; steps: Que
   );
 }
 
+function parseLocalizedDate(value: string, lang: Lang) {
+  const normalized = value.trim();
+  const match = lang === "ru"
+    ? normalized.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/)
+    : normalized.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+
+  if (!match) return null;
+  const day = lang === "ru" ? Number(match[1]) : Number(match[2]);
+  const month = lang === "ru" ? Number(match[2]) : Number(match[1]);
+  const year = Number(match[3]);
+  const date = new Date(year, month - 1, day);
+
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
 function formatDate(value: string, lang: Lang) {
   const date = new Date(`${value}T12:00:00`);
-  return new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "short" }).format(date);
+  return new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "short", year: "numeric" }).format(date);
 }

@@ -1,6 +1,6 @@
 export const XP_OPTIONS = [
   { value: 1, key: "step" as const },
-  { value: 3, key: "hard" as const },
+  { value: 7, key: "hard" as const },
   { value: 5, key: "promise" as const },
   { value: 10, key: "procrastination" as const }
 ];

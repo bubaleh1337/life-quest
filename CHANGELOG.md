@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.2.0 — 2026-10-07
+
+- Localized quest category examples for RU/EN.
+- Replaced browser-controlled target-date field with app-localized date input:
+  - RU: `ДД.ММ.ГГГГ`
+  - EN: `MM/DD/YYYY`
+- Fixed async form reset bug that left old values in quest-step, chain and reward forms.
+- Changed hard/scary action XP from `+3` to `+7`; migration also updates existing hard/scary steps.
+- QuestFrame logo now returns to the Today/home page.
+- Added quick quest-step check-off directly on the Today page.
+- Added repeating-goal check-off directly on the Today page.
+- Multiple active continuous chains are now supported instead of only one.
+- Added multi-chain management with separate seven-day history and daily check-in for each chain.
+- Fixed TypeScript success-message typing errors.
+- Pinned ESLint to the maintained ESLint 9 line to avoid the known ESLint 10 / React-plugin incompatibility.
+- Upgraded Next.js from 16.3.3 to 16.3.8 security release.
+- Added the Next.js smooth-scroll declaration expected by route transitions.
+
 ## 0.1.0 — 2026-10-07
 
 - Initial QuestFrame MVP.
