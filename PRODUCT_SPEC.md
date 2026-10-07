@@ -1,4 +1,4 @@
-# QuestFrame — product spec 0.4
+# QuestFrame — product spec 0.4.1
 
 ## Product promise
 
@@ -17,8 +17,8 @@ QuestFrame turns vague self-improvement goals into a small game loop without tur
 ## XP rules
 
 - +1 — completed a regular step.
-- +7 — did the hardest or scariest thing.
 - +5 — kept a promise to oneself.
+- +7 — did the hardest or scariest thing.
 - +10 — did something that had been procrastinated.
 - +25 — defeated the weekly boss.
 

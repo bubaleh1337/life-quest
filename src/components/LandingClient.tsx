@@ -23,7 +23,7 @@ const copy = {
     rule1Title: "Квест вместо размытой цели",
     rule1Text: "Большая цель превращается в понятные шаги, которые можно проходить один за другим.",
     rule2Title: "XP за усилие",
-    rule2Text: "Обычный шаг +1, самое сложное или страшное +7, обещание себе +5, победа над откладыванием +10.",
+    rule2Text: "Обычный шаг +1, обещание себе +5, самое сложное или страшное +7, победа над откладыванием +10.",
     rule3Title: "Цепочка без наказания",
     rule3Text: "Пропуск создаёт видимый разрыв, но не стирает уже собранные звенья. Просто продолжай с нового звена."
   },
@@ -44,7 +44,7 @@ const copy = {
     rule1Title: "Quest, not vague intention",
     rule1Text: "Break a large goal into visible steps that can be completed one by one.",
     rule2Title: "XP rewards effort",
-    rule2Text: "Regular step +1, hardest/scariest action +7, kept promise +5, beat procrastination +10.",
+    rule2Text: "Regular step +1, kept promise +5, hardest/scariest action +7, beat procrastination +10.",
     rule3Title: "A chain without punishment",
     rule3Text: "A missed day creates a visible break but never erases the links you already built. Just continue with a new link."
   }

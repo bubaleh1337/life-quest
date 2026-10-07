@@ -1,4 +1,4 @@
-# QuestFrame 0.4.0 — Windows 11 setup
+# QuestFrame 0.4.1 — Windows 11 setup
 
 These instructions assume PowerShell and a project folder such as `P:\Projects\questframe`.
 
@@ -198,18 +198,20 @@ npx vercel --prod
 
 After Vercel gives you the final production domain, Supabase → **Authentication → URL Configuration**.
 
-Change Site URL to the production URL, for example:
+Set **Site URL** to the stable production alias:
 
 ```text
 https://questframe.vercel.app
 ```
 
-Keep/add Redirect URLs:
+Under **Redirect URLs**, keep these exact callbacks:
 
 ```text
 http://localhost:3000/auth/callback
 https://questframe.vercel.app/auth/callback
 ```
+
+Do not use a one-off Vercel deployment hostname such as `questframe-xxxxx-asmdef.vercel.app` as the permanent Site URL. QuestFrame uses `NEXT_PUBLIC_APP_URL` as the stable callback base in production.
 
 Then redeploy if you changed Vercel environment variables:
 

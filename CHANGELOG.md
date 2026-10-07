@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.1 — 2026-10-07
+
+- Sorted XP explanations and selectors consistently as `+1`, `+5`, `+7`, `+10` in both RU and EN.
+- Hardened production magic-link redirects: QuestFrame now prefers the configured stable `NEXT_PUBLIC_APP_URL` instead of blindly using a temporary Vercel deployment hostname.
+- Added a guard so a mistakenly configured localhost app URL is never forced while running on production.
+- Added friendly localized handling for expired/invalid email sign-in links.
+- Added explicit production-auth setup instructions for the stable `https://questframe.vercel.app` alias and exact Supabase redirect URLs.
+- No database migration is required.
+
 ## 0.4.0 — 2026-10-07
 
 - Restored the core **Chains / «Цепочки»** identity instead of generic streak terminology.

@@ -8,6 +8,7 @@ export default function LoginClient() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState<"expired" | "generic" | null>(null);
   const [lang, setLang] = useState<"en" | "ru">("ru");
 
   const t = useMemo(() => ({
@@ -18,6 +19,8 @@ export default function LoginClient() {
     google: lang === "ru" ? "Продолжить с Google" : "Continue with Google",
     back: lang === "ru" ? "На главную" : "Back to home",
     sent: lang === "ru" ? "Ссылка отправлена. Проверь почту." : "Link sent. Check your inbox.",
+    expired: lang === "ru" ? "Ссылка для входа недействительна или уже истекла. Запроси новую ссылку ниже." : "This sign-in link is invalid or has expired. Request a new link below.",
+    authFailed: lang === "ru" ? "Авторизация не завершена. Запроси новую ссылку и попробуй ещё раз." : "Sign-in was not completed. Request a new link and try again.",
     missing: lang === "ru" ? "Сначала добавь Supabase URL и publishable key в .env.local." : "Add your Supabase URL and publishable key to .env.local first.",
     error: lang === "ru" ? "Не удалось войти. Проверь настройки Supabase." : "Sign-in failed. Check your Supabase settings.",
     eyebrow: lang === "ru" ? "ВХОД В ИГРУ" : "READY PLAYER ONE",
@@ -29,6 +32,16 @@ export default function LoginClient() {
     const timer = window.setTimeout(() => {
       const saved = window.localStorage.getItem("questframe-lang");
       if (saved === "ru" || saved === "en") setLang(saved);
+
+      const query = new URLSearchParams(window.location.search);
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const errorCode = query.get("error_code") ?? query.get("error") ?? hash.get("error_code") ?? hash.get("error");
+      const description = query.get("error_description") ?? hash.get("error_description") ?? "";
+      if (errorCode || description) {
+        const expired = errorCode === "otp_expired" || /expired|invalid/i.test(description);
+        setAuthError(expired ? "expired" : "generic");
+        window.history.replaceState({}, "", "/login");
+      }
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
@@ -44,17 +57,40 @@ export default function LoginClient() {
     window.localStorage.setItem("questframe-lang", next);
   }
 
+  function getAuthCallbackUrl() {
+    const runtimeOrigin = window.location.origin;
+    const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+
+    if (configured) {
+      try {
+        const configuredUrl = new URL(configured);
+        const runtimeUrl = new URL(runtimeOrigin);
+        const configuredIsLocal = configuredUrl.hostname === "localhost" || configuredUrl.hostname === "127.0.0.1";
+        const runtimeIsLocal = runtimeUrl.hostname === "localhost" || runtimeUrl.hostname === "127.0.0.1";
+
+        // Local development may use localhost. Production must never be forced back to localhost.
+        if (runtimeIsLocal || !configuredIsLocal) {
+          return `${configuredUrl.origin}/auth/callback?next=/app`;
+        }
+      } catch {
+        // Fall back to the actual browser origin if the configured URL is malformed.
+      }
+    }
+
+    return `${runtimeOrigin}/auth/callback?next=/app`;
+  }
+
   async function signInWithEmail(event: FormEvent) {
     event.preventDefault();
     setLoading(true);
     setMessage("");
+    setAuthError(null);
 
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: `${origin}/auth/callback?next=/app` }
+        options: { emailRedirectTo: getAuthCallbackUrl() }
       });
       setMessage(error ? `${t.error} ${error.message}` : t.sent);
     } catch {
@@ -67,12 +103,12 @@ export default function LoginClient() {
   async function signInWithGoogle() {
     setLoading(true);
     setMessage("");
+    setAuthError(null);
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${origin}/auth/callback?next=/app` }
+        options: { redirectTo: getAuthCallbackUrl() }
       });
       if (error) setMessage(`${t.error} ${error.message}`);
     } catch {
@@ -108,7 +144,7 @@ export default function LoginClient() {
           <div className="separator"><span>{t.or}</span></div>
           <button className="button button-ghost full-width" disabled={loading} onClick={signInWithGoogle}>{t.google}</button>
         </>)}
-        {message && <p className="notice" role="status">{message}</p>}
+        {(message || authError) && <p className="notice" role="status">{message || (authError === "expired" ? t.expired : t.authFailed)}</p>}
         <Link href="/" className="text-link">← {t.back}</Link>
       </section>
     </main>
