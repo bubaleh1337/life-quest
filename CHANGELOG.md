@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.5.0 — 2026-10-07
+
+- Replaced the one-click avatar sign-out with an explicit account menu.
+- Added sign-out confirmation so opening the account control can never end a session.
+- Added reusable confirmation dialogs for destructive or high-impact actions.
+- Quest-step deletion and reward deletion now require confirmation.
+- Quest archiving now requires confirmation and archived quests remain visible in a dedicated Archive filter.
+- Finished chains remain accessible in a Finished chains section and can be restored.
+- Today's chain check-in can be undone from both Today and Chains.
+- Reward claims require confirmation and can be undone afterward.
+- Completed/archived quests are read-only until restored to Active, preventing progress/status inconsistencies.
+- Defeated weekly bosses now show an explicit Undo victory action instead of a misleading clickable status label.
+- Added proper Russian singular/plural forms for chain-link counts.
+- Added click-outside and Escape handling for the account menu, plus keyboard focus styling and active-nav accessibility state.
+- Improved magic-link UX with a persisted 60-second resend cooldown.
+- Added friendly handling for Supabase email/request rate limits instead of exposing `email rate limit exceeded`.
+- Added success/error styling for authentication notices.
+- Landing-page auth errors are forwarded to the login recovery flow.
+- Updated Supabase client packages to current stable patch/minor releases (`@supabase/ssr` 0.12.7, `@supabase/supabase-js` 2.117.2).
+- No Supabase migration is required for this release.
+
 ## 0.4.1 — 2026-10-07
 
 - Sorted XP explanations and selectors consistently as `+1`, `+5`, `+7`, `+10` in both RU and EN.

@@ -1,4 +1,4 @@
-# QuestFrame — product spec 0.4.1
+# QuestFrame — product spec 0.5.0
 
 ## Product promise
 
@@ -13,6 +13,8 @@ QuestFrame turns vague self-improvement goals into a small game loop without tur
 5. **Several simple routines are allowed.** Multiple chains can run in parallel, each with one daily check-in.
 6. **Fast daily interaction.** Quest steps and repeating goals can be checked off from Today.
 7. **Transparent XP.** XP comes only from completed quest steps and defeated weekly bosses.
+8. **No surprise state changes.** Ambiguous controls never sign the user out, delete data or hide progress. Irreversible actions require confirmation; reversible actions should expose an undo path.
+9. **Recoverable organization.** Archived quests and finished chains remain accessible and can be restored.
 
 ## XP rules
 
@@ -56,7 +58,8 @@ Chains are a first-class visual mechanic, not a renamed streak counter:
 - a break never deletes previous links and never resets the total link count;
 - today remains an open/pending link until the user checks in;
 - the chain start is always visible, while older history can collapse behind a compact history bridge;
-- ending a chain keeps its history and removes it from the active list.
+- ending a chain keeps its history and moves it to a finished section where it can be restored;
+- today's check-in can be undone without affecting older links.
 
 ## Localized dates
 
@@ -81,3 +84,21 @@ The in-app reference area is called **«Гид игрока» / Player Guide**. 
 ## Data ownership
 
 All product data is private to the authenticated user. RLS is mandatory for every application table.
+
+
+## Account and destructive-action UX
+
+- The avatar is an account-menu trigger, never a direct sign-out control.
+- Sign-out requires an explicit confirmation dialog.
+- Deleting a quest step or reward requires confirmation because the deletion is permanent.
+- Archiving a quest and finishing a chain require confirmation, and both states remain recoverable from the UI.
+- Reward claims can be undone.
+- Completed or archived quests are read-only until returned to Active, preventing status/progress contradictions.
+
+## Authentication UX
+
+- Magic-link requests are throttled in the client for at least 60 seconds after a send attempt succeeds.
+- The cooldown is stored in browser storage so a refresh does not immediately enable accidental resends.
+- Known Supabase `429` / email-rate-limit errors are translated into a user-facing message instead of exposing raw backend text.
+- Expired/invalid links are routed back to the login screen with a localized recovery message.
+- Public landing-page auth errors are forwarded to `/login` rather than being silently displayed on the landing page.

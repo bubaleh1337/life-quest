@@ -1,4 +1,4 @@
-# QuestFrame 0.4.1 — Windows 11 setup
+# QuestFrame 0.5.0 — Windows 11 setup
 
 These instructions assume PowerShell and a project folder such as `P:\Projects\questframe`.
 
@@ -96,6 +96,8 @@ http://localhost:3000/auth/callback
 
 Email login is enough for the first launch. Google can be enabled later.
 
+> **Important for testing/production:** Supabase's built-in email sender is intentionally rate-limited and is not suitable for repeated public sign-in traffic. QuestFrame prevents rapid duplicate sends in the UI, but the backend quota still applies. Before a wider public launch, configure custom SMTP or enable a social provider such as Google. Do not try to work around a rate-limit response by repeatedly pressing Send.
+
 ## 6. Run locally
 
 ```powershell
@@ -141,7 +143,7 @@ Then:
 ```powershell
 git init
 git add .
-git commit -m "feat: launch QuestFrame 0.4.0"
+git commit -m "feat: launch QuestFrame 0.5.0"
 git branch -M main
 git remote add origin https://github.com/YOUR_GITHUB_USERNAME/questframe.git
 git push -u origin main

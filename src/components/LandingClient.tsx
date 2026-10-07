@@ -58,6 +58,17 @@ export default function LandingClient() {
     const timer = window.setTimeout(() => {
       const saved = window.localStorage.getItem("questframe-lang");
       if (saved === "ru" || saved === "en") setLang(saved);
+
+      const query = new URLSearchParams(window.location.search);
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const errorCode = query.get("error_code") ?? query.get("error") ?? hash.get("error_code") ?? hash.get("error");
+      const errorDescription = query.get("error_description") ?? hash.get("error_description");
+      if (errorCode) {
+        const login = new URL("/login", window.location.origin);
+        login.searchParams.set("error_code", errorCode);
+        if (errorDescription) login.searchParams.set("error_description", errorDescription);
+        window.location.replace(login.toString());
+      }
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);

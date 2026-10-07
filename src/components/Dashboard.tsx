@@ -10,6 +10,14 @@ type Lang = "ru" | "en";
 type Tab = "today" | "quests" | "chain" | "rewards" | "help";
 type ChainDayState = "hit" | "break" | "today";
 
+type ConfirmAction = {
+  title: string;
+  message: string;
+  confirmLabel: string;
+  danger?: boolean;
+  action: () => Promise<void> | void;
+};
+
 type DashboardProps = {
   userId: string;
   email: string;
@@ -22,6 +30,7 @@ const copy = {
     chain: "Цепочки",
     rewards: "Награды",
     help: "Гид игрока",
+    helpShort: "Гид",
     level: "Уровень",
     totalXp: "Всего XP",
     activeQuests: "Активные квесты",
@@ -33,6 +42,7 @@ const copy = {
     setBoss: "Назначить босса",
     defeatBoss: "Победить босса",
     bossDefeated: "Босс побеждён",
+    undoBoss: "Отменить победу",
     replaceBoss: "Изменить босса",
     focus: "Фокус сейчас",
     noQuests: "Пока нет активных квестов.",
@@ -87,6 +97,9 @@ const copy = {
     linkedToday: "Сегодня отмечено",
     links: "звеньев",
     finishChain: "Завершить цепочку",
+    restoreChain: "Вернуть цепочку",
+    finishedChains: "Завершённые цепочки",
+    noFinishedChains: "Завершённых цепочек пока нет.",
     chainEmpty: "Активных цепочек пока нет. Начни первую с повторяемого действия.",
     lastDays: "Последние 7 дней",
     chainStart: "Старт",
@@ -103,12 +116,22 @@ const copy = {
     locked: "Закрыта",
     claim: "Получить награду",
     claimed: "Получена",
+    undoClaim: "Отменить получение",
     rewardEmpty: "Добавь награду, которую действительно хочется заслужить.",
+    account: "Аккаунт",
+    accountMenu: "Меню аккаунта",
+    openGuide: "Открыть гид игрока",
     signOut: "Выйти",
+    signOutTitle: "Выйти из аккаунта?",
+    signOutText: "Текущая сессия на этом устройстве завершится. Для повторного входа понадобится действующая ссылка из письма или другой настроенный способ входа.",
+    staySignedIn: "Остаться",
     loading: "Загрузка приключения…",
     error: "Что-то пошло не так.",
     saved: "Сохранено.",
-    deleted: "Изменение сохранено.",
+    deleted: "Удалено.",
+    restored: "Восстановлено.",
+    chainUnlinked: "Отметка за сегодня отменена.",
+    rewardUnclaimed: "Получение награды отменено.",
     xpGuide: "Система XP",
     xpGuideText: "Награждаем не только результат, но и сложность самого действия.",
     noPunishment: "Без наказания за пропуск",
@@ -131,9 +154,22 @@ const copy = {
     contactsLead: "Вопросы, идеи и сообщения об ошибках можно отправить мне напрямую.",
     archive: "Архивировать",
     archived: "Квест архивирован.",
+    archivedTab: "Архив",
+    noArchived: "Архивных квестов пока нет.",
     active: "Активные",
     finished: "Завершённые",
     noFinished: "Завершённых квестов пока нет.",
+    confirmArchiveTitle: "Архивировать квест?",
+    confirmArchiveText: "Квест исчезнет из активных, но останется в разделе «Архив», откуда его можно вернуть.",
+    confirmFinishChainTitle: "Завершить цепочку?",
+    confirmFinishChainText: "Цепочка перейдёт в завершённые. Все звенья сохранятся, и её можно будет восстановить.",
+    confirmDeleteStepTitle: "Удалить шаг?",
+    confirmDeleteStepText: "Шаг и начисленный за него XP будут удалены. Это действие нельзя отменить.",
+    confirmDeleteRewardTitle: "Удалить награду?",
+    confirmDeleteRewardText: "Награда будет удалена без возможности восстановления.",
+    confirmClaimRewardTitle: "Отметить награду полученной?",
+    confirmClaimRewardText: "Она останется в списке и её отметку можно будет отменить.",
+    confirm: "Подтвердить",
     due: "до",
     remove: "Удалить",
     home: "На главную"
@@ -144,6 +180,7 @@ const copy = {
     chain: "Chains",
     rewards: "Rewards",
     help: "Player Guide",
+    helpShort: "Guide",
     level: "Level",
     totalXp: "Total XP",
     activeQuests: "Active quests",
@@ -155,6 +192,7 @@ const copy = {
     setBoss: "Set boss",
     defeatBoss: "Defeat boss",
     bossDefeated: "Boss defeated",
+    undoBoss: "Undo victory",
     replaceBoss: "Edit boss",
     focus: "Focus now",
     noQuests: "No active quests yet.",
@@ -209,6 +247,9 @@ const copy = {
     linkedToday: "Marked today",
     links: "links",
     finishChain: "Finish chain",
+    restoreChain: "Restore chain",
+    finishedChains: "Finished chains",
+    noFinishedChains: "No finished chains yet.",
     chainEmpty: "No active chains yet. Start the first one with a repeating action.",
     lastDays: "Last 7 days",
     chainStart: "Start",
@@ -225,12 +266,22 @@ const copy = {
     locked: "Locked",
     claim: "Claim reward",
     claimed: "Claimed",
+    undoClaim: "Undo claim",
     rewardEmpty: "Add something you would genuinely enjoy earning.",
+    account: "Account",
+    accountMenu: "Account menu",
+    openGuide: "Open Player Guide",
     signOut: "Sign out",
+    signOutTitle: "Sign out of your account?",
+    signOutText: "The current session on this device will end. Signing in again will require a valid email link or another configured sign-in method.",
+    staySignedIn: "Stay signed in",
     loading: "Loading your adventure…",
     error: "Something went wrong.",
     saved: "Saved.",
-    deleted: "Change saved.",
+    deleted: "Deleted.",
+    restored: "Restored.",
+    chainUnlinked: "Today’s check-in was undone.",
+    rewardUnclaimed: "Reward claim was undone.",
     xpGuide: "XP system",
     xpGuideText: "Reward the difficulty of the action, not only the final result.",
     noPunishment: "No punishment for a missed day",
@@ -253,9 +304,22 @@ const copy = {
     contactsLead: "Send questions, ideas and bug reports to me directly.",
     archive: "Archive",
     archived: "Quest archived.",
+    archivedTab: "Archive",
+    noArchived: "No archived quests yet.",
     active: "Active",
     finished: "Completed",
     noFinished: "No completed quests yet.",
+    confirmArchiveTitle: "Archive this quest?",
+    confirmArchiveText: "It will leave Active quests but remain in Archive, where you can restore it.",
+    confirmFinishChainTitle: "Finish this chain?",
+    confirmFinishChainText: "The chain will move to Finished chains. All links stay saved and the chain can be restored.",
+    confirmDeleteStepTitle: "Delete this step?",
+    confirmDeleteStepText: "The step and any XP earned from it will be deleted. This cannot be undone.",
+    confirmDeleteRewardTitle: "Delete this reward?",
+    confirmDeleteRewardText: "The reward will be permanently deleted.",
+    confirmClaimRewardTitle: "Mark this reward as claimed?",
+    confirmClaimRewardText: "It will stay in the list and you can undo the claim later.",
+    confirm: "Confirm",
     due: "due",
     remove: "Delete",
     home: "Home"
@@ -279,7 +343,9 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const [notice, setNotice] = useState("");
   const [showQuestForm, setShowQuestForm] = useState(false);
   const [showBossForm, setShowBossForm] = useState(false);
-  const [questFilter, setQuestFilter] = useState<"active" | "completed">("active");
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
+  const [questFilter, setQuestFilter] = useState<"active" | "completed" | "archived">("active");
 
   const [quests, setQuests] = useState<Quest[]>([]);
   const [steps, setSteps] = useState<QuestStep[]>([]);
@@ -302,6 +368,17 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     document.documentElement.lang = lang;
     document.title = lang === "ru" ? "QuestFrame — квесты и прогресс" : "QuestFrame — quests and progress";
   }, [lang]);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setProfileOpen(false);
+        setConfirmAction(null);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   function toggleLanguage() {
     const next: Lang = lang === "ru" ? "en" : "ru";
@@ -347,6 +424,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const currentBoss = bosses.find((boss) => boss.week_start === weekStart) ?? null;
   const today = isoDateLocal(new Date());
   const activeChains = chains.filter((chain) => chain.active);
+  const finishedChains = chains.filter((chain) => !chain.active);
 
   const totalXp = useMemo(() => {
     const stepXp = steps.filter((step) => step.completed_at).reduce((sum, step) => sum + step.xp_value, 0);
@@ -357,6 +435,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const level = getLevelProgress(totalXp);
   const activeQuests = quests.filter((quest) => quest.status === "active");
   const completedQuests = quests.filter((quest) => quest.status === "completed");
+  const archivedQuests = quests.filter((quest) => quest.status === "archived");
   const activeQuestIds = useMemo(() => new Set(activeQuests.map((quest) => quest.id)), [activeQuests]);
   const quickSteps = useMemo(() => {
     return steps
@@ -365,9 +444,24 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       .slice(0, 8);
   }, [steps, activeQuestIds]);
 
+  const visibleQuests = questFilter === "active" ? activeQuests : questFilter === "completed" ? completedQuests : archivedQuests;
+  const emptyQuestFilterMessage = questFilter === "active" ? t.noQuests : questFilter === "completed" ? t.noFinished : t.noArchived;
+
   function flash(message: string) {
     setNotice(message);
     window.setTimeout(() => setNotice(""), 2800);
+  }
+
+  function askForConfirmation(action: ConfirmAction) {
+    setProfileOpen(false);
+    setConfirmAction(action);
+  }
+
+  async function runConfirmedAction() {
+    const pending = confirmAction;
+    if (!pending) return;
+    setConfirmAction(null);
+    await pending.action();
   }
 
   async function withWork(action: () => Promise<{ error: { message: string } | null } | void>, success: string = t.saved) {
@@ -460,6 +554,16 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     }, t.deleted);
   }
 
+  function requestDeleteStep(stepId: string) {
+    askForConfirmation({
+      title: t.confirmDeleteStepTitle,
+      message: t.confirmDeleteStepText,
+      confirmLabel: t.remove,
+      danger: true,
+      action: () => deleteStep(stepId)
+    });
+  }
+
   async function setQuestStatus(quest: Quest, status: "active" | "completed" | "archived") {
     await withWork(async () => {
       const { error } = await supabase.from("quests").update({
@@ -467,7 +571,16 @@ export default function Dashboard({ userId, email }: DashboardProps) {
         completed_at: status === "completed" ? new Date().toISOString() : null
       }).eq("id", quest.id);
       return { error };
-    }, status === "archived" ? t.archived : t.saved);
+    }, status === "archived" ? t.archived : status === "active" ? t.restored : t.saved);
+  }
+
+  function requestArchiveQuest(quest: Quest) {
+    askForConfirmation({
+      title: t.confirmArchiveTitle,
+      message: t.confirmArchiveText,
+      confirmLabel: t.archive,
+      action: () => setQuestStatus(quest, "archived")
+    });
   }
 
   async function saveBoss(event: FormEvent<HTMLFormElement>) {
@@ -538,10 +651,35 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     });
   }
 
+  async function undoChainCheckIn(chain: Chain) {
+    const todayCheckin = checkins.find((checkin) => checkin.chain_id === chain.id && checkin.checkin_date === today);
+    if (!todayCheckin) return;
+    await withWork(async () => {
+      const { error } = await supabase.from("chain_checkins").delete().eq("id", todayCheckin.id);
+      return { error };
+    }, t.chainUnlinked);
+  }
+
   async function finishChain(chain: Chain) {
     await withWork(async () => {
       const { error } = await supabase.from("chains").update({ active: false }).eq("id", chain.id);
       return { error };
+    });
+  }
+
+  async function restoreChain(chain: Chain) {
+    await withWork(async () => {
+      const { error } = await supabase.from("chains").update({ active: true }).eq("id", chain.id);
+      return { error };
+    }, t.restored);
+  }
+
+  function requestFinishChain(chain: Chain) {
+    askForConfirmation({
+      title: t.confirmFinishChainTitle,
+      message: t.confirmFinishChainText,
+      confirmLabel: t.finishChain,
+      action: () => finishChain(chain)
     });
   }
 
@@ -572,6 +710,23 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     });
   }
 
+  async function undoRewardClaim(reward: Reward) {
+    if (!reward.claimed_at) return;
+    await withWork(async () => {
+      const { error } = await supabase.from("rewards").update({ claimed_at: null }).eq("id", reward.id);
+      return { error };
+    }, t.rewardUnclaimed);
+  }
+
+  function requestClaimReward(reward: Reward) {
+    askForConfirmation({
+      title: t.confirmClaimRewardTitle,
+      message: t.confirmClaimRewardText,
+      confirmLabel: t.claim,
+      action: () => claimReward(reward)
+    });
+  }
+
   async function deleteReward(rewardId: string) {
     await withWork(async () => {
       const { error } = await supabase.from("rewards").delete().eq("id", rewardId);
@@ -579,11 +734,39 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     }, t.deleted);
   }
 
+  function requestDeleteReward(rewardId: string) {
+    askForConfirmation({
+      title: t.confirmDeleteRewardTitle,
+      message: t.confirmDeleteRewardText,
+      confirmLabel: t.remove,
+      danger: true,
+      action: () => deleteReward(rewardId)
+    });
+  }
+
   async function signOut() {
     setWorking(true);
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        flash(`${t.error} ${error.message}`);
+        return;
+      }
+      router.push("/");
+      router.refresh();
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  function requestSignOut() {
+    askForConfirmation({
+      title: t.signOutTitle,
+      message: t.signOutText,
+      confirmLabel: t.signOut,
+      danger: true,
+      action: signOut
+    });
   }
 
   function chainWindow(chain: Chain) {
@@ -632,12 +815,44 @@ export default function Dashboard({ userId, email }: DashboardProps) {
         </button>
         <nav className="desktop-tabs" aria-label="Main navigation">
           {(["today", "quests", "chain", "rewards", "help"] as Tab[]).map((item) => (
-            <button key={item} className={tab === item ? "nav-tab active" : "nav-tab"} onClick={() => setTab(item)}>{t[item]}</button>
+            <button
+              key={item}
+              type="button"
+              className={tab === item ? "nav-tab active" : "nav-tab"}
+              aria-current={tab === item ? "page" : undefined}
+              onClick={() => { setTab(item); setProfileOpen(false); }}
+            >
+              {t[item]}
+            </button>
           ))}
         </nav>
         <div className="header-actions">
-          <button className="lang-button" onClick={toggleLanguage}>{lang === "ru" ? "EN" : "RU"}</button>
-          <button className="avatar-button" title={`${email} · ${t.signOut}`} onClick={signOut} disabled={working}>{email.slice(0, 1).toUpperCase() || "Q"}</button>
+          <button className="lang-button" type="button" onClick={toggleLanguage}>{lang === "ru" ? "EN" : "RU"}</button>
+          <div className="account-menu-wrap">
+            <button
+              className="avatar-button"
+              type="button"
+              title={`${email} · ${t.account}`}
+              aria-label={t.accountMenu}
+              aria-haspopup="menu"
+              aria-expanded={profileOpen}
+              onClick={() => setProfileOpen((value) => !value)}
+              disabled={working}
+            >
+              {email.slice(0, 1).toUpperCase() || "Q"}
+            </button>
+            {profileOpen && <div className="account-menu-scrim" aria-hidden="true" onMouseDown={() => setProfileOpen(false)} />}
+            {profileOpen && (
+              <div className="account-menu" role="menu" aria-label={t.accountMenu}>
+                <div className="account-menu-head">
+                  <span className="account-menu-avatar" aria-hidden="true">{email.slice(0, 1).toUpperCase() || "Q"}</span>
+                  <div><strong>{t.account}</strong><span>{email}</span></div>
+                </div>
+                <button type="button" role="menuitem" onClick={() => { setTab("help"); setProfileOpen(false); }}>{t.openGuide}</button>
+                <button type="button" role="menuitem" className="danger-text" onClick={requestSignOut}>{t.signOut}</button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -663,19 +878,19 @@ export default function Dashboard({ userId, email }: DashboardProps) {
               <div className="boss-copy">
                 <div className="card-heading-row">
                   <div><p className="eyebrow">{t.weeklyBoss} · +{BOSS_XP} XP</p><h2>{currentBoss?.title ?? t.weeklyBoss}</h2></div>
-                  {currentBoss && <button className="text-button" onClick={() => setShowBossForm((value) => !value)}>{t.replaceBoss}</button>}
+                  {currentBoss && <button className="text-button" type="button" onClick={() => setShowBossForm((value) => !value)}>{t.replaceBoss}</button>}
                 </div>
                 {currentBoss ? (
                   <>
                     {currentBoss.notes && <p>{currentBoss.notes}</p>}
-                    <button className={currentBoss.completed_at ? "button button-ghost" : "button button-primary"} onClick={toggleBoss} disabled={working}>
-                      {currentBoss.completed_at ? t.bossDefeated : t.defeatBoss}
+                    <button className={currentBoss.completed_at ? "button button-ghost" : "button button-primary"} type="button" onClick={toggleBoss} disabled={working}>
+                      {currentBoss.completed_at ? t.undoBoss : t.defeatBoss}
                     </button>
                   </>
                 ) : (
                   <>
                     <p>{t.bossHint}</p>
-                    <button className="button button-primary" onClick={() => setShowBossForm(true)}>{t.setBoss}</button>
+                    <button className="button button-primary" type="button" onClick={() => setShowBossForm(true)}>{t.setBoss}</button>
                   </>
                 )}
                 {showBossForm && (
@@ -691,7 +906,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
             <section className="quick-panel">
               <div className="section-heading compact-heading">
                 <div><p className="eyebrow">{t.questActionsEyebrow}</p><h2>{t.quickSteps}</h2><p>{t.quickStepsLead}</p></div>
-                <button className="text-button" onClick={() => setTab("quests")}>{t.openAllQuests}</button>
+                <button className="text-button" type="button" onClick={() => setTab("quests")}>{t.openAllQuests}</button>
               </div>
               {quickSteps.length === 0 ? <p className="empty-inline">{t.noQuickSteps}</p> : (
                 <div className="quick-step-list">
@@ -699,7 +914,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                     const quest = activeQuests.find((item) => item.id === step.quest_id);
                     return (
                       <div key={step.id} className={step.completed_at ? "quick-step-row completed" : "quick-step-row"}>
-                        <button className="check-button" onClick={() => toggleStep(step)} disabled={working} aria-label={step.completed_at ? t.undo : t.done}>{step.completed_at ? "✓" : ""}</button>
+                        <button className="check-button" type="button" onClick={() => toggleStep(step)} disabled={working} aria-label={step.completed_at ? t.undo : t.done}>{step.completed_at ? "✓" : ""}</button>
                         <div className="quick-step-copy"><strong>{step.title}</strong><span>{quest?.title ?? t.quests} · +{step.xp_value} XP</span></div>
                       </div>
                     );
@@ -711,7 +926,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
             <section className="quick-panel">
               <div className="section-heading compact-heading">
                 <div><p className="eyebrow">{t.dailyLoopEyebrow}</p><h2>{t.repeatingGoals}</h2><p>{t.repeatingGoalsLead}</p></div>
-                <button className="text-button" onClick={() => setTab("chain")}>{t.manageChains}</button>
+                <button className="text-button" type="button" onClick={() => setTab("chain")}>{t.manageChains}</button>
               </div>
               {activeChains.length === 0 ? <p className="empty-inline">{t.noRepeatingGoals}</p> : (
                 <div className="daily-chain-list">
@@ -719,9 +934,9 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                     const checked = isChainCheckedToday(chain.id);
                     return (
                       <div key={chain.id} className={checked ? "daily-chain-row completed" : "daily-chain-row"}>
-                        <button className="check-button" onClick={() => checkInChain(chain)} disabled={working || checked} aria-label={checked ? t.linkedToday : t.linkToday}>{checked ? "✓" : ""}</button>
-                        <div><strong>{chain.title}</strong><span>{chainLinks(chain.id)} {t.links}</span></div>
-                        <span className="daily-status">{checked ? t.linkedToday : t.linkToday}</span>
+                        <button className="check-button" type="button" onClick={() => checked ? undoChainCheckIn(chain) : checkInChain(chain)} disabled={working} aria-label={checked ? t.undo : t.linkToday}>{checked ? "✓" : ""}</button>
+                        <div><strong>{chain.title}</strong><span>{formatLinkCount(chainLinks(chain.id), lang)}</span></div>
+                        <span className="daily-status">{checked ? t.undo : t.linkToday}</span>
                       </div>
                     );
                   })}
@@ -730,9 +945,9 @@ export default function Dashboard({ userId, email }: DashboardProps) {
             </section>
 
             <section>
-              <div className="section-heading"><div><p className="eyebrow">{t.focus}</p><h2>{t.activeQuests}</h2></div><button className="button button-secondary" onClick={() => { setTab("quests"); setShowQuestForm(true); }}>+ {t.newQuest}</button></div>
+              <div className="section-heading"><div><p className="eyebrow">{t.focus}</p><h2>{t.activeQuests}</h2></div><button className="button button-secondary" type="button" onClick={() => { setTab("quests"); setShowQuestForm(true); }}>+ {t.newQuest}</button></div>
               {activeQuests.length === 0 ? (
-                <div className="empty-card"><p>{t.noQuests}</p><button className="button button-primary" onClick={() => { setTab("quests"); setShowQuestForm(true); }}>{t.createFirst}</button></div>
+                <div className="empty-card"><p>{t.noQuests}</p><button className="button button-primary" type="button" onClick={() => { setTab("quests"); setShowQuestForm(true); }}>{t.createFirst}</button></div>
               ) : (
                 <div className="quest-grid compact-grid">{activeQuests.slice(0, 4).map((quest) => <QuestSummary key={quest.id} quest={quest} steps={steps} lang={lang} onOpen={() => setTab("quests")} />)}</div>
               )}
@@ -743,7 +958,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
         {tab === "quests" && (
           <div className="page-stack">
-            <div className="section-heading"><div><p className="eyebrow">{t.questLogEyebrow}</p><h1>{t.quests}</h1></div><button className="button button-primary" onClick={() => setShowQuestForm((value) => !value)}>+ {t.newQuest}</button></div>
+            <div className="section-heading"><div><p className="eyebrow">{t.questLogEyebrow}</p><h1>{t.quests}</h1></div><button className="button button-primary" type="button" onClick={() => setShowQuestForm((value) => !value)}>+ {t.newQuest}</button></div>
 
             {showQuestForm && (
               <form className="create-panel" onSubmit={createQuest}>
@@ -758,13 +973,17 @@ export default function Dashboard({ userId, email }: DashboardProps) {
               </form>
             )}
 
-            <div className="segmented"><button className={questFilter === "active" ? "active" : ""} onClick={() => setQuestFilter("active")}>{t.active} · {activeQuests.length}</button><button className={questFilter === "completed" ? "active" : ""} onClick={() => setQuestFilter("completed")}>{t.finished} · {completedQuests.length}</button></div>
+            <div className="segmented quest-filters">
+              <button type="button" className={questFilter === "active" ? "active" : ""} aria-pressed={questFilter === "active"} onClick={() => setQuestFilter("active")}>{t.active} · {activeQuests.length}</button>
+              <button type="button" className={questFilter === "completed" ? "active" : ""} aria-pressed={questFilter === "completed"} onClick={() => setQuestFilter("completed")}>{t.finished} · {completedQuests.length}</button>
+              <button type="button" className={questFilter === "archived" ? "active" : ""} aria-pressed={questFilter === "archived"} onClick={() => setQuestFilter("archived")}>{t.archivedTab} · {archivedQuests.length}</button>
+            </div>
 
-            {(questFilter === "active" ? activeQuests : completedQuests).length === 0 ? (
-              <div className="empty-card"><p>{questFilter === "active" ? t.noQuests : t.noFinished}</p></div>
+            {visibleQuests.length === 0 ? (
+              <div className="empty-card"><p>{emptyQuestFilterMessage}</p></div>
             ) : (
               <div className="quest-list">
-                {(questFilter === "active" ? activeQuests : completedQuests).map((quest) => {
+                {visibleQuests.map((quest) => {
                   const questSteps = steps.filter((step) => step.quest_id === quest.id);
                   const completedCount = questSteps.filter((step) => step.completed_at).length;
                   const percent = questSteps.length ? Math.round((completedCount / questSteps.length) * 100) : 0;
@@ -775,7 +994,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                       <div className="quest-card-body">
                         <div className="quest-head">
                           <div>
-                            <div className="quest-meta">{quest.category && <span>{quest.category}</span>}{quest.target_date && <span>{t.due} {formatDate(quest.target_date, lang)}</span>}{quest.status === "completed" && <span className="complete-pill">{t.completed}</span>}</div>
+                            <div className="quest-meta">{quest.category && <span>{quest.category}</span>}{quest.target_date && <span>{t.due} {formatDate(quest.target_date, lang)}</span>}{quest.status === "completed" && <span className="complete-pill">{t.completed}</span>}{quest.status === "archived" && <span>{t.archivedTab}</span>}</div>
                             <h2>{quest.title}</h2>
                             {quest.description && <p>{quest.description}</p>}
                           </div>
@@ -787,9 +1006,9 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                           {questSteps.length === 0 && <p className="empty-inline">{t.emptyQuest}</p>}
                           {questSteps.map((step) => (
                             <div key={step.id} className={step.completed_at ? "step-row completed" : "step-row"}>
-                              <button className="check-button" onClick={() => toggleStep(step)} disabled={working} aria-label={step.completed_at ? t.undo : t.done}>{step.completed_at ? "✓" : ""}</button>
+                              <button className="check-button" type="button" onClick={() => toggleStep(step)} disabled={working || quest.status !== "active"} aria-label={step.completed_at ? t.undo : t.done}>{step.completed_at ? "✓" : ""}</button>
                               <div className="step-main"><span>{step.title}</span><small>+{step.xp_value} XP · {t[xpLabelKey[step.xp_reason] ?? "xpStep"]}</small></div>
-                              <button className="icon-button danger" title={t.remove} onClick={() => deleteStep(step.id)} disabled={working}>×</button>
+                              {quest.status === "active" ? <button className="icon-button danger" type="button" title={t.remove} aria-label={t.remove} onClick={() => requestDeleteStep(step.id)} disabled={working}>×</button> : <span aria-hidden="true" />}
                             </div>
                           ))}
                         </div>
@@ -806,9 +1025,9 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
                         <div className="quest-footer">
                           {quest.status === "active" ? (
-                            <><button className="button button-ghost" disabled={!allDone || working} onClick={() => setQuestStatus(quest, "completed")}>{t.completeQuest}</button><button className="text-button danger-text" disabled={working} onClick={() => setQuestStatus(quest, "archived")}>{t.archive}</button></>
+                            <><button className="button button-ghost" type="button" disabled={!allDone || working} onClick={() => setQuestStatus(quest, "completed")}>{t.completeQuest}</button><button className="text-button danger-text" type="button" disabled={working} onClick={() => requestArchiveQuest(quest)}>{t.archive}</button></>
                           ) : (
-                            <button className="button button-ghost" disabled={working} onClick={() => setQuestStatus(quest, "active")}>{t.reopenQuest}</button>
+                            <button className="button button-ghost" type="button" disabled={working} onClick={() => setQuestStatus(quest, "active")}>{t.reopenQuest}</button>
                           )}
                         </div>
                       </div>
@@ -840,7 +1059,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                     <article className={checked ? "chain-row checked" : "chain-row"} key={chain.id}>
                       <div className="chain-row-main">
                         <div className="chain-title-row">
-                          <div><h2>{chain.title}</h2><span>{links} {t.links}</span></div>
+                          <div><h2>{chain.title}</h2><span>{formatLinkCount(links, lang)}</span></div>
                           <span className="chain-start-date">{t.chainStart}: {history.started}</span>
                         </div>
                         <div className="chain-track-scroll" aria-label={t.lastDays}>
@@ -867,14 +1086,39 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                         </div>
                       </div>
                       <div className="chain-actions">
-                        <button className={checked ? "button button-ghost" : "button button-secondary"} onClick={() => checkInChain(chain)} disabled={working || checked}>{checked ? t.linkedToday : t.linkToday}</button>
-                        <button className="text-button danger-text" onClick={() => finishChain(chain)} disabled={working}>{t.finishChain}</button>
+                        <button className={checked ? "button button-ghost" : "button button-secondary"} type="button" onClick={() => checked ? undoChainCheckIn(chain) : checkInChain(chain)} disabled={working}>{checked ? t.undo : t.linkToday}</button>
+                        <button className="text-button danger-text" type="button" onClick={() => requestFinishChain(chain)} disabled={working}>{t.finishChain}</button>
                       </div>
                     </article>
                   );
                 })}
               </div>
             )}
+
+            <section className="finished-chain-section">
+              <div className="subsection-heading">
+                <h2>{t.finishedChains}</h2>
+                <span>{finishedChains.length}</span>
+              </div>
+              {finishedChains.length === 0 ? (
+                <p className="empty-inline">{t.noFinishedChains}</p>
+              ) : (
+                <div className="finished-chain-list">
+                  {finishedChains.map((chain) => {
+                    const history = chainWindow(chain);
+                    return (
+                      <article className="finished-chain-row" key={chain.id}>
+                        <div>
+                          <strong>{chain.title}</strong>
+                          <span>{formatLinkCount(chainLinks(chain.id), lang)} · {t.chainStart}: {history.started}</span>
+                        </div>
+                        <button className="button button-ghost" type="button" onClick={() => restoreChain(chain)} disabled={working}>{t.restoreChain}</button>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
           </div>
         )}
 
@@ -895,7 +1139,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                     <article key={reward.id} className={reward.claimed_at ? "reward-card claimed" : "reward-card"}>
                       <div className="reward-head"><div><span className={unlocked ? "status-pill unlocked" : "status-pill"}>{reward.claimed_at ? t.claimed : unlocked ? t.unlocked : t.locked}</span><h2>{reward.title}</h2></div><strong>{reward.xp_required} XP</strong></div>
                       <div className="progress-track"><span style={{ width: `${percent}%` }} /></div>
-                      <div className="reward-actions"><span>{Math.min(totalXp, reward.xp_required)} / {reward.xp_required} XP</span><div><button className="button button-secondary" disabled={!unlocked || Boolean(reward.claimed_at) || working} onClick={() => claimReward(reward)}>{reward.claimed_at ? t.claimed : t.claim}</button><button className="icon-button danger" title={t.remove} onClick={() => deleteReward(reward.id)} disabled={working}>×</button></div></div>
+                      <div className="reward-actions"><span>{Math.min(totalXp, reward.xp_required)} / {reward.xp_required} XP</span><div><button className="button button-secondary" type="button" disabled={!unlocked || working} onClick={() => reward.claimed_at ? undoRewardClaim(reward) : requestClaimReward(reward)}>{reward.claimed_at ? t.undoClaim : t.claim}</button><button className="icon-button danger" type="button" title={t.remove} aria-label={t.remove} onClick={() => requestDeleteReward(reward.id)} disabled={working}>×</button></div></div>
                     </article>
                   );
                 })}
@@ -941,9 +1185,34 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
       <nav className="mobile-tabs" aria-label="Mobile navigation">
         {(["today", "quests", "chain", "rewards", "help"] as Tab[]).map((item) => (
-          <button key={item} className={tab === item ? "active" : ""} onClick={() => setTab(item)}><span>{item === "today" ? "⌂" : item === "quests" ? "◇" : item === "chain" ? "⛓" : item === "rewards" ? "☆" : "?"}</span>{t[item]}</button>
+          <button
+            key={item}
+            type="button"
+            className={tab === item ? "active" : ""}
+            aria-current={tab === item ? "page" : undefined}
+            onClick={() => { setTab(item); setProfileOpen(false); }}
+          >
+            <span>{item === "today" ? "⌂" : item === "quests" ? "◇" : item === "chain" ? "⛓" : item === "rewards" ? "☆" : "?"}</span>
+            {item === "help" ? t.helpShort : t[item]}
+          </button>
         ))}
       </nav>
+
+      {confirmAction && (
+        <div className="dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !working) setConfirmAction(null); }}>
+          <section className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-dialog-title">
+            <div className={confirmAction.danger ? "confirm-icon danger" : "confirm-icon"} aria-hidden="true">{confirmAction.danger ? "!" : "?"}</div>
+            <div>
+              <h2 id="confirm-dialog-title">{confirmAction.title}</h2>
+              <p>{confirmAction.message}</p>
+            </div>
+            <div className="confirm-actions">
+              <button className="button button-ghost" type="button" onClick={() => setConfirmAction(null)} disabled={working}>{t.cancel}</button>
+              <button className={confirmAction.danger ? "button button-danger" : "button button-primary"} type="button" onClick={runConfirmedAction} disabled={working}>{confirmAction.confirmLabel}</button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
@@ -961,13 +1230,21 @@ function QuestSummary({ quest, steps, lang, onOpen }: { quest: Quest; steps: Que
   const done = questSteps.filter((step) => step.completed_at).length;
   const percent = questSteps.length ? Math.round((done / questSteps.length) * 100) : 0;
   return (
-    <button className="quest-summary" onClick={onOpen} style={{ "--quest-accent": quest.accent } as React.CSSProperties}>
+    <button className="quest-summary" type="button" onClick={onOpen} style={{ "--quest-accent": quest.accent } as React.CSSProperties}>
       <span className="summary-accent" />
       <span className="quest-meta">{quest.category || (lang === "ru" ? "Квест" : "Quest")}</span>
       <strong>{quest.title}</strong>
       <span className="summary-progress"><span><i style={{ width: `${percent}%`, background: quest.accent }} /></span><b>{percent}%</b></span>
     </button>
   );
+}
+
+function formatLinkCount(count: number, lang: Lang) {
+  if (lang === "en") return `${count} ${count === 1 ? "link" : "links"}`;
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  const word = mod10 === 1 && mod100 !== 11 ? "звено" : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? "звена" : "звеньев";
+  return `${count} ${word}`;
 }
 
 function maskLocalizedDate(value: string, lang: Lang) {
