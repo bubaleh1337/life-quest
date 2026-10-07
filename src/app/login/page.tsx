@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import LoginClient from "@/components/LoginClient";
 
-export const metadata = { title: { absolute: "QuestFrame" } };
+export const metadata = { title: { absolute: "Life Quest" } };
 
 export default async function LoginPage() {
   try {

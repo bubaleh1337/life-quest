@@ -1,11 +1,11 @@
 {
-  "name": "QuestFrame",
-  "short_name": "QuestFrame",
+  "name": "Life Quest",
+  "short_name": "LifeQuest",
   "description": "Turn real-life goals into quests, earn XP and keep moving without punishment for missed days.",
   "start_url": "/app",
   "display": "standalone",
   "background_color": "#f4f1ec",
-  "theme_color": "#672b45",
+  "theme_color": "#7e4164",
   "icons": [
     {
       "src": "/icon.svg",

@@ -1,8 +1,8 @@
-# QuestFrame — product spec 0.7.0
+# Life Quest — product spec 0.8.0
 
 ## Product promise
 
-QuestFrame turns vague self-improvement goals into a small game loop without turning the user's life into another complicated management system.
+Life Quest turns vague self-improvement goals into a small game loop without turning the user's life into another complicated management system.
 
 ## Design principles
 
@@ -19,7 +19,7 @@ QuestFrame turns vague self-improvement goals into a small game loop without tur
 
 ## Glossy Game art direction
 
-QuestFrame uses a **70% Glossy Elegant / 30% Cozy Game** visual system:
+Life Quest uses a **70% Glossy Elegant / 30% Cozy Game** visual system:
 
 - calm pearl/cream surfaces with wine and champagne accents;
 - polished-steel chain links with alternating angles so the chain reads as an actual interlocked object;
@@ -78,7 +78,7 @@ Chains are a first-class visual mechanic, not a renamed streak counter:
 
 ## Localized dates
 
-Quest target dates are entered by the app rather than the browser-native date control so the displayed input format follows the selected QuestFrame language:
+Quest target dates are entered by the app rather than the browser-native date control so the displayed input format follows the selected Life Quest language:
 
 - RU: `ДД.ММ.ГГГГ`
 - EN: `MM/DD/YYYY`
@@ -119,6 +119,6 @@ All product data is private to the authenticated user. RLS is mandatory for ever
 - Public landing-page auth errors are forwarded to `/login` rather than being silently displayed on the landing page.
 
 
-## Visual system — 0.7.0
+## Visual system — 0.8.0
 
-QuestFrame uses a **Glossy Game** direction: elegant pearl/glass surfaces with restrained game feedback. The Today page follows a responsive bento hierarchy rather than stacking full-width panels. On desktop, level + weekly boss form the overview row and quick quest actions + chain actions form the interaction row. Typography is modern display sans-serif; large editorial serif headings are intentionally avoided. The app header is visually separated into three floating islands (brand, navigation, controls) so it reads as intentional navigation rather than a rectangular banner.
+Life Quest uses a **Glossy Game** direction: elegant pearl/glass surfaces with restrained game feedback. The Today page follows a responsive bento hierarchy rather than stacking full-width panels. On desktop, level + weekly boss form the overview row and quick quest actions + chain actions form the interaction row. Typography is modern display sans-serif; large editorial serif headings are intentionally avoided. The app header is visually separated into three floating islands (brand, navigation, controls) so it reads as intentional navigation rather than a rectangular banner.

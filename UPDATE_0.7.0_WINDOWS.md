@@ -1,6 +1,6 @@
-# QuestFrame 0.7.0 — Windows update
+# Life Quest 0.8.0 — Windows update
 
-This update is for an existing QuestFrame 0.6.0 project.
+This update is for an existing Life Quest 0.6.0 project.
 
 ## 1. Stop development server
 
@@ -13,19 +13,19 @@ Ctrl + C
 Copy the contents of the `questframe` folder from this archive over:
 
 ```text
-P:\Projects\QuestFrame\questframe
+P:\Projects\Life Quest\questframe
 ```
 
 Choose **Replace files in the destination**. The archive does not contain `.env.local`.
 
 ## 3. Supabase
 
-No SQL migration is required for 0.7.0. Do not rerun bootstrap SQL.
+No SQL migration is required for 0.8.0. Do not rerun bootstrap SQL.
 
 ## 4. Install/check
 
 ```powershell
-cd P:\Projects\QuestFrame\questframe
+cd P:\Projects\Life Quest\questframe
 npm install
 npm run typecheck
 npm run lint
@@ -58,7 +58,7 @@ Open `http://localhost:3000` and verify:
 Ctrl + C
 git status
 git add .
-git commit -m "feat: modernize QuestFrame dashboard"
+git commit -m "feat: modernize Life Quest dashboard"
 git push
 ```
 

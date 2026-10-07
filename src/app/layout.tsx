@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  applicationName: "QuestFrame",
+  applicationName: "Life Quest",
   title: {
-    default: "QuestFrame",
-    template: "%s · QuestFrame"
+    default: "Life Quest",
+    template: "%s · Life Quest"
   },
-  description: "Turn real-life goals into quests and earn XP for the steps that actually move you forward.",
+  description: "Life Quest turns real-life goals into quests with XP, chains, weekly bosses and rewarding progress.",
   manifest: "/manifest.webmanifest"
 };
 

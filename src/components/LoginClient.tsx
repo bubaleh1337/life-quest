@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/browser";
+import BrandLockup from "@/components/Brand";
 
 type Lang = "en" | "ru";
 type MessageKind = "success" | "error" | "info";
@@ -28,7 +29,7 @@ export default function LoginClient() {
   const submittingRef = useRef(false);
 
   const t = useMemo(() => ({
-    title: lang === "ru" ? "Войти в QuestFrame" : "Sign in to QuestFrame",
+    title: lang === "ru" ? "Войти в Life Quest" : "Sign in to Life Quest",
     text: lang === "ru" ? "Без пароля: получи одноразовую безопасную ссылку на email." : "No password: get a one-time secure sign-in link by email.",
     email: "Email",
     send: lang === "ru" ? "Отправить ссылку" : "Send sign-in link",
@@ -39,7 +40,7 @@ export default function LoginClient() {
     back: lang === "ru" ? "На главную" : "Back to home",
     sent: lang === "ru" ? "Ссылка отправлена. Проверь последнее письмо и не запрашивай новую ссылку, пока не попробуешь эту." : "Link sent. Check the newest email and use that link before requesting another one.",
     rateLimited: lang === "ru" ? "Слишком много писем для входа отправлено за короткое время. Используй последнее письмо, если оно уже пришло, или попробуй отправить ссылку позже." : "Too many sign-in emails were sent in a short time. Use the newest email if you already received one, or try again later.",
-    missing: lang === "ru" ? "QuestFrame не может подключиться к авторизации: проверь переменные Supabase в окружении приложения." : "QuestFrame cannot connect to authentication. Check the Supabase environment variables.",
+    missing: lang === "ru" ? "Life Quest не может подключиться к авторизации: проверь переменные Supabase в окружении приложения." : "Life Quest cannot connect to authentication. Check the Supabase environment variables.",
     sendFailed: lang === "ru" ? "Не удалось отправить ссылку для входа. Попробуй ещё раз позже." : "Could not send the sign-in link. Please try again later.",
     eyebrow: lang === "ru" ? "ВХОД В ИГРУ" : "READY PLAYER ONE",
     or: lang === "ru" ? "или" : "or",
@@ -70,7 +71,7 @@ export default function LoginClient() {
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.title = lang === "ru" ? "QuestFrame — вход" : "QuestFrame — sign in";
+    document.title = lang === "ru" ? "Life Quest — вход" : "Life Quest — sign in";
   }, [lang]);
 
   useEffect(() => {
@@ -193,7 +194,7 @@ export default function LoginClient() {
     <main className="auth-shell">
       <section className="auth-card">
         <div className="auth-topline">
-          <div className="brand-lockup"><div className="brand-mark">QF</div><span>QuestFrame</span></div>
+          <BrandLockup />
           <button className="lang-button" type="button" onClick={toggleLanguage} aria-label={t.switchLanguage}>{lang === "ru" ? "EN" : "RU"}</button>
         </div>
         <div>

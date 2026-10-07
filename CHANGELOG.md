@@ -1,3 +1,9 @@
+## 0.8.0
+
+- Rebrand QuestFrame to Life Quest with a new star-growth brand mark, refreshed favicon and updated window titles.
+- Add a layered ambient background and softer glass surfaces so the app no longer feels flat or one-tone.
+- Make the level ring shift smoothly through a progression palette as levels rise.
+
 # Changelog
 
 ## 0.7.0 — 2026-10-07

@@ -1,11 +1,11 @@
-# QuestFrame
+# Life Quest
 
-QuestFrame is a calm gamified goal app: turn real-life goals into quests, break them into concrete steps and earn XP for the effort that actually moves you forward.
+Life Quest is a calm gamified goal app: turn real-life goals into quests, break them into concrete steps and earn XP for the effort that actually moves you forward.
 
-Version: **0.7.0**
+Version: **0.8.0**
 
 
-## 0.7.0 visual direction
+## 0.8.0 visual direction
 
 - Modern bento-style Today dashboard: level + weekly boss share the top row; quick quest actions + chains share the next row.
 - Header is no longer a full highlighted bar; brand, navigation and controls float as separate glass islands.
@@ -41,9 +41,9 @@ The UI is deliberately restrained: no inventory, currencies, badges, avatars or 
 - Vercel-ready
 - RU / EN interface toggle
 
-## Existing 0.6.0 project → update to 0.7.0
+## Existing 0.6.0 project → update to 0.8.0
 
-Use `UPDATE_0.7.0_WINDOWS.md`. There are **no database changes** in 0.7.0, so no new Supabase SQL is required.
+Use `UPDATE_0.8.0_WINDOWS.md`. There are **no database changes** in 0.8.0, so no new Supabase SQL is required.
 
 If updating directly from 0.1.0, first make sure the existing 0.2.0 migration `supabase/migrations/202610070002_multi_chains_and_xp.sql` has already been applied.
 

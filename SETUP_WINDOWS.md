@@ -1,4 +1,4 @@
-# QuestFrame 0.7.0 — Windows 11 setup
+# Life Quest 0.8.0 — Windows 11 setup
 
 These instructions assume PowerShell and a project folder such as `P:\Projects\questframe`.
 
@@ -39,7 +39,7 @@ npm install
 
 ## 3. Create ONE Supabase project
 
-Use one normal project for QuestFrame. No `beta`, `dev` or duplicate project is needed.
+Use one normal project for Life Quest. No `beta`, `dev` or duplicate project is needed.
 
 In Supabase:
 
@@ -64,7 +64,7 @@ notepad .env.local
 Fill it like this:
 
 ```dotenv
-NEXT_PUBLIC_APP_NAME=QuestFrame
+NEXT_PUBLIC_APP_NAME=Life Quest
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -96,7 +96,7 @@ http://localhost:3000/auth/callback
 
 Email login is enough for the first launch. Google can be enabled later.
 
-> **Important for testing/production:** Supabase's built-in email sender is intentionally rate-limited and is not suitable for repeated public sign-in traffic. QuestFrame prevents rapid duplicate sends in the UI, but the backend quota still applies. Before a wider public launch, configure custom SMTP or enable a social provider such as Google. Do not try to work around a rate-limit response by repeatedly pressing Send.
+> **Important for testing/production:** Supabase's built-in email sender is intentionally rate-limited and is not suitable for repeated public sign-in traffic. Life Quest prevents rapid duplicate sends in the UI, but the backend quota still applies. Before a wider public launch, configure custom SMTP or enable a social provider such as Google. Do not try to work around a rate-limit response by repeatedly pressing Send.
 
 ## 6. Run locally
 
@@ -143,7 +143,7 @@ Then:
 ```powershell
 git init
 git add .
-git commit -m "feat: launch QuestFrame 0.7.0"
+git commit -m "feat: launch Life Quest 0.8.0"
 git branch -M main
 git remote add origin https://github.com/YOUR_GITHUB_USERNAME/questframe.git
 git push -u origin main
@@ -183,7 +183,7 @@ npx vercel
 When Vercel creates the project, add these Environment Variables in Vercel → Project → Settings → Environment Variables:
 
 ```text
-NEXT_PUBLIC_APP_NAME=QuestFrame
+NEXT_PUBLIC_APP_NAME=Life Quest
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
 NEXT_PUBLIC_APP_URL=https://YOUR-PRODUCTION-DOMAIN
@@ -213,7 +213,7 @@ http://localhost:3000/auth/callback
 https://questframe.vercel.app/auth/callback
 ```
 
-Do not use a one-off Vercel deployment hostname such as `questframe-xxxxx-asmdef.vercel.app` as the permanent Site URL. QuestFrame uses `NEXT_PUBLIC_APP_URL` as the stable callback base in production.
+Do not use a one-off Vercel deployment hostname such as `questframe-xxxxx-asmdef.vercel.app` as the permanent Site URL. Life Quest uses `NEXT_PUBLIC_APP_URL` as the stable callback base in production.
 
 Then redeploy if you changed Vercel environment variables:
 
@@ -271,7 +271,7 @@ Commit an update:
 ```powershell
 git status
 git add .
-git commit -m "feat: update QuestFrame"
+git commit -m "feat: update Life Quest"
 git push
 ```
 

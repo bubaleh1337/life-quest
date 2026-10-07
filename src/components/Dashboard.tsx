@@ -3,7 +3,8 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/browser";
-import { BOSS_XP, getLevelProgress, isoDateLocal, startOfWeekLocal, XP_OPTIONS } from "@/lib/game";
+import { BOSS_XP, getLevelPalette, getLevelProgress, isoDateLocal, startOfWeekLocal, XP_OPTIONS } from "@/lib/game";
+import BrandLockup from "@/components/Brand";
 import type { Chain, ChainCheckin, Quest, QuestStep, Reward, WeeklyBoss } from "@/lib/types";
 import { playUiSound } from "@/lib/ui-sound";
 
@@ -143,7 +144,7 @@ const copy = {
     noPunishment: "Без наказания за пропуск",
     noPunishmentText: "Пропущенный день отображается как разрыв между звеньями, но уже собранная цепочка не исчезает и счётчик не сбрасывается.",
     helpTitle: "Гид игрока",
-    helpLead: "Правила и механики QuestFrame в одном месте — чтобы главная оставалась лёгкой.",
+    helpLead: "Правила и механики Life Quest в одном месте — чтобы главная оставалась лёгкой.",
     xpHelpTitle: "Как начисляется XP",
     xpRegularHelp: "Обычный шаг",
     xpPromiseHelp: "Сдержала обещание перед собой",
@@ -304,7 +305,7 @@ const copy = {
     noPunishment: "No punishment for a missed day",
     noPunishmentText: "A missed day appears as a break between links, but the chain you already built remains and the count never resets.",
     helpTitle: "Player Guide",
-    helpLead: "QuestFrame rules and mechanics in one place so the home screen stays light.",
+    helpLead: "Life Quest rules and mechanics in one place so the home screen stays light.",
     xpHelpTitle: "How XP works",
     xpRegularHelp: "Regular step",
     xpPromiseHelp: "Kept a promise to myself",
@@ -403,7 +404,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.title = lang === "ru" ? "QuestFrame — квесты и прогресс" : "QuestFrame — quests and progress";
+    document.title = lang === "ru" ? "Life Quest — квесты и прогресс" : "Life Quest — quests and progress";
   }, [lang]);
 
   useEffect(() => {
@@ -486,6 +487,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }, [steps, bosses]);
 
   const level = getLevelProgress(totalXp);
+  const levelPalette = getLevelPalette(level.level);
   const activeQuests = quests.filter((quest) => quest.status === "active");
   const completedQuests = quests.filter((quest) => quest.status === "completed");
   const archivedQuests = quests.filter((quest) => quest.status === "archived");
@@ -898,7 +900,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       {xpBurst && <div className="xp-burst" key={xpBurst.id} aria-live="polite"><span>+{xpBurst.amount} XP</span><i>✦</i><i>✧</i></div>}
       <header className="app-header">
         <button className="brand-home-button" type="button" onClick={() => setTab("today")} aria-label={t.home} title={t.home}>
-          <span className="brand-lockup compact"><span className="brand-mark">QF</span><span>QuestFrame</span></span>
+          <BrandLockup compact />
         </button>
         <nav className="desktop-tabs" aria-label="Main navigation">
           {(["today", "quests", "chain", "rewards", "help"] as Tab[]).map((item) => (
@@ -965,7 +967,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
             </section>
 
             <div className="today-overview-grid">
-              <section className="hero-panel compact-hero">
+              <section className="hero-panel compact-hero" style={{ "--level-primary": levelPalette.primary, "--level-secondary": levelPalette.secondary, "--level-tertiary": levelPalette.tertiary, "--level-shadow": levelPalette.shadow } as React.CSSProperties}>
                 <div className="level-orb" style={{ "--level-progress": `${level.percent}%` } as React.CSSProperties}><span>{t.level}</span><strong>{level.level}</strong></div>
                 <div className="level-main">
                   <div className="level-row"><strong>{totalXp} XP</strong><span>{level.current} / {level.needed} XP {t.nextLevel}</span></div>

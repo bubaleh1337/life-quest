@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import BrandLockup from "@/components/Brand";
 
 type Lang = "ru" | "en";
 
@@ -75,7 +76,7 @@ export default function LandingClient() {
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.title = lang === "ru" ? "QuestFrame — преврати цель в квест" : "QuestFrame — turn goals into quests";
+    document.title = lang === "ru" ? "Life Quest — преврати жизнь в квест" : "Life Quest — turn life into a quest";
   }, [lang]);
 
   function toggleLanguage() {
@@ -88,10 +89,7 @@ export default function LandingClient() {
     <main className="landing-shell">
       <section className="landing-card">
         <div className="landing-topline">
-          <div className="brand-lockup">
-            <div className="brand-mark" aria-hidden="true">QF</div>
-            <span>QuestFrame</span>
-          </div>
+          <BrandLockup />
           <button className="lang-button" type="button" onClick={toggleLanguage} aria-label={lang === "ru" ? "Switch to English" : "Переключить на русский"}>{lang === "ru" ? "EN" : "RU"}</button>
         </div>
 
