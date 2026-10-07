@@ -1,3 +1,8 @@
+## 0.8.1
+
+- Simplified the Life Quest brand icon so the favicon stays clear and readable at tiny browser-tab sizes.
+- Replaced the detailed mini mark with a bold quest star symbol and matching in-app brand mark.
+
 ## 0.8.0
 
 - Rebrand QuestFrame to Life Quest with a new star-growth brand mark, refreshed favicon and updated window titles.

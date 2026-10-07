@@ -1,4 +1,4 @@
-# Life Quest 0.8.0 update
+# Life Quest 0.8.1 update
 
 1. Stop the dev server.
 2. Replace the project files with this archive.

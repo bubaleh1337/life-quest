@@ -1,4 +1,4 @@
-# Life Quest 0.8.0 — Windows 11 setup
+# Life Quest 0.8.1 — Windows 11 setup
 
 These instructions assume PowerShell and a project folder such as `P:\Projects\questframe`.
 
@@ -143,7 +143,7 @@ Then:
 ```powershell
 git init
 git add .
-git commit -m "feat: launch Life Quest 0.8.0"
+git commit -m "feat: launch Life Quest 0.8.1"
 git branch -M main
 git remote add origin https://github.com/YOUR_GITHUB_USERNAME/questframe.git
 git push -u origin main
