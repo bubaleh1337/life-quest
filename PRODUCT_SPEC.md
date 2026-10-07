@@ -1,4 +1,4 @@
-# Life Quest — product spec 0.8.1
+# Life Quest — product spec 0.9.0
 
 ## Product promise
 
@@ -119,6 +119,6 @@ All product data is private to the authenticated user. RLS is mandatory for ever
 - Public landing-page auth errors are forwarded to `/login` rather than being silently displayed on the landing page.
 
 
-## Visual system — 0.8.1
+## Visual system — 0.9.0
 
 Life Quest uses a **Glossy Game** direction: elegant pearl/glass surfaces with restrained game feedback. The Today page follows a responsive bento hierarchy rather than stacking full-width panels. On desktop, level + weekly boss form the overview row and quick quest actions + chain actions form the interaction row. Typography is modern display sans-serif; large editorial serif headings are intentionally avoided. The app header is visually separated into three floating islands (brand, navigation, controls) so it reads as intentional navigation rather than a rectangular banner.

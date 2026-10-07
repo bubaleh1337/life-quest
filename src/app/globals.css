@@ -1511,3 +1511,227 @@ body::before {
   .landing-shell .brand-lockup span:last-child,
   .auth-card .brand-lockup span:last-child { font-size: 1rem; }
 }
+
+
+/* Life Quest 0.9.0 — Delight polish */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -12vh -10vw;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 218, 189, .30) 0 2.5rem, transparent 13rem),
+    radial-gradient(circle at 80% 18%, rgba(184, 129, 164, .18) 0 3rem, transparent 17rem),
+    radial-gradient(circle at 64% 80%, rgba(142, 178, 207, .17) 0 2.5rem, transparent 18rem),
+    radial-gradient(circle at 33% 72%, rgba(239, 202, 133, .12) 0 2rem, transparent 14rem);
+  filter: blur(18px);
+  transform: translate3d(0,0,0);
+  animation: ambient-drift 20s ease-in-out infinite alternate;
+}
+
+.page-stack { animation: page-enter .34s cubic-bezier(.2,.8,.2,1) both; }
+
+.today-heading {
+  background:
+    radial-gradient(circle at 88% 18%, rgba(242, 211, 160, .14), transparent 16rem),
+    linear-gradient(180deg, rgba(255,255,255,.77), rgba(255,255,255,.64));
+}
+.today-heading::before {
+  content: "✦";
+  position: absolute;
+  right: 28px;
+  top: 20px;
+  color: rgba(192, 145, 90, .28);
+  font-size: 24px;
+  line-height: 1;
+  transform: rotate(8deg);
+  pointer-events: none;
+}
+
+.today-stat-pills > span {
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.today-stat-pills > span:hover {
+  transform: translateY(-2px);
+  border-color: rgba(124, 74, 99, .18);
+  background: rgba(255,255,255,.85);
+  box-shadow: 0 8px 18px rgba(66,45,56,.07), inset 0 1px 0 #fff;
+}
+
+@media (hover: hover) {
+  .quick-panel,
+  .quest-card,
+  .reward-card,
+  .help-card,
+  .chain-row,
+  .finished-chain-row,
+  .compact-hero {
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+  .quick-panel:hover,
+  .quest-card:hover,
+  .reward-card:hover,
+  .help-card:hover,
+  .chain-row:hover,
+  .finished-chain-row:hover,
+  .compact-hero:hover {
+    transform: translateY(-3px);
+    border-color: rgba(122, 79, 101, .15);
+    box-shadow: 0 22px 48px rgba(57,39,48,.075), inset 0 1px 0 rgba(255,255,255,.98);
+  }
+
+  .quick-step-row,
+  .daily-chain-row,
+  .step-row {
+    transition: transform .16s ease, background .16s ease, border-radius .16s ease, padding .16s ease;
+  }
+  .quick-step-row:hover,
+  .daily-chain-row:hover,
+  .step-row:hover {
+    transform: translateX(3px);
+    background: rgba(255,255,255,.58);
+    border-radius: 13px;
+  }
+}
+
+.nav-tab { position: relative; }
+.nav-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d9b777, #9a5577);
+  transform: translateX(-50%);
+  box-shadow: 0 0 0 3px rgba(207,167,108,.12);
+}
+
+.brand-home-button,
+.header-actions,
+.desktop-tabs {
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+@media (hover: hover) {
+  .brand-home-button:hover { transform: translateY(-1px); box-shadow: 0 14px 34px rgba(45,31,38,.085), inset 0 1px 0 #fff; }
+  .header-actions:hover,
+  .desktop-tabs:hover { box-shadow: 0 14px 36px rgba(45,31,38,.075), inset 0 1px 0 #fff; }
+}
+
+.button-primary {
+  background: linear-gradient(135deg, #6f3154 0%, #8f5574 58%, #b27d92 100%);
+}
+.button-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle at 26% 0%, rgba(255,255,255,.26), transparent 44%);
+}
+
+.empty-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(243, 218, 178, .18), transparent 12rem),
+    linear-gradient(180deg, rgba(255,255,255,.72), rgba(252,249,250,.56));
+}
+.empty-card::after {
+  content: "✦";
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  color: rgba(160, 107, 132, .18);
+  font-size: 30px;
+  transform: rotate(12deg);
+}
+
+.reward-card:not(.claimed) .status-pill.unlocked {
+  position: relative;
+  overflow: hidden;
+}
+.reward-card:not(.claimed) .status-pill.unlocked::after {
+  content: "";
+  position: absolute;
+  inset: -2px auto -2px -60%;
+  width: 48%;
+  transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+  animation: reward-sheen 3.7s ease-in-out infinite;
+}
+
+.boss-card:not(.defeated) {
+  box-shadow: 0 18px 46px rgba(95, 43, 68, .18), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.boss-card.defeated {
+  box-shadow: 0 18px 46px rgba(55, 102, 76, .14), inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+.mobile-tabs {
+  background: rgba(255,255,255,.86);
+  border-color: rgba(105,78,91,.10);
+  box-shadow: 0 18px 44px rgba(49,34,42,.15), inset 0 1px 0 rgba(255,255,255,.94);
+}
+.mobile-tabs button { position: relative; transition: transform .16s ease, background .16s ease, color .16s ease; }
+.mobile-tabs button:active { transform: scale(.94); }
+.mobile-tabs button.active::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #b78662;
+}
+
+.landing-card {
+  background:
+    radial-gradient(circle at 86% 14%, rgba(156, 91, 125, .14), transparent 23rem),
+    radial-gradient(circle at 16% 100%, rgba(227, 194, 137, .13), transparent 20rem),
+    linear-gradient(118deg, rgba(255,255,255,.93), rgba(255,252,249,.78));
+}
+.landing-rules article {
+  border: 1px solid rgba(112,84,97,.08);
+  border-radius: 22px;
+  background: rgba(255,255,255,.48);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.78);
+}
+
+@keyframes ambient-drift {
+  0% { transform: translate3d(-1.5%, -1%, 0) scale(1); }
+  50% { transform: translate3d(1%, 1.2%, 0) scale(1.025); }
+  100% { transform: translate3d(1.8%, -.6%, 0) scale(1.01); }
+}
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes reward-sheen {
+  0%, 55% { transform: translateX(0) skewX(-20deg); opacity: 0; }
+  64% { opacity: .9; }
+  82%, 100% { transform: translateX(360%) skewX(-20deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after,
+  .page-stack,
+  .reward-card:not(.claimed) .status-pill.unlocked::after {
+    animation: none !important;
+  }
+  .quick-panel,
+  .quest-card,
+  .reward-card,
+  .help-card,
+  .chain-row,
+  .finished-chain-row,
+  .compact-hero,
+  .today-stat-pills > span,
+  .brand-home-button,
+  .header-actions,
+  .desktop-tabs {
+    transition: none !important;
+  }
+}

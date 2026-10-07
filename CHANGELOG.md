@@ -1,3 +1,11 @@
+## 0.9.0 — 2026-10-07
+
+- Added a subtle animated ambient background with warm pearl, berry and cool-blue light blooms.
+- Added smooth tab/page entrance transitions and richer hover/press feedback across cards, lists and navigation.
+- Added subtle glossy delight details to unlocked rewards, empty states, dashboard stat pills and the mobile dock.
+- Preserved reduced-motion accessibility by disabling non-essential movement when requested by the OS.
+- No database migration required.
+
 ## 0.8.1
 
 - Simplified the Life Quest brand icon so the favicon stays clear and readable at tiny browser-tab sizes.
