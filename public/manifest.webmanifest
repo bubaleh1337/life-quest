@@ -1,0 +1,17 @@
+{
+  "name": "QuestFrame",
+  "short_name": "QuestFrame",
+  "description": "Turn real-life goals into quests, earn XP and keep moving without punishment for missed days.",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#f4f1ec",
+  "theme_color": "#672b45",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
