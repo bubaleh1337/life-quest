@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/browser";
 import { BOSS_XP, getLevelProgress, isoDateLocal, startOfWeekLocal, XP_OPTIONS } from "@/lib/game";
 import type { Chain, ChainCheckin, Quest, QuestStep, Reward, WeeklyBoss } from "@/lib/types";
+import { playUiSound } from "@/lib/ui-sound";
 
 type Lang = "ru" | "en";
 type Tab = "today" | "quests" | "chain" | "rewards" | "help";
@@ -172,7 +173,13 @@ const copy = {
     confirm: "Подтвердить",
     due: "до",
     remove: "Удалить",
-    home: "На главную"
+    home: "На главную",
+    sound: "Звук",
+    soundOn: "Звук включён",
+    soundOff: "Звук выключен",
+    soundHelpTitle: "Звуки и отклик",
+    soundHelpText: "Металлический щелчок цепи, короткие сигналы XP и наград делают действия ощутимыми. Звук можно отключить в любой момент.",
+    glossyChainHint: "Собирай звено за звеном. Разрыв остаётся частью истории, а не стирает её."
   },
   en: {
     today: "Today",
@@ -322,7 +329,13 @@ const copy = {
     confirm: "Confirm",
     due: "due",
     remove: "Delete",
-    home: "Home"
+    home: "Home",
+    sound: "Sound",
+    soundOn: "Sound on",
+    soundOff: "Sound off",
+    soundHelpTitle: "Sound & feedback",
+    soundHelpText: "A metallic chain click plus short XP and reward cues make actions feel tangible. Sound can be switched off at any time.",
+    glossyChainHint: "Build it link by link. A break stays part of the story instead of erasing it."
   }
 } as const;
 
@@ -344,6 +357,10 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const [showQuestForm, setShowQuestForm] = useState(false);
   const [showBossForm, setShowBossForm] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [xpBurst, setXpBurst] = useState<{ id: number; amount: number } | null>(null);
+  const [chainCelebration, setChainCelebration] = useState<string | null>(null);
+  const [rewardCelebration, setRewardCelebration] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
   const [questFilter, setQuestFilter] = useState<"active" | "completed" | "archived">("active");
 
@@ -360,6 +377,15 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     const timer = window.setTimeout(() => {
       const saved = window.localStorage.getItem("questframe-lang");
       if (saved === "en" || saved === "ru") setLang(saved);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const saved = window.localStorage.getItem("questframe-sound");
+      if (saved === "off") setSoundEnabled(false);
+      if (saved === "on") setSoundEnabled(true);
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
@@ -384,6 +410,21 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     const next: Lang = lang === "ru" ? "en" : "ru";
     setLang(next);
     window.localStorage.setItem("questframe-lang", next);
+  }
+
+  function toggleSound() {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    window.localStorage.setItem("questframe-sound", next ? "on" : "off");
+    if (next) playUiSound("tap", true);
+  }
+
+  function showXpBurst(amount: number) {
+    const id = Date.now();
+    setXpBurst({ id, amount });
+    window.setTimeout(() => {
+      setXpBurst((current) => current?.id === id ? null : current);
+    }, 1100);
   }
 
   const loadData = useCallback(async (showSpinner = true) => {
@@ -539,12 +580,20 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   async function toggleStep(step: QuestStep) {
-    await withWork(async () => {
+    const completing = !step.completed_at;
+    const ok = await withWork(async () => {
       const { error } = await supabase.from("quest_steps").update({
         completed_at: step.completed_at ? null : new Date().toISOString()
       }).eq("id", step.id);
       return { error };
     });
+    if (!ok) return;
+    if (completing) {
+      playUiSound("success", soundEnabled);
+      showXpBurst(step.xp_value);
+    } else {
+      playUiSound("undo", soundEnabled);
+    }
   }
 
   async function deleteStep(stepId: string) {
@@ -605,12 +654,20 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function toggleBoss() {
     if (!currentBoss) return;
-    await withWork(async () => {
+    const defeating = !currentBoss.completed_at;
+    const ok = await withWork(async () => {
       const { error } = await supabase.from("weekly_bosses").update({
         completed_at: currentBoss.completed_at ? null : new Date().toISOString()
       }).eq("id", currentBoss.id);
       return { error };
     });
+    if (!ok) return;
+    if (defeating) {
+      playUiSound("boss", soundEnabled);
+      showXpBurst(BOSS_XP);
+    } else {
+      playUiSound("undo", soundEnabled);
+    }
   }
 
   async function createChain(event: FormEvent<HTMLFormElement>) {
@@ -641,7 +698,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function checkInChain(chain: Chain) {
     if (isChainCheckedToday(chain.id)) return;
-    await withWork(async () => {
+    const ok = await withWork(async () => {
       const { error } = await supabase.from("chain_checkins").insert({
         chain_id: chain.id,
         user_id: userId,
@@ -649,15 +706,20 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       });
       return { error };
     });
+    if (!ok) return;
+    setChainCelebration(chain.id);
+    playUiSound("chain", soundEnabled);
+    window.setTimeout(() => setChainCelebration((current) => current === chain.id ? null : current), 1250);
   }
 
   async function undoChainCheckIn(chain: Chain) {
     const todayCheckin = checkins.find((checkin) => checkin.chain_id === chain.id && checkin.checkin_date === today);
     if (!todayCheckin) return;
-    await withWork(async () => {
+    const ok = await withWork(async () => {
       const { error } = await supabase.from("chain_checkins").delete().eq("id", todayCheckin.id);
       return { error };
     }, t.chainUnlinked);
+    if (ok) playUiSound("undo", soundEnabled);
   }
 
   async function finishChain(chain: Chain) {
@@ -704,18 +766,23 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function claimReward(reward: Reward) {
     if (reward.claimed_at || totalXp < reward.xp_required) return;
-    await withWork(async () => {
+    const ok = await withWork(async () => {
       const { error } = await supabase.from("rewards").update({ claimed_at: new Date().toISOString() }).eq("id", reward.id);
       return { error };
     });
+    if (!ok) return;
+    setRewardCelebration(reward.id);
+    playUiSound("reward", soundEnabled);
+    window.setTimeout(() => setRewardCelebration((current) => current === reward.id ? null : current), 1400);
   }
 
   async function undoRewardClaim(reward: Reward) {
     if (!reward.claimed_at) return;
-    await withWork(async () => {
+    const ok = await withWork(async () => {
       const { error } = await supabase.from("rewards").update({ claimed_at: null }).eq("id", reward.id);
       return { error };
     }, t.rewardUnclaimed);
+    if (ok) playUiSound("undo", soundEnabled);
   }
 
   function requestClaimReward(reward: Reward) {
@@ -809,6 +876,8 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   return (
     <main className="app-shell">
+      <ChainMetalDefs />
+      {xpBurst && <div className="xp-burst" key={xpBurst.id} aria-live="polite"><span>+{xpBurst.amount} XP</span><i>✦</i><i>✧</i></div>}
       <header className="app-header">
         <button className="brand-home-button" type="button" onClick={() => setTab("today")} aria-label={t.home} title={t.home}>
           <span className="brand-lockup compact"><span className="brand-mark">QF</span><span>QuestFrame</span></span>
@@ -827,6 +896,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
           ))}
         </nav>
         <div className="header-actions">
+          <button className={soundEnabled ? "sound-button active" : "sound-button"} type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? t.soundOn : t.soundOff} title={soundEnabled ? t.soundOn : t.soundOff}><SoundIcon enabled={soundEnabled} /></button>
           <button className="lang-button" type="button" onClick={toggleLanguage}>{lang === "ru" ? "EN" : "RU"}</button>
           <div className="account-menu-wrap">
             <button
@@ -1056,28 +1126,24 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                   const links = chainLinks(chain.id);
                   const history = chainWindow(chain);
                   return (
-                    <article className={checked ? "chain-row checked" : "chain-row"} key={chain.id}>
+                    <article className={`${checked ? "chain-row checked" : "chain-row"}${chainCelebration === chain.id ? " chain-celebrating" : ""}`} key={chain.id}>
                       <div className="chain-row-main">
                         <div className="chain-title-row">
                           <div><h2>{chain.title}</h2><span>{formatLinkCount(links, lang)}</span></div>
                           <span className="chain-start-date">{t.chainStart}: {history.started}</span>
                         </div>
+                        <p className="chain-soft-hint">{t.glossyChainHint}</p>
                         <div className="chain-track-scroll" aria-label={t.lastDays}>
-                          <div className="chain-track">
-                            <div className="chain-origin" title={`${t.chainStart}: ${history.started}`}>
-                              <span className="chain-origin-symbol" aria-hidden="true"><i /></span>
-                              <small>{t.chainStart}</small>
-                            </div>
-                            {history.truncated && <div className="chain-history-gap" aria-hidden="true"><span>•••</span></div>}
+                          <div className="chain-track glossy-chain-track">
+                            <ChainStartCharm label={t.chainStart} />
+                            {history.truncated && <div className="chain-history-gap glossy-gap" aria-hidden="true"><span>•••</span></div>}
                             {history.days.map((day, index) => {
                               const stateLabel = day.state === "hit" ? t.chainBuilt : day.state === "break" ? t.chainBreak : t.chainToday;
+                              const celebrate = chainCelebration === chain.id && day.iso === today && day.state === "hit";
                               return (
-                                <div key={day.iso} className={`chain-day chain-day-${day.state}`} title={`${day.iso} · ${stateLabel}`}>
+                                <div key={day.iso} className={`chain-day chain-day-${day.state}${celebrate ? " is-new-link" : ""}`} title={`${day.iso} · ${stateLabel}`}>
                                   <span className="chain-day-label">{day.label} {day.dayNumber}</span>
-                                  <div className="chain-segment">
-                                    <span className="chain-connector" aria-hidden="true" />
-                                    <ChainLinkGlyph state={day.state} index={index} />
-                                  </div>
+                                  <ChainLinkGlyph state={day.state} index={index} celebrate={celebrate} />
                                   <small>{stateLabel}</small>
                                 </div>
                               );
@@ -1086,9 +1152,10 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                         </div>
                       </div>
                       <div className="chain-actions">
-                        <button className={checked ? "button button-ghost" : "button button-secondary"} type="button" onClick={() => checked ? undoChainCheckIn(chain) : checkInChain(chain)} disabled={working}>{checked ? t.undo : t.linkToday}</button>
+                        <button className={checked ? "button button-ghost" : "button button-secondary chain-action-primary"} type="button" onClick={() => checked ? undoChainCheckIn(chain) : checkInChain(chain)} disabled={working}>{checked ? t.undo : t.linkToday}</button>
                         <button className="text-button danger-text" type="button" onClick={() => requestFinishChain(chain)} disabled={working}>{t.finishChain}</button>
                       </div>
+                      {chainCelebration === chain.id && <div className="chain-sparkles" aria-hidden="true"><i>✦</i><i>✧</i><i>✦</i></div>}
                     </article>
                   );
                 })}
@@ -1136,7 +1203,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                   const unlocked = totalXp >= reward.xp_required;
                   const percent = Math.min(100, Math.round((totalXp / reward.xp_required) * 100));
                   return (
-                    <article key={reward.id} className={reward.claimed_at ? "reward-card claimed" : "reward-card"}>
+                    <article key={reward.id} className={`${reward.claimed_at ? "reward-card claimed" : "reward-card"}${rewardCelebration === reward.id ? " reward-celebrating" : ""}`}>
                       <div className="reward-head"><div><span className={unlocked ? "status-pill unlocked" : "status-pill"}>{reward.claimed_at ? t.claimed : unlocked ? t.unlocked : t.locked}</span><h2>{reward.title}</h2></div><strong>{reward.xp_required} XP</strong></div>
                       <div className="progress-track"><span style={{ width: `${percent}%` }} /></div>
                       <div className="reward-actions"><span>{Math.min(totalXp, reward.xp_required)} / {reward.xp_required} XP</span><div><button className="button button-secondary" type="button" disabled={!unlocked || working} onClick={() => reward.claimed_at ? undoRewardClaim(reward) : requestClaimReward(reward)}>{reward.claimed_at ? t.undoClaim : t.claim}</button><button className="icon-button danger" type="button" title={t.remove} aria-label={t.remove} onClick={() => requestDeleteReward(reward.id)} disabled={working}>×</button></div></div>
@@ -1165,6 +1232,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
               <article className="help-card"><span className="principle-number">⛓</span><h2>{t.noPunishment}</h2><p>{t.noPunishmentText}</p></article>
               <article className="help-card"><span className="principle-number">◆</span><h2>{t.bossHelpTitle}</h2><p>{t.bossHelpText}</p></article>
               <article className="help-card"><span className="principle-number">☆</span><h2>{t.rewardHelpTitle}</h2><p>{t.rewardHelpText}</p></article>
+              <article className="help-card sound-help-card"><span className="principle-number sound-principle"><SoundIcon enabled={soundEnabled} /></span><h2>{t.soundHelpTitle}</h2><p>{t.soundHelpText}</p><button className={soundEnabled ? "sound-setting active" : "sound-setting"} type="button" onClick={toggleSound} aria-pressed={soundEnabled}><span>{soundEnabled ? t.soundOn : t.soundOff}</span><i aria-hidden="true" /></button></article>
               <article className="help-card contacts-card">
                 <div><p className="eyebrow">{t.contactsEyebrow}</p><h2>{t.contactsTitle}</h2><p>{t.contactsLead}</p></div>
                 <div className="contact-links">
@@ -1217,12 +1285,95 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   );
 }
 
-function ChainLinkGlyph({ state, index }: { state: ChainDayState; index: number }) {
-  const tilt = index % 2 === 0 ? "tilt-left" : "tilt-right";
+function ChainMetalDefs() {
+  return (
+    <svg className="chain-svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="qf-steel" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="0.16" stopColor="#b9bec8" />
+          <stop offset="0.42" stopColor="#f7f8fb" />
+          <stop offset="0.62" stopColor="#7f8794" />
+          <stop offset="0.82" stopColor="#e9ecf2" />
+          <stop offset="1" stopColor="#a0a6b0" />
+        </linearGradient>
+        <linearGradient id="qf-steel-dim" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#f5f0ef" />
+          <stop offset="0.5" stopColor="#bdb5b7" />
+          <stop offset="1" stopColor="#80797e" />
+        </linearGradient>
+        <linearGradient id="qf-rose-steel" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#fff9fb" />
+          <stop offset="0.34" stopColor="#d7a9bb" />
+          <stop offset="0.7" stopColor="#8f526b" />
+          <stop offset="1" stopColor="#edd4de" />
+        </linearGradient>
+        <linearGradient id="qf-gold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#fff3c9" />
+          <stop offset="0.42" stopColor="#d7b06b" />
+          <stop offset="0.7" stopColor="#a97736" />
+          <stop offset="1" stopColor="#f4dda8" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+function ChainStartCharm({ label }: { label: string }) {
+  return (
+    <div className="chain-origin glossy-origin" title={label}>
+      <span className="start-charm" aria-hidden="true">
+        <svg viewBox="0 0 62 62">
+          <circle cx="31" cy="31" r="20" fill="rgba(255,255,255,.74)" stroke="url(#qf-gold)" strokeWidth="6" />
+          <path d="M31 18 L34 27 L43 31 L34 35 L31 44 L28 35 L19 31 L28 27 Z" fill="#fff8e4" stroke="#b98950" strokeWidth="1.5" />
+          <circle cx="49" cy="18" r="4" fill="#fff7de" stroke="#b98950" strokeWidth="2" />
+        </svg>
+      </span>
+      <small>{label}</small>
+    </div>
+  );
+}
+
+function ChainLinkGlyph({ state, index, celebrate = false }: { state: ChainDayState; index: number; celebrate?: boolean }) {
+  const rotation = index % 2 === 0 ? -24 : 24;
   if (state === "break") {
-    return <span className="chain-link-glyph broken" aria-hidden="true"><i className="broken-half broken-half-a" /><i className="broken-half broken-half-b" /></span>;
+    return (
+      <span className="chain-link-glyph-svg broken" aria-hidden="true">
+        <svg viewBox="0 0 86 58">
+          <path className="broken-link-half broken-link-left" d="M8 34 C9 19 24 11 37 17 C42 19 46 23 49 28" />
+          <path className="broken-link-half broken-link-right" d="M78 24 C75 39 60 47 48 41 C43 39 39 35 36 30" />
+          <path className="metal-highlight broken-highlight-left" d="M13 30 C17 20 28 16 37 20" />
+          <path className="metal-highlight broken-highlight-right" d="M73 28 C69 38 59 42 50 39" />
+          <circle className="break-particle p1" cx="42" cy="11" r="2" />
+          <circle className="break-particle p2" cx="48" cy="49" r="1.7" />
+          <path className="break-spark" d="M57 8 L59 13 L64 15 L59 17 L57 22 L55 17 L50 15 L55 13 Z" />
+          <path className="break-spark small" d="M30 42 L31.5 46 L35 47.5 L31.5 49 L30 53 L28.5 49 L25 47.5 L28.5 46 Z" />
+        </svg>
+      </span>
+    );
   }
-  return <span className={`chain-link-glyph ${state} ${tilt}`} aria-hidden="true"><i /></span>;
+
+  return (
+    <span className={`chain-link-glyph-svg ${state}${celebrate ? " celebrate" : ""}`} aria-hidden="true">
+      <svg viewBox="0 0 86 58">
+        <g transform={`rotate(${rotation} 43 29)`}>
+          <rect className="metal-link-shadow" x="13" y="16" width="60" height="27" rx="13.5" />
+          <rect className="metal-link" x="13" y="16" width="60" height="27" rx="13.5" />
+          <path className="metal-highlight" d="M24 20 C36 15 55 16 65 22" />
+          {state === "hit" && <path className="link-glint" d="M60 13 L62 19 L68 21 L62 23 L60 29 L58 23 L52 21 L58 19 Z" />}
+        </g>
+      </svg>
+    </span>
+  );
+}
+
+function SoundIcon({ enabled }: { enabled: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M5 10v4h3l4 3V7l-4 3H5Z" fill="currentColor" />
+      {enabled ? <><path d="M15 9.4a4 4 0 0 1 0 5.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /><path d="M17.6 7a7.2 7.2 0 0 1 0 10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></> : <path d="M15.5 9.5l5 5m0-5-5 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />}
+    </svg>
+  );
 }
 
 function QuestSummary({ quest, steps, lang, onOpen }: { quest: Quest; steps: QuestStep[]; lang: Lang; onOpen: () => void }) {

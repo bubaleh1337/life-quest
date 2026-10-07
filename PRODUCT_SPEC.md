@@ -1,4 +1,4 @@
-# QuestFrame — product spec 0.5.0
+# QuestFrame — product spec 0.6.0
 
 ## Product promise
 
@@ -15,6 +15,21 @@ QuestFrame turns vague self-improvement goals into a small game loop without tur
 7. **Transparent XP.** XP comes only from completed quest steps and defeated weekly bosses.
 8. **No surprise state changes.** Ambiguous controls never sign the user out, delete data or hide progress. Irreversible actions require confirmation; reversible actions should expose an undo path.
 9. **Recoverable organization.** Archived quests and finished chains remain accessible and can be restored.
+
+
+## Glossy Game art direction
+
+QuestFrame uses a **70% Glossy Elegant / 30% Cozy Game** visual system:
+
+- calm pearl/cream surfaces with wine and champagne accents;
+- polished-steel chain links with alternating angles so the chain reads as an actual interlocked object;
+- a split-link break illustration with particles rather than a generic gap or warning badge;
+- short, restrained micro-interactions for press, completion, XP, chain-link creation, boss victory and rewards;
+- optional sound feedback generated locally in the browser;
+- no decorative feedback may block, delay or change the underlying action;
+- `prefers-reduced-motion` must disable decorative motion without removing functionality.
+
+Sound preference is stored locally in the browser (`questframe-sound`) and is not user-profile data.
 
 ## XP rules
 

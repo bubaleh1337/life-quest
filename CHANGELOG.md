@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.0 — 2026-10-07
+
+- Introduced the **Glossy Game** art direction: elegant glassy surfaces, wine/champagne accents and restrained game feedback.
+- Rebuilt visual chains as overlapping polished-steel SVG links instead of CSS ovals and connector bars.
+- Broken days now use a dedicated split-link illustration with separated metal halves, debris particles and sparkles while preserving history.
+- Added a jewelry-like Start charm, alternating interlocked link angles, glossy highlights and a softly animated pending-today link.
+- Added a snap-in animation and sparkle celebration when today's chain link is created.
+- Added subtle press, hover, shimmer, progress and completion micro-interactions across buttons, check controls, cards and progress bars.
+- Added floating `+XP` feedback when completing quest steps and defeating the weekly boss.
+- Added reward-claim celebration feedback.
+- Added optional procedural UI sounds generated in-browser with Web Audio: chain clink, XP success, boss victory, reward sparkle and undo cues. No external audio assets are required.
+- Added a persistent Sound on/off setting in the header and Player Guide.
+- Added `prefers-reduced-motion` support so motion-sensitive users do not receive decorative animation.
+- No Supabase migration is required for this release.
+
 ## 0.5.0 — 2026-10-07
 
 - Replaced the one-click avatar sign-out with an explicit account menu.
