@@ -1,4 +1,4 @@
-# QuestFrame — product spec 0.2
+# QuestFrame — product spec 0.4
 
 ## Product promise
 
@@ -10,7 +10,7 @@ QuestFrame turns vague self-improvement goals into a small game loop without tur
 2. **Progress without punishment.** Missed days do not erase historical progress.
 3. **Low cognitive load.** No inventories, currencies, skill trees, badges or dozens of score types.
 4. **One scary thing at a time.** One weekly boss per user and week.
-5. **Several simple routines are allowed.** Multiple streaks can run in parallel, each with one daily check-in.
+5. **Several simple routines are allowed.** Multiple chains can run in parallel, each with one daily check-in.
 6. **Fast daily interaction.** Quest steps and repeating goals can be checked off from Today.
 7. **Transparent XP.** XP comes only from completed quest steps and defeated weekly bosses.
 
@@ -46,12 +46,16 @@ Rewards unlock at a chosen lifetime-XP threshold. Claiming a reward does not spe
 
 ## Chain semantics
 
-Streaks intentionally are **not** traditional streaks:
+Chains are a first-class visual mechanic, not a renamed streak counter:
 
-- multiple active streaks are allowed;
+- multiple active chains are allowed;
 - each chain represents one repeatable action;
 - only one check-in per chain per calendar day is allowed;
-- a missed day creates a gap but does not reset the count;
+- every completed day adds a visual link;
+- a missed past day is shown as a broken link;
+- a break never deletes previous links and never resets the total link count;
+- today remains an open/pending link until the user checks in;
+- the chain start is always visible, while older history can collapse behind a compact history bridge;
 - ending a chain keeps its history and removes it from the active list.
 
 ## Localized dates
@@ -62,6 +66,17 @@ Quest target dates are entered by the app rather than the browser-native date co
 - EN: `MM/DD/YYYY`
 
 Dates are stored in PostgreSQL as normal ISO `date` values.
+
+## Public entry and language
+
+The landing page and login page both support RU/EN before authentication. Russian is the default for a new browser session; the selected language is stored in `localStorage` and reused by the landing page, login and authenticated dashboard.
+
+## Player Guide and contacts
+
+The in-app reference area is called **«Гид игрока» / Player Guide**. It contains the XP rules, chain/no-reset explanation, weekly boss, rewards and only two author-contact actions:
+
+- Email: `ekaterina.pyshkova@gmail.com`
+- Telegram: `@kemisayega`
 
 ## Data ownership
 

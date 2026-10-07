@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0 — 2026-10-07
+
+- Restored the core **Chains / «Цепочки»** identity instead of generic streak terminology.
+- Rebuilt chain history as a visual chain: each completed day is a link, missed days are shown as visibly broken links and today remains an open/pending link until checked in.
+- Added a persistent chain start marker and a compact history bridge when the chain began before the visible seven-day window.
+- Kept chain history compact and horizontally scrollable instead of returning to oversized cards.
+- Renamed Help / «Справка» to **Player Guide / «Гид игрока»**.
+- Replaced GitHub/LinkedIn author links with the same direct Email and Telegram contacts used by the other apps.
+- Added full RU/EN localization and a language switcher to the public landing page before authentication.
+- Login now defaults to Russian, remembers the selected language and localizes its eyebrow/separator as well as the main copy.
+- No Supabase migration is required for this release.
+
 ## 0.3.0 — 2026-10-07
 
 - Added automatic date masking while typing: `11102026` becomes `11.10.2026` in Russian and `10112026` becomes `10/11/2026` in English.

@@ -8,6 +8,7 @@ import type { Chain, ChainCheckin, Quest, QuestStep, Reward, WeeklyBoss } from "
 
 type Lang = "ru" | "en";
 type Tab = "today" | "quests" | "chain" | "rewards" | "help";
+type ChainDayState = "hit" | "break" | "today";
 
 type DashboardProps = {
   userId: string;
@@ -18,9 +19,9 @@ const copy = {
   ru: {
     today: "Сегодня",
     quests: "Квесты",
-    chain: "Серии",
+    chain: "Цепочки",
     rewards: "Награды",
-    help: "Справка",
+    help: "Гид игрока",
     level: "Уровень",
     totalXp: "Всего XP",
     activeQuests: "Активные квесты",
@@ -68,26 +69,31 @@ const copy = {
     questLogEyebrow: "ЖУРНАЛ КВЕСТОВ",
     chainEyebrow: "БЕЗ ОБНУЛЕНИЯ",
     rewardsEyebrow: "НАГРАДЫ",
-    helpEyebrow: "КАК ЭТО РАБОТАЕТ",
+    helpEyebrow: "ПРАВИЛА ИГРЫ",
     quickSteps: "Быстрые шаги",
     quickStepsLead: "Отмечай шаги активных квестов прямо с главной страницы.",
     noQuickSteps: "В активных квестах пока нет шагов для отметки.",
     openAllQuests: "Открыть все квесты",
     repeatingGoals: "Повторяемые действия",
     repeatingGoalsLead: "То, что хочется делать регулярно, отмечается одним нажатием.",
-    manageChains: "Управлять сериями",
+    manageChains: "Управлять цепочками",
     noRepeatingGoals: "Пока нет повторяемых действий.",
-    chainTitle: "Серии",
-    chainLead: "Каждая серия хранит историю выполнений. Пропущенный день ничего не обнуляет — просто продолжай дальше.",
-    chainPlaceholder: "Например: польский каждый день",
-    startChain: "Добавить серию",
-    addAnotherChain: "Добавить серию",
+    chainTitle: "Цепочки",
+    chainLead: "Каждое выполнение добавляет новое звено. Пропуск виден как разрыв, но цепочка не обнуляется — следующее звено можно добавить в любой день.",
+    chainPlaceholder: "Например: изучать польский каждый день",
+    startChain: "Начать цепочку",
+    addAnotherChain: "Добавить цепочку",
     linkToday: "Отметить сегодня",
     linkedToday: "Сегодня отмечено",
-    links: "выполнено",
-    finishChain: "Завершить серию",
-    chainEmpty: "Активных серий пока нет. Добавь первое повторяемое действие.",
+    links: "звеньев",
+    finishChain: "Завершить цепочку",
+    chainEmpty: "Активных цепочек пока нет. Начни первую с повторяемого действия.",
     lastDays: "Последние 7 дней",
+    chainStart: "Старт",
+    chainBreak: "Разрыв",
+    chainToday: "Сегодня",
+    chainBeforeStart: "До старта",
+    chainBuilt: "Звено добавлено",
     rewardTitle: "Награды за путь",
     rewardLead: "Награда открывается по общему XP и не списывает прогресс.",
     rewardPlaceholder: "Например: сходить на массаж",
@@ -106,9 +112,9 @@ const copy = {
     xpGuide: "Система XP",
     xpGuideText: "Награждаем не только результат, но и сложность самого действия.",
     noPunishment: "Без наказания за пропуск",
-    noPunishmentText: "Серия хранит историю выполнений, но пропуск дня никогда не сбрасывает прогресс в ноль.",
-    helpTitle: "Справка",
-    helpLead: "Коротко о механиках QuestFrame — без лишнего текста на главной странице.",
+    noPunishmentText: "Пропущенный день отображается как разрыв между звеньями, но уже собранная цепочка не исчезает и счётчик не сбрасывается.",
+    helpTitle: "Гид игрока",
+    helpLead: "Правила и механики QuestFrame в одном месте — чтобы главная оставалась лёгкой.",
     xpHelpTitle: "Как начисляется XP",
     xpRegularHelp: "Обычный шаг",
     xpPromiseHelp: "Сдержала обещание перед собой",
@@ -119,8 +125,10 @@ const copy = {
     rewardHelpTitle: "Награды",
     rewardHelpText: "Награды открываются по общему XP. Получение награды не отнимает XP и не уменьшает уровень.",
     contactsEyebrow: "КОНТАКТЫ",
-    contactsTitle: "Контакты автора",
-    contactsLead: "Вопросы, идеи и сообщения об ошибках можно отправить через мои публичные профили.",
+    contactsTitle: "Связаться с автором",
+    emailContact: "Email",
+    telegramContact: "Telegram",
+    contactsLead: "Вопросы, идеи и сообщения об ошибках можно отправить мне напрямую.",
     archive: "Архивировать",
     archived: "Квест архивирован.",
     active: "Активные",
@@ -133,9 +141,9 @@ const copy = {
   en: {
     today: "Today",
     quests: "Quests",
-    chain: "Streaks",
+    chain: "Chains",
     rewards: "Rewards",
-    help: "Help",
+    help: "Player Guide",
     level: "Level",
     totalXp: "Total XP",
     activeQuests: "Active quests",
@@ -183,26 +191,31 @@ const copy = {
     questLogEyebrow: "QUEST LOG",
     chainEyebrow: "NO RESET",
     rewardsEyebrow: "REWARDS",
-    helpEyebrow: "HOW IT WORKS",
+    helpEyebrow: "GAME RULES",
     quickSteps: "Quick steps",
     quickStepsLead: "Check off active quest steps directly from your home page.",
     noQuickSteps: "There are no active quest steps to check off yet.",
     openAllQuests: "Open all quests",
     repeatingGoals: "Repeating actions",
     repeatingGoalsLead: "Anything you want to do regularly can be checked off in one tap.",
-    manageChains: "Manage streaks",
+    manageChains: "Manage chains",
     noRepeatingGoals: "No repeating actions yet.",
-    chainTitle: "Streaks",
-    chainLead: "Each streak keeps its completion history. Missing a day never resets anything — just continue.",
+    chainTitle: "Chains",
+    chainLead: "Each completion adds a new link. A missed day appears as a break, but your chain never resets — add the next link whenever you continue.",
     chainPlaceholder: "For example: practice Polish every day",
-    startChain: "Add streak",
-    addAnotherChain: "Add streak",
+    startChain: "Start chain",
+    addAnotherChain: "Add chain",
     linkToday: "Mark today",
     linkedToday: "Marked today",
-    links: "completed",
-    finishChain: "Finish streak",
-    chainEmpty: "No active streaks yet. Add your first repeating action.",
+    links: "links",
+    finishChain: "Finish chain",
+    chainEmpty: "No active chains yet. Start the first one with a repeating action.",
     lastDays: "Last 7 days",
+    chainStart: "Start",
+    chainBreak: "Break",
+    chainToday: "Today",
+    chainBeforeStart: "Before start",
+    chainBuilt: "Link added",
     rewardTitle: "Rewards for the path",
     rewardLead: "A reward unlocks at total XP and never spends your progress.",
     rewardPlaceholder: "For example: book a massage",
@@ -221,9 +234,9 @@ const copy = {
     xpGuide: "XP system",
     xpGuideText: "Reward the difficulty of the action, not only the final result.",
     noPunishment: "No punishment for a missed day",
-    noPunishmentText: "A streak keeps your completion history, but missing a day never resets progress to zero.",
-    helpTitle: "Help",
-    helpLead: "A short guide to QuestFrame mechanics without cluttering the home page.",
+    noPunishmentText: "A missed day appears as a break between links, but the chain you already built remains and the count never resets.",
+    helpTitle: "Player Guide",
+    helpLead: "QuestFrame rules and mechanics in one place so the home screen stays light.",
     xpHelpTitle: "How XP works",
     xpRegularHelp: "Regular step",
     xpPromiseHelp: "Kept a promise to myself",
@@ -234,8 +247,10 @@ const copy = {
     rewardHelpTitle: "Rewards",
     rewardHelpText: "Rewards unlock from total XP. Claiming one never spends XP or lowers your level.",
     contactsEyebrow: "CONTACTS",
-    contactsTitle: "Author contacts",
-    contactsLead: "Questions, ideas and bug reports can be sent through my public profiles.",
+    contactsTitle: "Contact the author",
+    emailContact: "Email",
+    telegramContact: "Telegram",
+    contactsLead: "Send questions, ideas and bug reports to me directly.",
     archive: "Archive",
     archived: "Quest archived.",
     active: "Active",
@@ -571,19 +586,38 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     router.refresh();
   }
 
-  function lastSevenDaysForChain(chainId: string) {
-    const days: { iso: string; label: string; hit: boolean }[] = [];
-    for (let offset = 6; offset >= 0; offset -= 1) {
-      const date = new Date();
-      date.setDate(date.getDate() - offset);
+  function chainWindow(chain: Chain) {
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+
+    const createdDate = new Date(chain.created_at);
+    createdDate.setHours(0, 0, 0, 0);
+
+    const sevenDayWindow = new Date(todayDate);
+    sevenDayWindow.setDate(sevenDayWindow.getDate() - 6);
+
+    const windowStart = createdDate.getTime() > sevenDayWindow.getTime() ? createdDate : sevenDayWindow;
+    const truncated = createdDate.getTime() < sevenDayWindow.getTime();
+    const days: { iso: string; label: string; dayNumber: string; state: ChainDayState }[] = [];
+
+    for (const cursor = new Date(windowStart); cursor.getTime() <= todayDate.getTime(); cursor.setDate(cursor.getDate() + 1)) {
+      const date = new Date(cursor);
       const iso = isoDateLocal(date);
+      const hit = checkins.some((item) => item.chain_id === chain.id && item.checkin_date === iso);
+      const state: ChainDayState = hit ? "hit" : iso === today ? "today" : "break";
       days.push({
         iso,
         label: new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-US", { weekday: "short" }).format(date).replace(".", ""),
-        hit: checkins.some((item) => item.chain_id === chainId && item.checkin_date === iso)
+        dayNumber: new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-US", { day: "numeric" }).format(date),
+        state
       });
     }
-    return days;
+
+    return {
+      days,
+      truncated,
+      started: new Intl.DateTimeFormat(lang === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "short" }).format(createdDate)
+    };
   }
 
   if (loading) {
@@ -789,34 +823,50 @@ export default function Dashboard({ userId, email }: DashboardProps) {
         {tab === "chain" && (
           <div className="page-stack narrow-stack">
             <div className="section-heading"><div><p className="eyebrow">{t.chainEyebrow}</p><h1>{t.chainTitle}</h1><p>{t.chainLead}</p></div></div>
-            <section className="create-panel series-create">
-              <form className="series-create-form" onSubmit={createChain}>
+            <section className="create-panel chain-create-panel">
+              <form className="chain-create-form" onSubmit={createChain}>
                 <input name="title" required maxLength={180} placeholder={t.chainPlaceholder} />
                 <button className="button button-primary" disabled={working} type="submit">{activeChains.length ? t.addAnotherChain : t.startChain}</button>
               </form>
             </section>
 
             {activeChains.length === 0 ? <div className="empty-card"><p>{t.chainEmpty}</p></div> : (
-              <div className="series-list">
+              <div className="chain-list">
                 {activeChains.map((chain) => {
                   const checked = isChainCheckedToday(chain.id);
                   const links = chainLinks(chain.id);
+                  const history = chainWindow(chain);
                   return (
-                    <article className={checked ? "series-row checked" : "series-row"} key={chain.id}>
-                      <div className="series-copy">
-                        <div className="series-title-row">
-                          <h2>{chain.title}</h2>
-                          <span className="series-count">{links} {t.links}</span>
+                    <article className={checked ? "chain-row checked" : "chain-row"} key={chain.id}>
+                      <div className="chain-row-main">
+                        <div className="chain-title-row">
+                          <div><h2>{chain.title}</h2><span>{links} {t.links}</span></div>
+                          <span className="chain-start-date">{t.chainStart}: {history.started}</span>
                         </div>
-                        <div className="series-week" aria-label={t.lastDays}>
-                          {lastSevenDaysForChain(chain.id).map((day) => (
-                            <div key={day.iso} className={day.hit ? "series-day hit" : "series-day"} title={day.iso}>
-                              <span>{day.label}</span><b>{day.hit ? "✓" : "·"}</b>
+                        <div className="chain-track-scroll" aria-label={t.lastDays}>
+                          <div className="chain-track">
+                            <div className="chain-origin" title={`${t.chainStart}: ${history.started}`}>
+                              <span className="chain-origin-symbol" aria-hidden="true"><i /></span>
+                              <small>{t.chainStart}</small>
                             </div>
-                          ))}
+                            {history.truncated && <div className="chain-history-gap" aria-hidden="true"><span>•••</span></div>}
+                            {history.days.map((day, index) => {
+                              const stateLabel = day.state === "hit" ? t.chainBuilt : day.state === "break" ? t.chainBreak : t.chainToday;
+                              return (
+                                <div key={day.iso} className={`chain-day chain-day-${day.state}`} title={`${day.iso} · ${stateLabel}`}>
+                                  <span className="chain-day-label">{day.label} {day.dayNumber}</span>
+                                  <div className="chain-segment">
+                                    <span className="chain-connector" aria-hidden="true" />
+                                    <ChainLinkGlyph state={day.state} index={index} />
+                                  </div>
+                                  <small>{stateLabel}</small>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
-                      <div className="series-actions">
+                      <div className="chain-actions">
                         <button className={checked ? "button button-ghost" : "button button-secondary"} onClick={() => checkInChain(chain)} disabled={working || checked}>{checked ? t.linkedToday : t.linkToday}</button>
                         <button className="text-button danger-text" onClick={() => finishChain(chain)} disabled={working}>{t.finishChain}</button>
                       </div>
@@ -868,14 +918,20 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                   <div><strong>+10 XP</strong><span>{t.xpDelayHelp}</span></div>
                 </div>
               </article>
-              <article className="help-card"><span className="principle-number">∞</span><h2>{t.noPunishment}</h2><p>{t.noPunishmentText}</p></article>
+              <article className="help-card"><span className="principle-number">⛓</span><h2>{t.noPunishment}</h2><p>{t.noPunishmentText}</p></article>
               <article className="help-card"><span className="principle-number">◆</span><h2>{t.bossHelpTitle}</h2><p>{t.bossHelpText}</p></article>
               <article className="help-card"><span className="principle-number">☆</span><h2>{t.rewardHelpTitle}</h2><p>{t.rewardHelpText}</p></article>
               <article className="help-card contacts-card">
                 <div><p className="eyebrow">{t.contactsEyebrow}</p><h2>{t.contactsTitle}</h2><p>{t.contactsLead}</p></div>
                 <div className="contact-links">
-                  <a className="button button-secondary" href="https://github.com/bubaleh1337" target="_blank" rel="noreferrer">GitHub · bubaleh1337</a>
-                  <a className="button button-secondary" href="https://www.linkedin.com/in/ekaterina-pupykina/" target="_blank" rel="noreferrer">LinkedIn</a>
+                  <a className="contact-button" href="mailto:ekaterina.pyshkova@gmail.com">
+                    <span className="contact-icon" aria-hidden="true">✉</span>
+                    <span><small>{t.emailContact}</small><strong>ekaterina.pyshkova@gmail.com</strong></span>
+                  </a>
+                  <a className="contact-button" href="https://t.me/kemisayega" target="_blank" rel="noreferrer">
+                    <span className="contact-icon telegram-icon" aria-hidden="true">↗</span>
+                    <span><small>{t.telegramContact}</small><strong>@kemisayega</strong></span>
+                  </a>
                 </div>
               </article>
             </div>
@@ -885,11 +941,19 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
       <nav className="mobile-tabs" aria-label="Mobile navigation">
         {(["today", "quests", "chain", "rewards", "help"] as Tab[]).map((item) => (
-          <button key={item} className={tab === item ? "active" : ""} onClick={() => setTab(item)}><span>{item === "today" ? "⌂" : item === "quests" ? "◇" : item === "chain" ? "∞" : item === "rewards" ? "☆" : "?"}</span>{t[item]}</button>
+          <button key={item} className={tab === item ? "active" : ""} onClick={() => setTab(item)}><span>{item === "today" ? "⌂" : item === "quests" ? "◇" : item === "chain" ? "⛓" : item === "rewards" ? "☆" : "?"}</span>{t[item]}</button>
         ))}
       </nav>
     </main>
   );
+}
+
+function ChainLinkGlyph({ state, index }: { state: ChainDayState; index: number }) {
+  const tilt = index % 2 === 0 ? "tilt-left" : "tilt-right";
+  if (state === "break") {
+    return <span className="chain-link-glyph broken" aria-hidden="true"><i className="broken-half broken-half-a" /><i className="broken-half broken-half-b" /></span>;
+  }
+  return <span className={`chain-link-glyph ${state} ${tilt}`} aria-hidden="true"><i /></span>;
 }
 
 function QuestSummary({ quest, steps, lang, onOpen }: { quest: Quest; steps: QuestStep[]; lang: Lang; onOpen: () => void }) {

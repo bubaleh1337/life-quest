@@ -2,16 +2,16 @@
 
 QuestFrame is a calm gamified goal app: turn real-life goals into quests, break them into concrete steps and earn XP for the effort that actually moves you forward.
 
-Version: **0.3.0**
+Version: **0.4.0**
 
 ## Core loop
 
 - **Quests** — a goal becomes a quest with small concrete steps.
 - **XP** — +1 regular step, +7 hardest/scariest action, +5 kept promise, +10 action you were procrastinating on.
 - **Weekly boss** — one avoided task per week, +25 XP.
-- **Streaks / Серии** — several repeating actions can run in parallel; each one keeps a compact 7-day history and missed days never reset progress.
+- **Chains / Цепочки** — repeatable actions build visible links; missed days appear as broken links without deleting earlier progress or resetting the count.
 - **Today** — quick check-off for quest steps and repeating actions without opening their management pages.
-- **Help** — XP rules, no-reset logic, boss/reward explanations and author contacts live outside the home dashboard.
+- **Player Guide / Гид игрока** — XP rules, chain logic, boss/reward explanations and direct Email/Telegram contacts live outside the home dashboard.
 - **Rewards** — unlock personal rewards at total-XP milestones without spending XP.
 - **Levels** — global account level grows automatically from total XP.
 
@@ -25,9 +25,9 @@ The UI is deliberately restrained: no inventory, currencies, badges, avatars or 
 - Vercel-ready
 - RU / EN interface toggle
 
-## Existing 0.2.0 project → update to 0.3.0
+## Existing 0.3.0 project → update to 0.4.0
 
-Use `UPDATE_0.3.0_WINDOWS.md`. There are **no database changes** in 0.3.0, so no new Supabase SQL is required.
+Use `UPDATE_0.4.0_WINDOWS.md`. There are **no database changes** in 0.4.0, so no new Supabase SQL is required.
 
 If updating directly from 0.1.0, first make sure the existing 0.2.0 migration `supabase/migrations/202610070002_multi_chains_and_xp.sql` has already been applied.
 
