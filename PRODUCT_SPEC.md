@@ -1,4 +1,4 @@
-# Life Quest — product spec 0.11.0
+# Life Quest — product spec 1.0.0
 
 ## Product promise
 
@@ -71,7 +71,7 @@ Selecting a preset fills the XP field. Selecting the same preset again clears it
 ## Authentication
 
 - Email magic-link authentication remains available.
-- Google OAuth is supported by the client and becomes visible when `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true`.
+- Google OAuth is enabled in production alongside email magic-link authentication.
 - OAuth and magic links use `/auth/callback` for the PKCE session exchange.
 - Production redirect behavior is based on the stable `NEXT_PUBLIC_APP_URL`.
 

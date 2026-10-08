@@ -1,4 +1,4 @@
-# Life Quest 0.11.0 — Windows 11 setup
+# Life Quest 1.0.0 — Windows 11 setup
 
 These instructions assume PowerShell and one Supabase project.
 
@@ -47,7 +47,7 @@ NEXT_PUBLIC_APP_NAME=Life Quest
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=false
+NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true
 SUPABASE_SECRET_KEY=YOUR_SECRET_KEY
 ```
 
@@ -108,8 +108,8 @@ Add:
 NEXT_PUBLIC_APP_NAME=Life Quest
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
-NEXT_PUBLIC_APP_URL=https://YOUR-STABLE-PRODUCTION-DOMAIN
-NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=false
+NEXT_PUBLIC_APP_URL=https://lifequest-game.vercel.app
+NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true
 SUPABASE_SECRET_KEY=...
 ```
 
@@ -127,11 +127,11 @@ Supabase → **Authentication → URL Configuration**:
 
 ```text
 Site URL:
-https://YOUR-STABLE-PRODUCTION-DOMAIN
+https://lifequest-game.vercel.app
 
 Redirect URLs:
 http://localhost:3000/auth/callback
-https://YOUR-STABLE-PRODUCTION-DOMAIN/auth/callback
+https://lifequest-game.vercel.app/auth/callback
 ```
 
 ## 9. Google sign-in
@@ -169,9 +169,8 @@ Use a disposable account, not your main account.
 ```powershell
 git status
 git add .
-git commit -m "feat: prepare Life Quest for public launch"
+git commit -m "release: Life Quest 1.0.0"
 git push
 npx vercel --prod
 ```
 
-See `LAUNCH_1.0_CHECKLIST.md` for the final repository/domain rename and release checklist.

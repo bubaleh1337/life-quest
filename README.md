@@ -1,29 +1,37 @@
 # Life Quest
 
-Life Quest is a bilingual gamified goal app that turns real-life goals into quests, concrete actions, XP, levels, weekly bosses, repeatable chains and personal rewards.
+Life Quest is a bilingual gamified goal tracker that turns real-life goals into quests, concrete actions, XP, levels, weekly bosses, repeatable chains and personal rewards.
 
-**Version: 0.11.0 — Portfolio & Launch Readiness**
+**Stable release: 1.0.0**
 
-## What makes it portfolio-ready
+- Production: https://lifequest-game.vercel.app
+- Interactive demo: https://lifequest-game.vercel.app/demo
 
-- Real authentication with Supabase Auth and PostgreSQL persistence.
-- Row Level Security for every user-owned application table.
-- RU/EN interface and responsive desktop/mobile UI.
-- Interactive **Demo Mode** at `/demo` with realistic prefilled data and no registration.
-- XP, levels, weekly bosses, non-resetting chains and rewards.
-- Safe account UX: explicit sign-out, export, privacy page and permanent account deletion.
-- Google OAuth-ready login in addition to email magic links.
-- Playwright smoke/E2E coverage for public launch-critical flows.
-- Production-ready Next.js/Vercel structure.
+## Product idea
 
-## Core loop
+Life Quest is built around a simple loop: **choose a quest → take a concrete action → earn XP → see progress → keep going**. Missed days do not erase earlier chain progress; they create a visible break and the user can continue from the next link.
 
-- **Quests** — turn a goal into concrete steps.
-- **XP** — +1 regular step, +5 kept promise, +7 hardest/scariest action, +10 action that had been procrastinated.
-- **Weekly boss** — one avoided task per week, +25 XP.
-- **Chains** — repeated actions create visible links; missed days create a break without erasing earlier progress.
-- **Rewards** — choose a small/regular/meaningful/big XP distance or enter custom XP.
-- **Levels** — derived automatically from lifetime completed XP.
+## Highlights
+
+- Email magic-link and Google authentication with Supabase Auth.
+- Interactive no-sign-up Demo Mode.
+- Quests with concrete steps and effort-based XP.
+- Weekly Boss (+25 XP) for one avoided high-impact task.
+- Visual chains where missed days create breaks without deleting previous links.
+- Personal rewards with preset or custom XP distance.
+- Lifetime XP levels with an evolving visual palette.
+- RU/EN responsive interface.
+- Account data export, privacy notice and permanent account deletion.
+- PostgreSQL Row Level Security for all user-owned application data.
+- Playwright launch smoke/E2E coverage.
+
+## XP model
+
+- `+1 XP` — regular step
+- `+5 XP` — kept promise
+- `+7 XP` — hardest/scariest action
+- `+10 XP` — did what had been procrastinated
+- `+25 XP` — weekly boss
 
 ## Stack
 
@@ -34,17 +42,16 @@ Life Quest is a bilingual gamified goal app that turns real-life goals into ques
 - Vercel
 - Playwright
 
-## Routes
+## Public routes
 
-- `/` — public landing
-- `/demo` — interactive no-sign-up demo
-- `/login` — email magic link / optional Google OAuth
-- `/app` — authenticated application
-- `/privacy` — public privacy notice
-- `/api/account/export` — authenticated JSON export
-- `/api/account/delete` — authenticated permanent account deletion
+- `/` — landing page
+- `/demo` — interactive demo without registration
+- `/login` — email magic link / Google OAuth
+- `/privacy` — privacy notice
 
-## Environment
+Authenticated application routes and account APIs are protected separately.
+
+## Local setup
 
 Copy `.env.example` to `.env.local` and fill the values.
 
@@ -53,37 +60,29 @@ NEXT_PUBLIC_APP_NAME=Life Quest
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=false
+NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true
 SUPABASE_SECRET_KEY=YOUR_SECRET_KEY
 ```
 
-`SUPABASE_SECRET_KEY` is **server-only** and must never use a `NEXT_PUBLIC_` prefix.
-
-## Quality checks
+`SUPABASE_SECRET_KEY` is server-only. Never expose it with a `NEXT_PUBLIC_` prefix or commit it to Git.
 
 ```powershell
+npm install
 npm run typecheck
 npm run lint
 npm run build
+npx playwright install chromium
 npm run test:e2e
 ```
 
-The first Playwright run may require:
+## Security
 
-```powershell
-npx playwright install chromium
-```
+- RLS scopes application data to the authenticated owner.
+- Relationship checks prevent cross-owner quest/step and chain/check-in references.
+- The account-deletion endpoint authenticates the current user before using a server-only Supabase secret.
+- The `handle_new_user()` trigger helper is not directly executable by public API roles.
+- Demo Mode is isolated from Supabase writes.
 
-## Security model
+## Repository
 
-- Application data is scoped by `auth.uid()` through RLS.
-- Cross-owner quest/step and chain/check-in relationships are additionally guarded by database triggers.
-- Account deletion is executed only on the server using the Supabase secret key after authenticating the current user.
-- The browser never receives the secret key.
-- Demo Mode uses local in-memory sample data and never writes to Supabase.
-
-## Upgrade
-
-For an existing 0.10.1 installation, follow `UPDATE_0.11.0_WINDOWS.md`.
-
-No database migration is required for 0.11.0.
+https://github.com/bubaleh1337/life-quest

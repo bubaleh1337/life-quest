@@ -1,3 +1,14 @@
+## 1.0.0
+
+- First stable public release of Life Quest.
+- Google OAuth enabled alongside email magic-link authentication.
+- Public interactive Demo Mode, privacy page, account export and permanent account deletion.
+- Production database hardened: direct public execution of `handle_new_user()` revoked, RLS policies optimized and ownership indexes added.
+- Production brand and URLs finalized for Life Quest.
+- Added public SEO metadata, robots rules and sitemap.
+- Clarified landing-page chain copy from “не обнуляется” to “прогресс сохраняется”.
+- Portfolio and README documentation finalized with production/demo/repository links.
+
 ## 0.11.1
 
 - Fixed the account dropdown stacking context so it always renders above dashboard cards.

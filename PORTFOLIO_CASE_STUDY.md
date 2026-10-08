@@ -24,7 +24,7 @@ Traditional habit trackers often punish missed days and goal apps can become pla
 - Row Level Security on all application tables
 - Server-side account deletion using a protected service-role key
 - JSON account export
-- Email magic links + Google OAuth-ready flow
+- Email magic links + Google OAuth sign-in
 - Responsive RU/EN interface
 - Vercel deployment
 - Playwright launch smoke tests
@@ -39,9 +39,9 @@ Traditional habit trackers often punish missed days and goal apps can become pla
 
 ## Portfolio links to include
 
-- Production: replace with the final stable Life Quest URL
-- Demo: `/demo`
-- GitHub: replace with `bubaleh1337/life-quest` after repository rename
+- Production: https://lifequest-game.vercel.app
+- Demo: https://lifequest-game.vercel.app/demo
+- GitHub: https://github.com/bubaleh1337/life-quest
 
 ## Suggested portfolio headline
 
