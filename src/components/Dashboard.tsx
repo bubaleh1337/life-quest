@@ -1399,7 +1399,12 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
 
   function exportAccountData() {
     setProfileOpen(false);
-    window.location.assign("/api/account/export");
+    const link = document.createElement("a");
+    link.href = "/api/account/export";
+    link.rel = "noopener";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   }
 
   async function deleteAccount() {

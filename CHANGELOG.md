@@ -1,3 +1,8 @@
+## 1.1.1
+
+- Fixed the League E2E test to use an unambiguous accessible locator for the demo leaderboard.
+- Removed the Next.js lint warning from account export navigation while preserving the JSON download behavior.
+
 ## 1.1.0
 
 - Added the optional Life Quest League with weekly XP runs, top-10 ranking and a personal rank card.
