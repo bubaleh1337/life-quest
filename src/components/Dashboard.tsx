@@ -125,7 +125,7 @@ const copy = {
     leagueLeaveConfirm: "Выйти из Лиги",
     leagueLeft: "Участие в Лиге завершено. Вернуться можно в любой момент.",
     leagueRulesTitle: "Как работает Лига",
-    leagueRulesText: "Каждый понедельник счёт Лиги начинается заново. В топ попадает XP только из обычных шагов и босса недели, заработанный после вступления. Старые рейтинги удаляются сразу после выдачи золотого, серебряного и бронзового бейджей.",
+    leagueRulesText: "Каждый понедельник счёт Лиги начинается заново. В топ попадает XP только из обычных шагов и босса недели, заработанный после вступления.",
     leagueBadgeGold: "Золотой бейдж",
     leagueBadgeSilver: "Серебряный бейдж",
     leagueBadgeBronze: "Бронзовый бейдж",
@@ -186,7 +186,6 @@ const copy = {
     accountMenu: "Меню аккаунта",
     profile: "Профиль",
     profileTitle: "Профиль игрока",
-    profileLead: "Трофеи и настройки Лиги — отдельно от самого недельного забега.",
     profileClose: "Закрыть профиль",
     profileLeagueInactive: "Вступи в Лигу, чтобы выбрать публичное имя и участвовать в недельных забегах.",
     openLeague: "Открыть Лигу",
@@ -358,7 +357,7 @@ const copy = {
     leagueLeaveConfirm: "Leave League",
     leagueLeft: "You left the League. You can rejoin anytime.",
     leagueRulesTitle: "How the League works",
-    leagueRulesText: "Every Monday the League score starts fresh. Only XP from quest steps and the weekly boss earned after joining counts. Old rankings are deleted as soon as gold, silver and bronze badges are awarded.",
+    leagueRulesText: "Every Monday the League score starts fresh. Only XP from quest steps and the weekly boss earned after joining counts.",
     leagueBadgeGold: "Gold badge",
     leagueBadgeSilver: "Silver badge",
     leagueBadgeBronze: "Bronze badge",
@@ -419,7 +418,6 @@ const copy = {
     accountMenu: "Account menu",
     profile: "Profile",
     profileTitle: "Player profile",
-    profileLead: "League trophies and settings live here, separate from the weekly race itself.",
     profileClose: "Close profile",
     profileLeagueInactive: "Join the League to choose a public name and take part in weekly runs.",
     openLeague: "Open League",
@@ -1675,7 +1673,6 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
               </div>
               <button className="profile-close" type="button" aria-label={t.profileClose} title={t.profileClose} onClick={() => setProfilePanelOpen(false)}>×</button>
             </header>
-            <p className="profile-lead">{t.profileLead}</p>
 
             {leagueLoading && !leagueSnapshot ? (
               <div className="profile-loading"><div className="spinner" /><span>{t.leagueLoading}</span></div>
@@ -2069,7 +2066,6 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
-                    placeholder="XP"
                     aria-label={t.xpNeeded}
                     required
                   />

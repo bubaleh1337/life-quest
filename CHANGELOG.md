@@ -1,3 +1,10 @@
+## 1.1.4
+
+- Removed implementation-detail copy about deleting old League rankings after podium badges are awarded.
+- Removed the redundant Player Profile explanatory subtitle; the League name and trophies are self-explanatory from their sections.
+- Fixed duplicate `XP` text inside the custom reward XP input while keeping a single suffix.
+- No database changes.
+
 ## 1.1.3
 
 - Renamed the League page heading to “Недельная лига” / “Weekly League”.
