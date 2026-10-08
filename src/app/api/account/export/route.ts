@@ -8,7 +8,10 @@ const tables = [
   "weekly_bosses",
   "chains",
   "chain_checkins",
-  "rewards"
+  "rewards",
+  "league_memberships",
+  "league_weekly_scores",
+  "league_badges"
 ] as const;
 
 export async function GET() {

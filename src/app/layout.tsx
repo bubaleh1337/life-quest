@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     default: "Life Quest — turn life into a quest",
     template: "%s · Life Quest"
   },
-  description: "Turn real-life goals into quests, earn XP, build chains, beat weekly bosses and unlock personal rewards.",
+  description: "Turn real-life goals into quests, earn XP, build chains, beat weekly bosses, unlock rewards and join an optional weekly League.",
   manifest: "/manifest.webmanifest",
   alternates: { canonical: "/" },
   openGraph: {
@@ -16,12 +16,12 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "Life Quest",
     title: "Life Quest — turn life into a quest",
-    description: "A bilingual gamified goal tracker with quests, XP, chains, weekly bosses and personal rewards."
+    description: "A bilingual gamified goal tracker with quests, XP, chains, weekly bosses, personal rewards and an optional weekly League."
   },
   twitter: {
     card: "summary",
     title: "Life Quest — turn life into a quest",
-    description: "A bilingual gamified goal tracker with quests, XP, chains, weekly bosses and personal rewards."
+    description: "A bilingual gamified goal tracker with quests, XP, chains, weekly bosses, personal rewards and an optional weekly League."
   }
 };
 

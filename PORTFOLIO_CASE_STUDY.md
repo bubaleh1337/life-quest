@@ -2,7 +2,7 @@
 
 ## One-line description
 
-A bilingual gamified goal-tracking web app that turns real-life goals into quests, XP, levels, weekly bosses, non-resetting chains and personal rewards.
+A bilingual gamified goal-tracking web app that turns real-life goals into quests, XP, levels, weekly bosses, non-resetting chains, personal rewards and an optional weekly League.
 
 ## Problem
 
@@ -16,12 +16,14 @@ Traditional habit trackers often punish missed days and goal apps can become pla
 - Chains show missed days as visible breaks but never erase previous progress.
 - Rewards unlock from lifetime XP without spending it.
 - Demo Mode lets reviewers experience the product without creating an account.
+- Optional League adds weekly social motivation without resetting lifetime XP; top-three podium badges are permanent and shareable.
 
 ## Engineering
 
 - Next.js 16 / React 19 / TypeScript
 - Supabase Auth + PostgreSQL
 - Row Level Security on all application tables
+- Server-controlled League score triggers and RPC leaderboard snapshots
 - Server-side account deletion using a protected service-role key
 - JSON account export
 - Email magic links + Google OAuth sign-in
@@ -34,7 +36,7 @@ Traditional habit trackers often punish missed days and goal apps can become pla
 - explicit confirmation for irreversible actions;
 - account menu outside-click and Escape behavior;
 - magic-link resend cooldown and rate-limit handling;
-- regression coverage for demo, rewards, privacy and account-menu behavior;
+- regression coverage for demo, rewards, League opt-in, privacy and account-menu behavior;
 - `typecheck`, ESLint, production build and Playwright checks before release.
 
 ## Portfolio links to include

@@ -12,9 +12,11 @@ const copy = {
     updated: "Обновлено: 8 октября 2026",
     intro: "Life Quest хранит только данные, которые нужны для работы приложения. Мы не продаём пользовательские данные и не используем их для рекламы.",
     collectedTitle: "Какие данные хранятся",
-    collected: "Email для входа, профиль, квесты, шаги, XP-связанные действия, боссы недели, цепочки и отметки, награды и технические данные авторизации.",
+    collected: "Email для входа, профиль, квесты, шаги, XP-связанные действия, боссы недели, цепочки и отметки, награды, а при добровольном вступлении в Лигу — выбранное публичное имя, XP текущей недели и заработанные бейджи.",
     whyTitle: "Зачем они нужны",
-    why: "Чтобы авторизовать пользователя, сохранять его прогресс, показывать историю и синхронизировать данные между сессиями.",
+    why: "Чтобы авторизовать пользователя, сохранять его прогресс, показывать историю и синхронизировать данные между сессиями. Данные Лиги используются только для добровольного недельного рейтинга и выдачи бейджей.",
+    leagueTitle: "Добровольная Лига",
+    league: "Лига включается только по желанию. Другие участники видят выбранное тобой имя в Лиге, место и XP текущей недели. Email, названия квестов и другие личные данные в рейтинге не показываются. Старые недельные рейтинги удаляются после выдачи бейджей топ-3; сами бейджи сохраняются в аккаунте.",
     providersTitle: "Сервисы",
     providers: "Авторизация и база данных работают через Supabase. Приложение размещено на Vercel. Эти сервисы могут обрабатывать технические данные в соответствии со своими политиками.",
     cookiesTitle: "Cookies и локальные настройки",
@@ -31,9 +33,11 @@ const copy = {
     updated: "Updated: October 8, 2026",
     intro: "Life Quest stores only the data needed to operate the product. We do not sell user data or use it for advertising.",
     collectedTitle: "Data we store",
-    collected: "Email for sign-in, profile, quests, steps, XP-related actions, weekly bosses, chains and check-ins, rewards and technical authentication data.",
+    collected: "Email for sign-in, profile, quests, steps, XP-related actions, weekly bosses, chains and check-ins, rewards and, if you voluntarily join the League, your chosen public name, current weekly XP and earned badges.",
     whyTitle: "Why it is used",
-    why: "To authenticate the user, save progress, show history and keep data available between sessions.",
+    why: "To authenticate the user, save progress, show history and keep data available between sessions. League data is used only for the optional weekly leaderboard and badge awards.",
+    leagueTitle: "Optional League",
+    league: "The League is opt-in. Other participants can see your chosen League name, rank and current weekly XP. Your email, quest titles and other private data are never shown in the leaderboard. Old weekly rankings are deleted after top-three badges are awarded; earned badges remain in your account.",
     providersTitle: "Service providers",
     providers: "Authentication and the database are provided by Supabase. The application is hosted on Vercel. These providers may process technical data under their own policies.",
     cookiesTitle: "Cookies and local settings",
@@ -85,6 +89,7 @@ export default function PrivacyClient() {
 
         <section><h2>{t.collectedTitle}</h2><p>{t.collected}</p></section>
         <section><h2>{t.whyTitle}</h2><p>{t.why}</p></section>
+        <section><h2>{t.leagueTitle}</h2><p>{t.league}</p></section>
         <section><h2>{t.providersTitle}</h2><p>{t.providers}</p></section>
         <section><h2>{t.cookiesTitle}</h2><p>{t.cookies}</p></section>
         <section><h2>{t.controlTitle}</h2><p>{t.control}</p></section>

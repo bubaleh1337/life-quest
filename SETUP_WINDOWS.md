@@ -1,4 +1,4 @@
-# Life Quest 1.0.0 — Windows 11 setup
+# Life Quest 1.1.0 — Windows 11 setup
 
 These instructions assume PowerShell and one Supabase project.
 
@@ -19,7 +19,7 @@ Create one project. In **SQL Editor**, run:
 supabase\bootstrap\questframe_initial.sql
 ```
 
-The existing bootstrap filename is kept for upgrade compatibility; the product is branded **Life Quest**.
+The existing bootstrap filename is kept for upgrade compatibility; the product is branded **Life Quest**. For a fresh environment, also apply the SQL files in `supabase\migrations` in filename order so launch hardening and League features are present.
 
 Expected tables:
 
@@ -31,6 +31,9 @@ weekly_bosses
 chains
 chain_checkins
 rewards
+league_memberships
+league_weekly_scores
+league_badges
 ```
 
 ## 3. Local environment
@@ -169,7 +172,7 @@ Use a disposable account, not your main account.
 ```powershell
 git status
 git add .
-git commit -m "release: Life Quest 1.0.0"
+git commit -m "feat: add Life Quest weekly League"
 git push
 npx vercel --prod
 ```

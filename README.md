@@ -2,7 +2,7 @@
 
 Life Quest is a bilingual gamified goal tracker that turns real-life goals into quests, concrete actions, XP, levels, weekly bosses, repeatable chains and personal rewards.
 
-**Stable release: 1.0.0**
+**Stable release: 1.1.0**
 
 - Production: https://lifequest-game.vercel.app
 - Interactive demo: https://lifequest-game.vercel.app/demo
@@ -19,6 +19,7 @@ Life Quest is built around a simple loop: **choose a quest → take a concrete a
 - Weekly Boss (+25 XP) for one avoided high-impact task.
 - Visual chains where missed days create breaks without deleting previous links.
 - Personal rewards with preset or custom XP distance.
+- Optional weekly League with top-10 ranking, personal placement and permanent podium badges.
 - Lifetime XP levels with an evolving visual palette.
 - RU/EN responsive interface.
 - Account data export, privacy notice and permanent account deletion.
@@ -82,7 +83,13 @@ npm run test:e2e
 - The account-deletion endpoint authenticates the current user before using a server-only Supabase secret.
 - The `handle_new_user()` trigger helper is not directly executable by public API roles.
 - Demo Mode is isolated from Supabase writes.
+- League score and badge writes are server-controlled; clients cannot directly modify weekly scores or badges.
 
 ## Repository
 
 https://github.com/bubaleh1337/life-quest
+
+
+## Weekly League
+
+League participation is optional. Members choose a public nickname and earn a separate weekly XP score from quest-step and weekly-boss XP. Every Monday the League starts fresh while lifetime XP and level stay untouched. The top three earn permanent gold, silver and bronze badges. Old weekly score rows are deleted after the podium is finalized; badges remain in the winner's account and can be shared as branded Life Quest cards.

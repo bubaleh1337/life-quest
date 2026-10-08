@@ -61,3 +61,38 @@ export type Reward = {
   claimed_at: string | null;
   created_at: string;
 };
+
+
+export type LeagueEntry = {
+  rank: number;
+  nickname: string;
+  weekly_xp: number;
+  is_me: boolean;
+};
+
+export type LeagueBadge = {
+  id: string;
+  week_start: string;
+  place: 1 | 2 | 3;
+  weekly_xp: number;
+  created_at: string;
+};
+
+export type LeagueSnapshot = {
+  week_start: string;
+  week_end: string;
+  member: {
+    active: boolean;
+    nickname: string;
+    joined_at: string;
+  } | null;
+  top: LeagueEntry[];
+  me: {
+    rank: number;
+    nickname: string;
+    weekly_xp: number;
+    xp_to_next: number;
+  } | null;
+  participants: number;
+  badges: LeagueBadge[];
+};

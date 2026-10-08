@@ -42,3 +42,14 @@ test("privacy page is public", async ({ page }) => {
   await expect(page.getByText(/Supabase/)).toBeVisible();
   await expect(page.getByText(/Vercel/)).toBeVisible();
 });
+
+test("demo League is opt-in and shows weekly ranking after joining", async ({ page }) => {
+  await page.goto("/demo");
+  await page.getByRole("button", { name: /Лига|League/ }).click();
+  await expect(page.getByRole("heading", { name: /Лига Life Quest|Life Quest League/ })).toBeVisible();
+  await page.getByRole("textbox", { name: /Имя в Лиге|League name/ }).fill("Comet");
+  await page.getByRole("button", { name: /Вступить в Лигу|Join the League/ }).click();
+  await expect(page.getByText("#24")).toBeVisible();
+  await expect(page.getByText(/Luna/)).toBeVisible();
+  await expect(page.getByRole("button", { name: /Поделиться бейджем|Share badge/ }).first()).toBeVisible();
+});

@@ -1,4 +1,4 @@
-# Life Quest — product spec 1.0.0
+# Life Quest — product spec 1.1.0
 
 ## Product promise
 
@@ -109,3 +109,16 @@ Playwright launch smoke tests cover:
 - public Privacy page.
 
 Manual release regression remains required for authenticated Supabase flows, account deletion, Google OAuth and production callback URLs.
+
+
+## League
+
+- Participation is voluntary and requires a chosen public nickname.
+- The public leaderboard exposes only nickname, weekly XP and rank. It never exposes email, quest titles or private profile data.
+- The League week runs Monday to Monday on a shared UTC boundary.
+- Only XP earned from quest-step completion and the weekly boss after joining counts toward League XP.
+- Undoing a completion in the current week subtracts the matching League XP.
+- Lifetime XP and player level never reset.
+- Top 10 is shown to League participants; every participant also sees their own rank and XP needed to overtake the next place.
+- Top 3 receive permanent gold/silver/bronze badges. Weekly score rows are deleted after finalization; badges are retained.
+- Badge sharing generates a Life Quest branded image and includes the production URL.

@@ -1,3 +1,11 @@
+## 1.1.0
+
+- Added the optional Life Quest League with weekly XP runs, top-10 ranking and a personal rank card.
+- Added permanent gold, silver and bronze podium badges while old weekly score rows are deleted after finalization.
+- Added shareable badge cards with Life Quest branding and a production link.
+- League scoring is server-side and derived from quest-step and weekly-boss XP; lifetime XP and levels never reset.
+- Added League privacy controls, nickname editing, opt-out and demo coverage.
+
 ## 1.0.2
 
 - Rebalanced Demo Mode across projects, health, home, learning and leisure instead of overcorrecting into household-only examples.

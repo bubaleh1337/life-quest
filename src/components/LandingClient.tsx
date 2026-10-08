@@ -10,7 +10,7 @@ const copy = {
   ru: {
     eyebrow: "РЕАЛЬНАЯ ЖИЗНЬ, ИГРОВАЯ ЛОГИКА",
     title: "Преврати цель в квест, который хочется продолжать.",
-    lead: "Получай XP за реальные действия, побеждай одного босса недели, собирай цепочки из повторяемых действий без обнуления и открывай награды по мере прогресса.",
+    lead: "Получай XP за реальные действия, побеждай босса недели, собирай цепочки без обнуления, открывай награды и — если хочется соревнования — вступай в добровольную Лигу недельных забегов.",
     start: "Начать первый квест",
     demo: "Посмотреть демо",
     demoHint: "Без регистрации · данные не сохраняются",
@@ -29,12 +29,14 @@ const copy = {
     rule2Title: "XP за усилие",
     rule2Text: "Обычный шаг +1, обещание себе +5, самое сложное или страшное +7, победа над откладыванием +10.",
     rule3Title: "Цепочка без наказания",
-    rule3Text: "Пропуск создаёт видимый разрыв, но не стирает уже собранные звенья. Просто продолжай с нового звена."
+    rule3Text: "Пропуск создаёт видимый разрыв, но не стирает уже собранные звенья. Просто продолжай с нового звена.",
+    rule4Title: "Лига — только по желанию",
+    rule4Text: "Недельный рейтинг даёт дружескую конкуренцию, а топ-3 получает коллекционные бейджи. Личный XP никогда не сбрасывается."
   },
   en: {
     eyebrow: "REAL LIFE, GAME LOGIC",
     title: "Turn a goal into a quest you actually want to continue.",
-    lead: "Earn XP for real actions, beat one weekly boss, build chains from repeating actions without resets and unlock rewards as your progress grows.",
+    lead: "Earn XP for real actions, beat a weekly boss, build chains without resets, unlock rewards and — if competition helps — join the optional weekly League.",
     start: "Start your first quest",
     demo: "View demo",
     demoHint: "No sign-up · changes are not saved",
@@ -53,7 +55,9 @@ const copy = {
     rule2Title: "XP rewards effort",
     rule2Text: "Regular step +1, kept promise +5, hardest/scariest action +7, beat procrastination +10.",
     rule3Title: "A chain without punishment",
-    rule3Text: "A missed day creates a visible break but never erases the links you already built. Just continue with a new link."
+    rule3Text: "A missed day creates a visible break but never erases the links you already built. Just continue with a new link.",
+    rule4Title: "League only if you want it",
+    rule4Text: "A weekly leaderboard adds friendly competition and the top three earn collectible badges. Lifetime XP never resets."
   }
 } as const;
 
@@ -149,6 +153,11 @@ export default function LandingClient() {
           <span>03</span>
           <h2>{t.rule3Title}</h2>
           <p>{t.rule3Text}</p>
+        </article>
+        <article>
+          <span>04</span>
+          <h2>{t.rule4Title}</h2>
+          <p>{t.rule4Text}</p>
         </article>
       </section>
     </main>

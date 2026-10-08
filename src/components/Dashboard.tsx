@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/browser";
 import { BOSS_XP, getLevelPalette, getLevelProgress, isoDateLocal, startOfWeekLocal, XP_OPTIONS } from "@/lib/game";
 import BrandLockup from "@/components/Brand";
-import { createDemoData } from "@/lib/demo-data";
-import type { Chain, ChainCheckin, Quest, QuestStep, Reward, WeeklyBoss } from "@/lib/types";
+import { createDemoData, createDemoLeagueSnapshot } from "@/lib/demo-data";
+import type { Chain, ChainCheckin, LeagueBadge, LeagueEntry, LeagueSnapshot, Quest, QuestStep, Reward, WeeklyBoss } from "@/lib/types";
 import { playUiSound } from "@/lib/ui-sound";
 
 type Lang = "ru" | "en";
-type Tab = "today" | "quests" | "chain" | "rewards" | "help";
+type Tab = "today" | "quests" | "chain" | "rewards" | "league" | "help";
 type ChainDayState = "hit" | "break" | "today";
 
 type ConfirmAction = {
@@ -33,6 +33,7 @@ const copy = {
     quests: "Квесты",
     chain: "Цепочки",
     rewards: "Награды",
+    league: "Лига",
     help: "Гид игрока",
     helpShort: "Гид",
     dashboardEyebrow: "ТВОЯ ИГРОВАЯ ПАНЕЛЬ",
@@ -88,6 +89,47 @@ const copy = {
     questLogEyebrow: "ЖУРНАЛ КВЕСТОВ",
     chainEyebrow: "БЕЗ ОБНУЛЕНИЯ",
     rewardsEyebrow: "НАГРАДЫ",
+    leagueEyebrow: "ДРУЖЕСКОЕ СОРЕВНОВАНИЕ",
+    leagueTitle: "Лига Life Quest",
+    leagueLead: "Недельный забег для тех, кого заряжает лёгкая конкуренция. Личный XP и уровень никогда не сбрасываются.",
+    leagueJoinTitle: "Хочешь немного игровой мотивации?",
+    leagueJoinText: "Вступление добровольное. В Лиге видны только выбранное имя и XP текущей недели — без email, квестов и других личных данных.",
+    leagueNickname: "Имя в Лиге",
+    leagueNicknamePlaceholder: "Например: Luna",
+    leagueJoin: "Вступить в Лигу ✦",
+    leagueJoinNote: "Счёт Лиги начнётся с XP, заработанного после вступления.",
+    leagueWeekRun: "Забег недели",
+    leagueUntilReset: "до нового забега",
+    leagueParticipants: "участников",
+    leagueTop: "Топ-10 недели",
+    leaguePodiumTitle: "Пьедестал недели",
+    leagueTrophiesEyebrow: "ТРОФЕИ",
+    leagueProfileEyebrow: "ПРОФИЛЬ ЛИГИ",
+    leagueYourPlace: "Твоё место",
+    leagueWeekXp: "XP недели",
+    leagueToNext: "до следующего места",
+    leagueFirst: "Ты на вершине ✦",
+    leagueNoXp: "Заработай первый XP этой недели — и начни подъём по Лиге.",
+    leaguePodiumEmpty: "Пока никто не заработал XP. Можно стать первым.",
+    leagueBadges: "Твои трофеи",
+    leagueBadgesLead: "Бейджи за 1–3 место остаются навсегда, даже когда недельный рейтинг очищается.",
+    leagueNoBadges: "Первый трофей ещё впереди.",
+    leagueShare: "Поделиться бейджем",
+    leagueShareText: "Мой результат в Лиге Life Quest",
+    leagueShareCopied: "Карточка бейджа сохранена, а ссылка на Life Quest скопирована.",
+    leagueNicknameSaved: "Имя в Лиге обновлено.",
+    leagueSaveName: "Сохранить имя",
+    leagueLeave: "Выйти из Лиги",
+    leagueLeaveTitle: "Выйти из Лиги?",
+    leagueLeaveText: "Ты перестанешь участвовать в текущем рейтинге и новых забегах. Личный XP, уровень и уже полученные бейджи сохранятся.",
+    leagueLeaveConfirm: "Выйти из Лиги",
+    leagueLeft: "Участие в Лиге завершено. Вернуться можно в любой момент.",
+    leagueRulesTitle: "Как работает Лига",
+    leagueRulesText: "Каждый понедельник счёт Лиги начинается заново. В топ попадает XP только из обычных шагов и босса недели, заработанный после вступления. Старые рейтинги удаляются сразу после выдачи золотого, серебряного и бронзового бейджей.",
+    leagueBadgeGold: "Золотой бейдж",
+    leagueBadgeSilver: "Серебряный бейдж",
+    leagueBadgeBronze: "Бронзовый бейдж",
+    leagueLoading: "Собираем таблицу Лиги…",
     helpEyebrow: "ПРАВИЛА ИГРЫ",
     quickSteps: "Быстрые шаги",
     quickStepsLead: "Отмечай шаги активных квестов прямо с главной страницы.",
@@ -147,7 +189,7 @@ const copy = {
     privacy: "Конфиденциальность",
     deleteAccount: "Удалить аккаунт",
     deleteAccountTitle: "Удалить аккаунт и все данные?",
-    deleteAccountText: "Будут безвозвратно удалены аккаунт, квесты, шаги, цепочки, отметки, боссы и награды. Это действие нельзя отменить.",
+    deleteAccountText: "Будут безвозвратно удалены аккаунт, квесты, шаги, цепочки, отметки, боссы, награды, участие в Лиге и бейджи. Это действие нельзя отменить.",
     deleteAccountConfirm: "Удалить навсегда",
     deleteAccountFailed: "Не удалось удалить аккаунт.",
     demoMode: "Демо-режим",
@@ -218,6 +260,7 @@ const copy = {
     quests: "Quests",
     chain: "Chains",
     rewards: "Rewards",
+    league: "League",
     help: "Player Guide",
     helpShort: "Guide",
     dashboardEyebrow: "YOUR GAME BOARD",
@@ -273,6 +316,47 @@ const copy = {
     questLogEyebrow: "QUEST LOG",
     chainEyebrow: "NO RESET",
     rewardsEyebrow: "REWARDS",
+    leagueEyebrow: "FRIENDLY COMPETITION",
+    leagueTitle: "Life Quest League",
+    leagueLead: "A weekly run for people who enjoy a little friendly competition. Your lifetime XP and level never reset.",
+    leagueJoinTitle: "Want an extra game-like push?",
+    leagueJoinText: "Joining is optional. The League shows only your chosen name and this week's XP — never your email, quests or other private data.",
+    leagueNickname: "League name",
+    leagueNicknamePlaceholder: "For example: Luna",
+    leagueJoin: "Join the League ✦",
+    leagueJoinNote: "Your League score starts with XP earned after you join.",
+    leagueWeekRun: "Weekly run",
+    leagueUntilReset: "until the next run",
+    leagueParticipants: "players",
+    leagueTop: "Weekly top 10",
+    leaguePodiumTitle: "Weekly podium",
+    leagueTrophiesEyebrow: "TROPHIES",
+    leagueProfileEyebrow: "LEAGUE PROFILE",
+    leagueYourPlace: "Your place",
+    leagueWeekXp: "Weekly XP",
+    leagueToNext: "to the next place",
+    leagueFirst: "You're on top ✦",
+    leagueNoXp: "Earn your first XP this week and start climbing the League.",
+    leaguePodiumEmpty: "No XP yet. You can be the first.",
+    leagueBadges: "Your trophies",
+    leagueBadgesLead: "Badges for 1st–3rd place stay forever even after the weekly leaderboard is cleared.",
+    leagueNoBadges: "Your first trophy is still ahead.",
+    leagueShare: "Share badge",
+    leagueShareText: "My result in the Life Quest League",
+    leagueShareCopied: "Badge card saved and the Life Quest link copied.",
+    leagueNicknameSaved: "League name updated.",
+    leagueSaveName: "Save name",
+    leagueLeave: "Leave League",
+    leagueLeaveTitle: "Leave the League?",
+    leagueLeaveText: "You'll stop appearing in the current ranking and future runs. Lifetime XP, level and earned badges stay yours.",
+    leagueLeaveConfirm: "Leave League",
+    leagueLeft: "You left the League. You can rejoin anytime.",
+    leagueRulesTitle: "How the League works",
+    leagueRulesText: "Every Monday the League score starts fresh. Only XP from quest steps and the weekly boss earned after joining counts. Old rankings are deleted as soon as gold, silver and bronze badges are awarded.",
+    leagueBadgeGold: "Gold badge",
+    leagueBadgeSilver: "Silver badge",
+    leagueBadgeBronze: "Bronze badge",
+    leagueLoading: "Building the League table…",
     helpEyebrow: "GAME RULES",
     quickSteps: "Quick steps",
     quickStepsLead: "Check off active quest steps directly from your home page.",
@@ -332,7 +416,7 @@ const copy = {
     privacy: "Privacy",
     deleteAccount: "Delete account",
     deleteAccountTitle: "Delete your account and all data?",
-    deleteAccountText: "Your account, quests, steps, chains, check-ins, bosses and rewards will be permanently deleted. This cannot be undone.",
+    deleteAccountText: "Your account, quests, steps, chains, check-ins, bosses, rewards, League participation and badges will be permanently deleted. This cannot be undone.",
     deleteAccountConfirm: "Delete forever",
     deleteAccountFailed: "Could not delete the account.",
     demoMode: "Demo mode",
@@ -407,6 +491,28 @@ const xpLabelKey: Record<string, "xpStep" | "xpHard" | "xpPromise" | "xpProcrast
   procrastination: "xpProcrastination"
 };
 
+function leaguePlaceMark(place: number) {
+  return place === 1 ? "✦" : place === 2 ? "◆" : "▲";
+}
+
+function formatLeagueWeek(weekStart: string, lang: Lang) {
+  const start = new Date(`${weekStart}T00:00:00Z`);
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 6);
+  const locale = lang === "ru" ? "ru-RU" : "en-US";
+  const startText = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone: "UTC" }).format(start);
+  const endText = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", timeZone: "UTC" }).format(end);
+  return `${startText} — ${endText}`;
+}
+
+function leagueCountdown(weekEnd: string, lang: Lang) {
+  const end = new Date(`${weekEnd}T00:00:00Z`).getTime();
+  const diff = Math.max(0, end - new Date().getTime());
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  return lang === "ru" ? `${days} д ${hours} ч` : `${days}d ${hours}h`;
+}
+
 export default function Dashboard({ userId, email, demo = false }: DashboardProps) {
   const router = useRouter();
   const supabase = useMemo(() => createClient({ allowMissing: demo }), [demo]);
@@ -435,6 +541,9 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
   const [chains, setChains] = useState<Chain[]>([]);
   const [checkins, setCheckins] = useState<ChainCheckin[]>([]);
   const [rewards, setRewards] = useState<Reward[]>([]);
+  const [leagueSnapshot, setLeagueSnapshot] = useState<LeagueSnapshot | null>(null);
+  const [leagueLoading, setLeagueLoading] = useState(false);
+  const [leagueNickname, setLeagueNickname] = useState("");
 
   const t = copy[lang];
 
@@ -554,6 +663,32 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
     return () => window.clearTimeout(timer);
   }, [loadData]);
 
+  const loadLeague = useCallback(async () => {
+    setLeagueLoading(true);
+    try {
+      if (demo) {
+        setLeagueSnapshot((current) => current ?? createDemoLeagueSnapshot(false));
+        return;
+      }
+      const { data, error } = await supabase.rpc("league_snapshot");
+      if (error) {
+        setNotice(`${t.error} ${error.message}`);
+        return;
+      }
+      const snapshot = data as LeagueSnapshot;
+      setLeagueSnapshot(snapshot);
+      if (snapshot.member?.nickname) setLeagueNickname(snapshot.member.nickname);
+    } finally {
+      setLeagueLoading(false);
+    }
+  }, [demo, supabase, t.error]);
+
+  useEffect(() => {
+    if (tab !== "league") return;
+    const timer = window.setTimeout(() => { void loadLeague(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [tab, loadLeague]);
+
   const weekStart = isoDateLocal(startOfWeekLocal());
   const currentBoss = bosses.find((boss) => boss.week_start === weekStart) ?? null;
   const today = isoDateLocal(new Date());
@@ -587,6 +722,10 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
 
   const visibleQuests = questFilter === "active" ? activeQuests : questFilter === "completed" ? completedQuests : archivedQuests;
   const emptyQuestFilterMessage = questFilter === "active" ? t.noQuests : questFilter === "completed" ? t.noFinished : t.noArchived;
+  const leagueTop = leagueSnapshot?.top ?? [];
+  const leaguePodium = [2, 1, 3]
+    .map((rank) => leagueTop.find((entry) => entry.rank === rank && entry.weekly_xp > 0))
+    .filter((entry): entry is LeagueEntry => Boolean(entry));
 
   function flash(message: string) {
     setNotice(message);
@@ -626,6 +765,169 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
     } finally {
       setWorking(false);
     }
+  }
+
+  async function joinLeague(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const nickname = leagueNickname.trim();
+    if (nickname.length < 2 || nickname.length > 24) return;
+
+    setWorking(true);
+    try {
+      if (demo) {
+        setLeagueSnapshot(createDemoLeagueSnapshot(true, nickname));
+        playUiSound("reward", soundEnabled);
+        flash(t.saved);
+        return;
+      }
+      const { error } = await supabase.rpc("league_join", { p_nickname: nickname });
+      if (error) {
+        flash(`${t.error} ${error.message}`);
+        return;
+      }
+      playUiSound("reward", soundEnabled);
+      await loadLeague();
+      flash(t.saved);
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  async function saveLeagueNickname() {
+    const nickname = leagueNickname.trim();
+    if (nickname.length < 2 || nickname.length > 24) return;
+    setWorking(true);
+    try {
+      if (demo) {
+        setLeagueSnapshot((current) => current ? {
+          ...current,
+          member: current.member ? { ...current.member, nickname } : current.member,
+          me: current.me ? { ...current.me, nickname } : current.me
+        } : current);
+        flash(t.leagueNicknameSaved);
+        return;
+      }
+      const { error } = await supabase.rpc("league_update_nickname", { p_nickname: nickname });
+      if (error) {
+        flash(`${t.error} ${error.message}`);
+        return;
+      }
+      await loadLeague();
+      flash(t.leagueNicknameSaved);
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  async function leaveLeague() {
+    setWorking(true);
+    try {
+      if (demo) {
+        setLeagueSnapshot(createDemoLeagueSnapshot(false));
+        setLeagueNickname("");
+        flash(t.leagueLeft);
+        return;
+      }
+      const { error } = await supabase.rpc("league_leave");
+      if (error) {
+        flash(`${t.error} ${error.message}`);
+        return;
+      }
+      await loadLeague();
+      flash(t.leagueLeft);
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  function requestLeaveLeague() {
+    askForConfirmation({
+      title: t.leagueLeaveTitle,
+      message: t.leagueLeaveText,
+      confirmLabel: t.leagueLeaveConfirm,
+      danger: true,
+      action: leaveLeague
+    });
+  }
+
+  async function shareLeagueBadge(badge: LeagueBadge) {
+    const placeLabel = badge.place === 1
+      ? (lang === "ru" ? "1 МЕСТО" : "1ST PLACE")
+      : badge.place === 2
+        ? (lang === "ru" ? "2 МЕСТО" : "2ND PLACE")
+        : (lang === "ru" ? "3 МЕСТО" : "3RD PLACE");
+    const url = "https://lifequest-game.vercel.app";
+    const shareText = `${t.leagueShareText}: ${placeLabel} · ${badge.weekly_xp} XP ✦ ${url}`;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    const gradient = context.createLinearGradient(0, 0, 1080, 1080);
+    gradient.addColorStop(0, "#f8e8dc");
+    gradient.addColorStop(0.48, badge.place === 1 ? "#f7dfad" : badge.place === 2 ? "#e6e8ef" : "#e7c3ac");
+    gradient.addColorStop(1, "#d9e6f4");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, 1080, 1080);
+
+    context.fillStyle = "rgba(255,255,255,.82)";
+    context.beginPath();
+    context.roundRect(90, 90, 900, 900, 64);
+    context.fill();
+
+    context.textAlign = "center";
+    context.fillStyle = "#7b3b5f";
+    context.font = "700 42px Arial";
+    context.fillText("LIFE QUEST · LEAGUE", 540, 210);
+
+    context.font = "700 150px Arial";
+    context.fillStyle = badge.place === 1 ? "#c99738" : badge.place === 2 ? "#8790a0" : "#b77b5f";
+    context.fillText(leaguePlaceMark(badge.place), 540, 400);
+
+    context.fillStyle = "#231b20";
+    context.font = "900 104px Arial";
+    context.fillText(placeLabel, 540, 545);
+    context.fillStyle = "#7b3b5f";
+    context.font = "800 70px Arial";
+    context.fillText(`${badge.weekly_xp} XP`, 540, 650);
+
+    context.fillStyle = "#231b20";
+    context.font = "700 40px Arial";
+    context.fillText(leagueSnapshot?.member?.nickname ?? "Life Quest player", 540, 730);
+    context.fillStyle = "#756c71";
+    context.font = "500 34px Arial";
+    context.fillText(formatLeagueWeek(badge.week_start, lang), 540, 790);
+    context.fillStyle = "#231b20";
+    context.font = "700 34px Arial";
+    context.fillText("lifequest-game.vercel.app", 540, 900);
+
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) return;
+    const file = new File([blob], `life-quest-league-${badge.week_start}.png`, { type: "image/png" });
+
+    try {
+      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+        await navigator.share({ title: "Life Quest League", text: shareText, url, files: [file] });
+        return;
+      }
+      if (navigator.share) {
+        await navigator.share({ title: "Life Quest League", text: shareText, url });
+        return;
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+    }
+
+    try { await navigator.clipboard.writeText(shareText); } catch { /* optional fallback */ }
+    const imageUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = imageUrl;
+    anchor.download = file.name;
+    anchor.click();
+    window.setTimeout(() => URL.revokeObjectURL(imageUrl), 1000);
+    flash(t.leagueShareCopied);
   }
 
   async function createQuest(event: FormEvent<HTMLFormElement>) {
@@ -1176,7 +1478,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
           <BrandLockup compact />
         </button>
         <nav className="desktop-tabs" aria-label="Main navigation">
-          {(["today", "quests", "chain", "rewards", "help"] as Tab[]).map((item) => (
+          {(["today", "quests", "chain", "rewards", "league", "help"] as Tab[]).map((item) => (
             <button
               key={item}
               type="button"
@@ -1599,6 +1901,151 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
           </div>
         )}
 
+        {tab === "league" && (
+          <div className="page-stack narrow-stack league-page">
+            <div className="section-heading league-heading">
+              <div>
+                <p className="eyebrow">{t.leagueEyebrow}</p>
+                <h1>{t.leagueTitle}</h1>
+                <p>{t.leagueLead}</p>
+              </div>
+              <span className="league-orbit" aria-hidden="true"><i>✦</i><i>◆</i><i>✧</i></span>
+            </div>
+
+            {leagueLoading && !leagueSnapshot ? (
+              <div className="empty-card league-loading"><div className="spinner" /><p>{t.leagueLoading}</p></div>
+            ) : !leagueSnapshot?.member?.active ? (
+              <section className="league-join-card">
+                <div className="league-join-visual" aria-hidden="true">
+                  <span className="league-medal league-medal-small silver">2</span>
+                  <span className="league-medal league-medal-hero gold">1</span>
+                  <span className="league-medal league-medal-small bronze">3</span>
+                  <i>✦</i><i>✧</i>
+                </div>
+                <div className="league-join-copy">
+                  <p className="eyebrow">{t.leagueWeekRun}</p>
+                  <h2>{t.leagueJoinTitle}</h2>
+                  <p>{t.leagueJoinText}</p>
+                  <form className="league-join-form" onSubmit={joinLeague}>
+                    <label>
+                      <span>{t.leagueNickname}</span>
+                      <input
+                        value={leagueNickname}
+                        onChange={(event) => setLeagueNickname(event.target.value.slice(0, 24))}
+                        placeholder={t.leagueNicknamePlaceholder}
+                        minLength={2}
+                        maxLength={24}
+                        required
+                      />
+                    </label>
+                    <button className="button button-primary league-join-button" type="submit" disabled={working || leagueNickname.trim().length < 2}>{t.leagueJoin}</button>
+                  </form>
+                  <small className="league-note">{t.leagueJoinNote}</small>
+                </div>
+              </section>
+            ) : (
+              <>
+                <section className="league-week-card">
+                  <div>
+                    <p className="eyebrow">{t.leagueWeekRun}</p>
+                    <h2>{formatLeagueWeek(leagueSnapshot.week_start, lang)}</h2>
+                  </div>
+                  <div className="league-week-meta">
+                    <span><strong>{leagueCountdown(leagueSnapshot.week_end, lang)}</strong>{t.leagueUntilReset}</span>
+                    <span><strong>{leagueSnapshot.participants}</strong>{t.leagueParticipants}</span>
+                  </div>
+                </section>
+
+                <section className="league-podium-section">
+                  <div className="subsection-heading">
+                    <div><p className="eyebrow">TOP 3</p><h2>{t.leaguePodiumTitle}</h2></div>
+                    <span className="league-season-chip">✦</span>
+                  </div>
+                  {leaguePodium.length === 0 ? (
+                    <div className="empty-card"><p>{t.leaguePodiumEmpty}</p></div>
+                  ) : (
+                    <div className="league-podium">
+                      {leaguePodium.map((entry) => (
+                        <article key={`${entry.rank}-${entry.nickname}`} className={`league-podium-card place-${entry.rank}${entry.is_me ? " is-me" : ""}`}>
+                          <div className={`league-medal ${entry.rank === 1 ? "gold" : entry.rank === 2 ? "silver" : "bronze"}`}>
+                            <span>{leaguePlaceMark(entry.rank)}</span>
+                            <strong>{entry.rank}</strong>
+                          </div>
+                          <h3>{entry.nickname}</h3>
+                          <strong className="league-xp">{entry.weekly_xp} XP</strong>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                <section className="league-board-card">
+                  <div className="league-board-head"><h2>{t.leagueTop}</h2><span>{leagueSnapshot.participants} {t.leagueParticipants}</span></div>
+                  <div className="league-board-list">
+                    {leagueTop.map((entry) => (
+                      <div key={`${entry.rank}-${entry.nickname}`} className={`league-board-row${entry.is_me ? " is-me" : ""}`}>
+                        <span className={`league-rank rank-${entry.rank}`}>{entry.rank <= 3 ? leaguePlaceMark(entry.rank) : `#${entry.rank}`}</span>
+                        <strong>{entry.nickname}</strong>
+                        <span>{entry.weekly_xp} XP</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {leagueSnapshot.me && (
+                  <section className="league-me-card">
+                    <div className="league-me-rank"><span>#{leagueSnapshot.me.rank}</span><small>{t.leagueYourPlace}</small></div>
+                    <div className="league-me-main">
+                      <strong>{leagueSnapshot.me.nickname}</strong>
+                      <div><span>{t.leagueWeekXp}</span><b>{leagueSnapshot.me.weekly_xp} XP</b></div>
+                      <div className="league-me-progress">
+                        <i style={{ width: `${Math.min(100, Math.max(10, 100 - Math.min(90, leagueSnapshot.me.xp_to_next * 4)))}%` }} />
+                      </div>
+                      <p>{leagueSnapshot.me.weekly_xp === 0 ? t.leagueNoXp : leagueSnapshot.me.rank === 1 ? t.leagueFirst : `${leagueSnapshot.me.xp_to_next} XP ${t.leagueToNext}`}</p>
+                    </div>
+                  </section>
+                )}
+
+                <section className="league-trophies">
+                  <div className="subsection-heading">
+                    <div><p className="eyebrow">{t.leagueTrophiesEyebrow}</p><h2>{t.leagueBadges}</h2><p>{t.leagueBadgesLead}</p></div>
+                  </div>
+                  {leagueSnapshot.badges.length === 0 ? (
+                    <div className="empty-card"><p>{t.leagueNoBadges}</p></div>
+                  ) : (
+                    <div className="league-badge-grid">
+                      {leagueSnapshot.badges.map((badge) => {
+                        const badgeName = badge.place === 1 ? t.leagueBadgeGold : badge.place === 2 ? t.leagueBadgeSilver : t.leagueBadgeBronze;
+                        return (
+                          <article key={badge.id} className={`league-badge-card place-${badge.place}`}>
+                            <div className={`league-badge-emblem ${badge.place === 1 ? "gold" : badge.place === 2 ? "silver" : "bronze"}`}>
+                              <span>{leaguePlaceMark(badge.place)}</span><strong>{badge.place}</strong>
+                            </div>
+                            <div><p className="eyebrow">{formatLeagueWeek(badge.week_start, lang)}</p><h3>{badgeName}</h3><span>{badge.weekly_xp} XP</span></div>
+                            <button className="button button-ghost" type="button" onClick={() => void shareLeagueBadge(badge)}>{t.leagueShare}</button>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  )}
+                </section>
+
+                <section className="league-settings-card">
+                  <div>
+                    <p className="eyebrow">{t.leagueProfileEyebrow}</p>
+                    <h2>{t.leagueNickname}</h2>
+                  </div>
+                  <div className="league-name-edit">
+                    <input value={leagueNickname} onChange={(event) => setLeagueNickname(event.target.value.slice(0, 24))} minLength={2} maxLength={24} />
+                    <button className="button button-secondary" type="button" onClick={() => void saveLeagueNickname()} disabled={working || leagueNickname.trim().length < 2 || leagueNickname.trim() === (leagueSnapshot.member?.nickname ?? "")}>{t.leagueSaveName}</button>
+                  </div>
+                  <button className="button button-ghost danger-text" type="button" onClick={requestLeaveLeague} disabled={working}>{t.leagueLeave}</button>
+                </section>
+              </>
+            )}
+          </div>
+        )}
+
         {tab === "help" && (
           <div className="page-stack narrow-stack">
             <div className="section-heading"><div><p className="eyebrow">{t.helpEyebrow}</p><h1>{t.helpTitle}</h1><p>{t.helpLead}</p></div></div>
@@ -1616,6 +2063,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
               <article className="help-card"><span className="principle-number">⛓</span><h2>{t.noPunishment}</h2><p>{t.noPunishmentText}</p></article>
               <article className="help-card"><span className="principle-number">◆</span><h2>{t.bossHelpTitle}</h2><p>{t.bossHelpText}</p></article>
               <article className="help-card"><span className="principle-number">☆</span><h2>{t.rewardHelpTitle}</h2><p>{t.rewardHelpText}</p></article>
+              <article className="help-card league-help-card"><span className="principle-number">♛</span><h2>{t.leagueRulesTitle}</h2><p>{t.leagueRulesText}</p></article>
               <article className="help-card sound-help-card"><span className="principle-number sound-principle"><SoundIcon enabled={soundEnabled} /></span><h2>{t.soundHelpTitle}</h2><p>{t.soundHelpText}</p><button className={soundEnabled ? "sound-setting active" : "sound-setting"} type="button" onClick={toggleSound} aria-pressed={soundEnabled}><span>{soundEnabled ? t.soundOn : t.soundOff}</span><i aria-hidden="true" /></button></article>
               <article className="help-card contacts-card">
                 <div><p className="eyebrow">{t.contactsEyebrow}</p><h2>{t.contactsTitle}</h2><p>{t.contactsLead}</p></div>
@@ -1636,7 +2084,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
       </section>
 
       <nav className="mobile-tabs" aria-label="Mobile navigation">
-        {(["today", "quests", "chain", "rewards", "help"] as Tab[]).map((item) => (
+        {(["today", "quests", "chain", "rewards", "league", "help"] as Tab[]).map((item) => (
           <button
             key={item}
             type="button"
@@ -1644,7 +2092,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
             aria-current={tab === item ? "page" : undefined}
             onClick={() => { setTab(item); setProfileOpen(false); }}
           >
-            <span>{item === "today" ? "⌂" : item === "quests" ? "◇" : item === "chain" ? "⛓" : item === "rewards" ? "☆" : "?"}</span>
+            <span>{item === "today" ? "⌂" : item === "quests" ? "◇" : item === "chain" ? "⛓" : item === "rewards" ? "☆" : item === "league" ? "♛" : "?"}</span>
             {item === "help" ? t.helpShort : t[item]}
           </button>
         ))}

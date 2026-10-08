@@ -1,4 +1,4 @@
-import type { Chain, ChainCheckin, Quest, QuestStep, Reward, WeeklyBoss } from "@/lib/types";
+import type { Chain, ChainCheckin, LeagueSnapshot, Quest, QuestStep, Reward, WeeklyBoss } from "@/lib/types";
 import { isoDateLocal, startOfWeekLocal } from "@/lib/game";
 
 export type DemoData = {
@@ -201,5 +201,37 @@ export function createDemoData(): DemoData {
     chains,
     checkins,
     rewards
+  };
+}
+
+export function createDemoLeagueSnapshot(active = false, nickname = "Ты"): LeagueSnapshot {
+  const weekStart = isoDateLocal(startOfWeekLocal());
+  const weekEndDate = new Date(`${weekStart}T00:00:00`);
+  weekEndDate.setDate(weekEndDate.getDate() + 7);
+  const weekEnd = isoDateLocal(weekEndDate);
+  const top = [
+    { rank: 1, nickname: "Luna", weekly_xp: 286, is_me: false },
+    { rank: 2, nickname: "Northstar", weekly_xp: 241, is_me: false },
+    { rank: 3, nickname: "Mira", weekly_xp: 218, is_me: false },
+    { rank: 4, nickname: "PixelFox", weekly_xp: 196, is_me: false },
+    { rank: 5, nickname: "Sora", weekly_xp: 181, is_me: false },
+    { rank: 6, nickname: "Atlas", weekly_xp: 169, is_me: false },
+    { rank: 7, nickname: "Nori", weekly_xp: 154, is_me: false },
+    { rank: 8, nickname: "Moss", weekly_xp: 143, is_me: false },
+    { rank: 9, nickname: "Nova", weekly_xp: 132, is_me: false },
+    { rank: 10, nickname: "Kite", weekly_xp: 121, is_me: false }
+  ];
+
+  return {
+    week_start: weekStart,
+    week_end: weekEnd,
+    member: active ? { active: true, nickname, joined_at: new Date().toISOString() } : null,
+    top,
+    me: active ? { rank: 24, nickname, weekly_xp: 46, xp_to_next: 5 } : null,
+    participants: 38,
+    badges: active ? [
+      { id: "demo-badge-gold", week_start: isoDateOffset(-14), place: 1, weekly_xp: 312, created_at: isoTimeOffset(-7) },
+      { id: "demo-badge-bronze", week_start: isoDateOffset(-28), place: 3, weekly_xp: 204, created_at: isoTimeOffset(-21) }
+    ] : []
   };
 }
