@@ -1,3 +1,9 @@
+## 1.0.1
+
+- Reworked the demo around ordinary household and everyday-life goals instead of job-search and portfolio examples.
+- Replaced career-specific landing examples and boss/category placeholders with neutral household examples.
+- Updated the demo smoke test for the new sample content.
+
 ## 1.0.0
 
 - First stable public release of Life Quest.

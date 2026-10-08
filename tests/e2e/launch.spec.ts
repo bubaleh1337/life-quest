@@ -9,7 +9,7 @@ test("landing exposes a zero-friction demo", async ({ page }) => {
 test("demo opens with populated data and navigation", async ({ page }) => {
   await page.goto("/demo");
   await expect(page.getByText(/Демо-режим|Demo mode/)).toBeVisible();
-  await expect(page.getByText(/Найти работу мечты|Dream job/).first()).toBeVisible();
+  await expect(page.getByText(/Разобрать квартиру по зонам|Declutter the apartment by zones/).first()).toBeVisible();
 
   await page.getByRole("button", { name: /Награды|Rewards/ }).click();
   await expect(page.getByRole("heading", { name: /Награды за путь|Rewards for the path/ })).toBeVisible();
