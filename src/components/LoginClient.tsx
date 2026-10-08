@@ -9,7 +9,7 @@ type Lang = "en" | "ru";
 type MessageKind = "success" | "error" | "info";
 type AuthLikeError = { message?: string; status?: number; code?: string };
 
-const COOLDOWN_KEY = "questframe-auth-cooldown-until";
+const COOLDOWN_KEY = "lifequest-auth-cooldown-until";
 const RESEND_COOLDOWN_MS = 60_000;
 
 function isRateLimitError(error: AuthLikeError) {
@@ -38,6 +38,7 @@ export default function LoginClient() {
     secondsShort: lang === "ru" ? "с" : "s",
     google: lang === "ru" ? "Продолжить с Google" : "Continue with Google",
     back: lang === "ru" ? "На главную" : "Back to home",
+    privacy: lang === "ru" ? "Конфиденциальность" : "Privacy",
     sent: lang === "ru" ? "Ссылка отправлена. Проверь последнее письмо и не запрашивай новую ссылку, пока не попробуешь эту." : "Link sent. Check the newest email and use that link before requesting another one.",
     rateLimited: lang === "ru" ? "Слишком много писем для входа отправлено за короткое время. Используй последнее письмо, если оно уже пришло, или попробуй отправить ссылку позже." : "Too many sign-in emails were sent in a short time. Use the newest email if you already received one, or try again later.",
     missing: lang === "ru" ? "Life Quest не может подключиться к авторизации: проверь переменные Supabase в окружении приложения." : "Life Quest cannot connect to authentication. Check the Supabase environment variables.",
@@ -49,7 +50,7 @@ export default function LoginClient() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const saved = window.localStorage.getItem("questframe-lang");
+      const saved = window.localStorage.getItem("lifequest-lang") ?? window.localStorage.getItem("questframe-lang");
       if (saved === "ru" || saved === "en") setLang(saved);
 
       const savedCooldown = Number(window.localStorage.getItem(COOLDOWN_KEY) ?? 0);
@@ -93,7 +94,7 @@ export default function LoginClient() {
   function toggleLanguage() {
     const next: Lang = lang === "ru" ? "en" : "ru";
     setLang(next);
-    window.localStorage.setItem("questframe-lang", next);
+    window.localStorage.setItem("lifequest-lang", next);
   }
 
   function getAuthCallbackUrl() {
@@ -216,7 +217,10 @@ export default function LoginClient() {
           <button className="button button-ghost full-width" type="button" disabled={loading} onClick={signInWithGoogle}>{t.google}</button>
         </>)}
         {message && <p className={`notice notice-${messageKind}`} role={messageKind === "error" ? "alert" : "status"} aria-live="polite">{message}</p>}
-        <Link href="/" className="text-link">← {t.back}</Link>
+        <div className="auth-footer-links">
+          <Link href="/" className="text-link">← {t.back}</Link>
+          <Link href="/privacy" className="text-link">{t.privacy}</Link>
+        </div>
       </section>
     </main>
   );

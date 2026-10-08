@@ -1,124 +1,111 @@
-# Life Quest — product spec 0.9.0
+# Life Quest — product spec 0.11.0
 
 ## Product promise
 
-Life Quest turns vague self-improvement goals into a small game loop without turning the user's life into another complicated management system.
+Life Quest turns vague real-life goals into a small, motivating game loop without turning personal development into another complicated management system.
 
-## Design principles
+## Product principles
 
-1. **Action over planning.** The app rewards concrete real-world actions.
-2. **Progress without punishment.** Missed days do not erase historical progress.
-3. **Low cognitive load.** No inventories, currencies, skill trees, badges or dozens of score types.
-4. **One scary thing at a time.** One weekly boss per user and week.
-5. **Several simple routines are allowed.** Multiple chains can run in parallel, each with one daily check-in.
-6. **Fast daily interaction.** Quest steps and repeating goals can be checked off from Today.
-7. **Transparent XP.** XP comes only from completed quest steps and defeated weekly bosses.
-8. **No surprise state changes.** Ambiguous controls never sign the user out, delete data or hide progress. Irreversible actions require confirmation; reversible actions should expose an undo path.
-9. **Recoverable organization.** Archived quests and finished chains remain accessible and can be restored.
-
-
-## Glossy Game art direction
-
-Life Quest uses a **70% Glossy Elegant / 30% Cozy Game** visual system:
-
-- calm pearl/cream surfaces with wine and champagne accents;
-- polished-steel chain links with alternating angles so the chain reads as an actual interlocked object;
-- a split-link break illustration with particles rather than a generic gap or warning badge;
-- short, restrained micro-interactions for press, completion, XP, chain-link creation, boss victory and rewards;
-- optional sound feedback generated locally in the browser;
-- no decorative feedback may block, delay or change the underlying action;
-- `prefers-reduced-motion` must disable decorative motion without removing functionality.
-
-Sound preference is stored locally in the browser (`questframe-sound`) and is not user-profile data.
+1. **Action over planning.** Reward concrete real-world action.
+2. **Progress without punishment.** A missed day must not erase historical progress.
+3. **Low cognitive load.** Avoid unnecessary currencies, inventories and formulas.
+4. **Fast daily interaction.** Core actions should be completable from Today.
+5. **No surprise destructive actions.** Sign-out, deletion and state-changing destructive actions require explicit intent.
+6. **Portfolio-friendly access.** A reviewer must be able to understand the product without creating an account.
+7. **User control of data.** Users can export and permanently delete their data.
 
 ## XP rules
 
-- +1 — completed a regular step.
-- +5 — kept a promise to oneself.
-- +7 — did the hardest or scariest thing.
-- +10 — did something that had been procrastinated.
-- +25 — defeated the weekly boss.
+- +1 — regular step
+- +5 — kept a promise to oneself
+- +7 — hardest/scariest action
+- +10 — action that had been procrastinated
+- +25 — weekly boss
 
-Undoing a completion removes that XP because total XP is derived from completed records rather than stored as a mutable wallet balance.
+XP is derived from completed records. Undoing a completion removes the corresponding XP.
 
 ## Levels
 
-Level start threshold:
+Level threshold:
 
 ```text
 25 × (level - 1) × level
 ```
 
-Examples:
+The level ring changes smoothly through the product progression palette rather than staying one fixed color.
 
-- Level 1 starts at 0 XP
-- Level 2 starts at 50 XP
-- Level 3 starts at 150 XP
-- Level 4 starts at 300 XP
-- Level 5 starts at 500 XP
+## Chains
+
+Chains are not streak counters:
+
+- several active chains are allowed;
+- one check-in per chain per calendar day;
+- each completed day adds a visual link;
+- missed past days appear as broken links;
+- a break never erases old links or resets the total;
+- finished chains remain recoverable.
 
 ## Rewards
 
-Rewards unlock at a chosen lifetime-XP threshold. Claiming a reward does not spend XP and therefore cannot reduce level progression.
+The user chooses how much additional progress a reward should require:
 
-## Chain semantics
+- Small +25 XP
+- Regular +50 XP
+- Meaningful +100 XP
+- Big +200 XP
+- custom XP
 
-Chains are a first-class visual mechanic, not a renamed streak counter:
+Selecting a preset fills the XP field. Selecting the same preset again clears it so custom XP can be entered.
 
-- multiple active chains are allowed;
-- each chain represents one repeatable action;
-- only one check-in per chain per calendar day is allowed;
-- every completed day adds a visual link;
-- a missed past day is shown as a broken link;
-- a break never deletes previous links and never resets the total link count;
-- today remains an open/pending link until the user checks in;
-- the chain start is always visible, while older history can collapse behind a compact history bridge;
-- ending a chain keeps its history and moves it to a finished section where it can be restored;
-- today's check-in can be undone without affecting older links.
+## Demo Mode
 
-## Localized dates
+`/demo` is a public, interactive demonstration with prefilled quests, chains, rewards and a weekly boss.
 
-Quest target dates are entered by the app rather than the browser-native date control so the displayed input format follows the selected Life Quest language:
+- no authentication required;
+- sample state is kept only in React memory;
+- demo changes disappear on refresh;
+- no demo mutation writes to Supabase;
+- a visible banner explains that behavior;
+- the user can move directly from demo to sign-in.
 
-- RU: `ДД.ММ.ГГГГ`
-- EN: `MM/DD/YYYY`
+## Authentication
 
-Dates are stored in PostgreSQL as normal ISO `date` values.
+- Email magic-link authentication remains available.
+- Google OAuth is supported by the client and becomes visible when `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true`.
+- OAuth and magic links use `/auth/callback` for the PKCE session exchange.
+- Production redirect behavior is based on the stable `NEXT_PUBLIC_APP_URL`.
 
-## Public entry and language
+## Personal data controls
 
-The landing page and login page both support RU/EN before authentication. Russian is the default for a new browser session; the selected language is stored in `localStorage` and reused by the landing page, login and authenticated dashboard.
+Authenticated account menu provides:
 
-## Player Guide and contacts
+- JSON export of the current user's Life Quest data;
+- public Privacy page;
+- permanent account deletion;
+- explicit sign-out.
 
-The in-app reference area is called **«Гид игрока» / Player Guide**. It contains the XP rules, chain/no-reset explanation, weekly boss, rewards and only two author-contact actions:
+Permanent deletion uses a server-only Supabase secret key. Because the application tables reference `auth.users(id)` with `ON DELETE CASCADE`, deleting the authenticated user also removes associated application rows.
 
-- Email: `ekaterina.pyshkova@gmail.com`
-- Telegram: `@kemisayega`
+## Glossy Game visual direction
 
-## Data ownership
+70% Glossy Elegant / 30% Cozy Game:
 
-All product data is private to the authenticated user. RLS is mandatory for every application table.
+- pearl/glass surfaces;
+- wine, champagne and evolving level-color accents;
+- soft multi-tone ambient background;
+- polished chain links and visible broken-link history;
+- restrained micro-interactions, XP bursts and optional procedural sound;
+- reduced-motion support.
 
+## QA baseline
 
-## Account and destructive-action UX
+Playwright launch smoke tests cover:
 
-- The avatar is an account-menu trigger, never a direct sign-out control.
-- Sign-out requires an explicit confirmation dialog.
-- Deleting a quest step or reward requires confirmation because the deletion is permanent.
-- Archiving a quest and finishing a chain require confirmation, and both states remain recoverable from the UI.
-- Reward claims can be undone.
-- Completed or archived quests are read-only until returned to Active, preventing status/progress contradictions.
+- public landing + Demo CTA;
+- populated Demo Mode;
+- main demo navigation;
+- reward preset fill/clear behavior;
+- account-menu outside-click dismissal;
+- public Privacy page.
 
-## Authentication UX
-
-- Magic-link requests are throttled in the client for at least 60 seconds after a send attempt succeeds.
-- The cooldown is stored in browser storage so a refresh does not immediately enable accidental resends.
-- Known Supabase `429` / email-rate-limit errors are translated into a user-facing message instead of exposing raw backend text.
-- Expired/invalid links are routed back to the login screen with a localized recovery message.
-- Public landing-page auth errors are forwarded to `/login` rather than being silently displayed on the landing page.
-
-
-## Visual system — 0.9.0
-
-Life Quest uses a **Glossy Game** direction: elegant pearl/glass surfaces with restrained game feedback. The Today page follows a responsive bento hierarchy rather than stacking full-width panels. On desktop, level + weekly boss form the overview row and quick quest actions + chain actions form the interaction row. Typography is modern display sans-serif; large editorial serif headings are intentionally avoided. The app header is visually separated into three floating islands (brand, navigation, controls) so it reads as intentional navigation rather than a rectangular banner.
+Manual release regression remains required for authenticated Supabase flows, account deletion, Google OAuth and production callback URLs.

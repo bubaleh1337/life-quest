@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/browser";
 import { BOSS_XP, getLevelPalette, getLevelProgress, isoDateLocal, startOfWeekLocal, XP_OPTIONS } from "@/lib/game";
 import BrandLockup from "@/components/Brand";
+import { createDemoData } from "@/lib/demo-data";
 import type { Chain, ChainCheckin, Quest, QuestStep, Reward, WeeklyBoss } from "@/lib/types";
 import { playUiSound } from "@/lib/ui-sound";
 
@@ -23,6 +24,7 @@ type ConfirmAction = {
 type DashboardProps = {
   userId: string;
   email: string;
+  demo?: boolean;
 };
 
 const copy = {
@@ -141,6 +143,17 @@ const copy = {
     account: "Аккаунт",
     accountMenu: "Меню аккаунта",
     openGuide: "Открыть гид игрока",
+    exportData: "Экспортировать данные",
+    privacy: "Конфиденциальность",
+    deleteAccount: "Удалить аккаунт",
+    deleteAccountTitle: "Удалить аккаунт и все данные?",
+    deleteAccountText: "Будут безвозвратно удалены аккаунт, квесты, шаги, цепочки, отметки, боссы и награды. Это действие нельзя отменить.",
+    deleteAccountConfirm: "Удалить навсегда",
+    deleteAccountFailed: "Не удалось удалить аккаунт.",
+    demoMode: "Демо-режим",
+    demoModeText: "Это интерактивная демонстрация. Изменения работают только до обновления страницы и не сохраняются.",
+    startOwn: "Начать свой квест",
+    leaveDemo: "Выйти из демо",
     signOut: "Выйти",
     signOutTitle: "Выйти из аккаунта?",
     signOutText: "Текущая сессия на этом устройстве завершится. Для повторного входа понадобится действующая ссылка из письма или другой настроенный способ входа.",
@@ -315,6 +328,17 @@ const copy = {
     account: "Account",
     accountMenu: "Account menu",
     openGuide: "Open Player Guide",
+    exportData: "Export my data",
+    privacy: "Privacy",
+    deleteAccount: "Delete account",
+    deleteAccountTitle: "Delete your account and all data?",
+    deleteAccountText: "Your account, quests, steps, chains, check-ins, bosses and rewards will be permanently deleted. This cannot be undone.",
+    deleteAccountConfirm: "Delete forever",
+    deleteAccountFailed: "Could not delete the account.",
+    demoMode: "Demo mode",
+    demoModeText: "This is an interactive demo. Changes work until you refresh the page and are never saved.",
+    startOwn: "Start my own quest",
+    leaveDemo: "Leave demo",
     signOut: "Sign out",
     signOutTitle: "Sign out of your account?",
     signOutText: "The current session on this device will end. Signing in again will require a valid email link or another configured sign-in method.",
@@ -383,9 +407,9 @@ const xpLabelKey: Record<string, "xpStep" | "xpHard" | "xpPromise" | "xpProcrast
   procrastination: "xpProcrastination"
 };
 
-export default function Dashboard({ userId, email }: DashboardProps) {
+export default function Dashboard({ userId, email, demo = false }: DashboardProps) {
   const router = useRouter();
-  const supabase = useMemo(() => createClient(), []);
+  const supabase = useMemo(() => createClient({ allowMissing: demo }), [demo]);
   const [lang, setLang] = useState<Lang>("ru");
   const [tab, setTab] = useState<Tab>("today");
   const [loading, setLoading] = useState(true);
@@ -416,7 +440,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const saved = window.localStorage.getItem("questframe-lang");
+      const saved = window.localStorage.getItem("lifequest-lang") ?? window.localStorage.getItem("questframe-lang");
       if (saved === "en" || saved === "ru") setLang(saved);
     }, 0);
     return () => window.clearTimeout(timer);
@@ -424,7 +448,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const saved = window.localStorage.getItem("questframe-sound");
+      const saved = window.localStorage.getItem("lifequest-sound") ?? window.localStorage.getItem("questframe-sound");
       if (saved === "off") setSoundEnabled(false);
       if (saved === "on") setSoundEnabled(true);
     }, 0);
@@ -465,13 +489,13 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   function toggleLanguage() {
     const next: Lang = lang === "ru" ? "en" : "ru";
     setLang(next);
-    window.localStorage.setItem("questframe-lang", next);
+    window.localStorage.setItem("lifequest-lang", next);
   }
 
   function toggleSound() {
     const next = !soundEnabled;
     setSoundEnabled(next);
-    window.localStorage.setItem("questframe-sound", next ? "on" : "off");
+    window.localStorage.setItem("lifequest-sound", next ? "on" : "off");
     if (next) playUiSound("tap", true);
   }
 
@@ -487,6 +511,18 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const loadData = useCallback(async (showSpinner = true) => {
     if (showSpinner) setLoading(true);
     setNotice("");
+
+    if (demo) {
+      const data = createDemoData();
+      setQuests(data.quests);
+      setSteps(data.steps);
+      setBosses(data.bosses);
+      setChains(data.chains);
+      setCheckins(data.checkins);
+      setRewards(data.rewards);
+      if (showSpinner) setLoading(false);
+      return;
+    }
 
     const [questRes, stepRes, bossRes, chainRes, checkinRes, rewardRes] = await Promise.all([
       supabase.from("quests").select("*").order("created_at", { ascending: false }),
@@ -509,7 +545,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       setRewards((rewardRes.data ?? []) as Reward[]);
     }
     if (showSpinner) setLoading(false);
-  }, [supabase, t.error]);
+  }, [demo, supabase, t.error]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -557,6 +593,10 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     window.setTimeout(() => setNotice(""), 2800);
   }
 
+  function newDemoId(prefix: string) {
+    return `${prefix}-${crypto.randomUUID()}`;
+  }
+
   function askForConfirmation(action: ConfirmAction) {
     setProfileOpen(false);
     setConfirmAction(action);
@@ -602,6 +642,25 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       return;
     }
 
+    if (demo) {
+      setQuests((current) => [{
+        id: newDemoId("quest"),
+        user_id: userId,
+        title,
+        description: String(form.get("description") ?? "").trim() || null,
+        category: String(form.get("category") ?? "").trim() || null,
+        target_date: targetDate,
+        accent: String(form.get("accent") ?? "#7a3d5c"),
+        status: "active",
+        completed_at: null,
+        created_at: new Date().toISOString()
+      }, ...current]);
+      formElement.reset();
+      setShowQuestForm(false);
+      flash(t.saved);
+      return;
+    }
+
     const ok = await withWork(async () => {
       const { error } = await supabase.from("quests").insert({
         user_id: userId,
@@ -628,8 +687,25 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     const option = XP_OPTIONS.find((item) => item.key === reason) ?? XP_OPTIONS[0];
     if (!title) return;
 
+    const questSteps = steps.filter((step) => step.quest_id === questId);
+    if (demo) {
+      setSteps((current) => [...current, {
+        id: newDemoId("step"),
+        user_id: userId,
+        quest_id: questId,
+        title,
+        xp_reason: option.key,
+        xp_value: option.value,
+        sort_order: questSteps.length,
+        completed_at: null,
+        created_at: new Date().toISOString()
+      }]);
+      formElement.reset();
+      flash(t.saved);
+      return;
+    }
+
     const ok = await withWork(async () => {
-      const questSteps = steps.filter((step) => step.quest_id === questId);
       const { error } = await supabase.from("quest_steps").insert({
         user_id: userId,
         quest_id: questId,
@@ -645,13 +721,17 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function toggleStep(step: QuestStep) {
     const completing = !step.completed_at;
-    const ok = await withWork(async () => {
-      const { error } = await supabase.from("quest_steps").update({
-        completed_at: step.completed_at ? null : new Date().toISOString()
-      }).eq("id", step.id);
-      return { error };
-    });
-    if (!ok) return;
+    if (demo) {
+      setSteps((current) => current.map((item) => item.id === step.id ? { ...item, completed_at: step.completed_at ? null : new Date().toISOString() } : item));
+    } else {
+      const ok = await withWork(async () => {
+        const { error } = await supabase.from("quest_steps").update({
+          completed_at: step.completed_at ? null : new Date().toISOString()
+        }).eq("id", step.id);
+        return { error };
+      });
+      if (!ok) return;
+    }
     if (completing) {
       playUiSound("success", soundEnabled);
       showXpBurst(step.xp_value);
@@ -661,6 +741,11 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   async function deleteStep(stepId: string) {
+    if (demo) {
+      setSteps((current) => current.filter((step) => step.id !== stepId));
+      flash(t.deleted);
+      return;
+    }
     await withWork(async () => {
       const { error } = await supabase.from("quest_steps").delete().eq("id", stepId);
       return { error };
@@ -678,6 +763,11 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   async function setQuestStatus(quest: Quest, status: "active" | "completed" | "archived") {
+    if (demo) {
+      setQuests((current) => current.map((item) => item.id === quest.id ? { ...item, status, completed_at: status === "completed" ? new Date().toISOString() : null } : item));
+      flash(status === "archived" ? t.archived : status === "active" ? t.restored : t.saved);
+      return;
+    }
     await withWork(async () => {
       const { error } = await supabase.from("quests").update({
         status,
@@ -702,6 +792,23 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     const title = String(form.get("title") ?? "").trim();
     if (!title) return;
 
+    if (demo) {
+      const nextBoss: WeeklyBoss = {
+        id: currentBoss?.id ?? newDemoId("boss"),
+        user_id: userId,
+        week_start: weekStart,
+        title,
+        notes: String(form.get("notes") ?? "").trim() || null,
+        xp_value: BOSS_XP,
+        completed_at: currentBoss?.completed_at ?? null,
+        created_at: currentBoss?.created_at ?? new Date().toISOString()
+      };
+      setBosses((current) => [nextBoss, ...current.filter((boss) => boss.week_start !== weekStart)]);
+      setShowBossForm(false);
+      flash(t.saved);
+      return;
+    }
+
     const ok = await withWork(async () => {
       const { error } = await supabase.from("weekly_bosses").upsert({
         user_id: userId,
@@ -719,13 +826,17 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   async function toggleBoss() {
     if (!currentBoss) return;
     const defeating = !currentBoss.completed_at;
-    const ok = await withWork(async () => {
-      const { error } = await supabase.from("weekly_bosses").update({
-        completed_at: currentBoss.completed_at ? null : new Date().toISOString()
-      }).eq("id", currentBoss.id);
-      return { error };
-    });
-    if (!ok) return;
+    if (demo) {
+      setBosses((current) => current.map((boss) => boss.id === currentBoss.id ? { ...boss, completed_at: currentBoss.completed_at ? null : new Date().toISOString() } : boss));
+    } else {
+      const ok = await withWork(async () => {
+        const { error } = await supabase.from("weekly_bosses").update({
+          completed_at: currentBoss.completed_at ? null : new Date().toISOString()
+        }).eq("id", currentBoss.id);
+        return { error };
+      });
+      if (!ok) return;
+    }
     if (defeating) {
       playUiSound("boss", soundEnabled);
       showXpBurst(BOSS_XP);
@@ -740,6 +851,20 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     const form = new FormData(formElement);
     const title = String(form.get("title") ?? "").trim();
     if (!title) return;
+
+    if (demo) {
+      setChains((current) => [{
+        id: newDemoId("chain"),
+        user_id: userId,
+        quest_id: null,
+        title,
+        active: true,
+        created_at: new Date().toISOString()
+      }, ...current]);
+      formElement.reset();
+      flash(t.saved);
+      return;
+    }
 
     const ok = await withWork(async () => {
       const { error } = await supabase.from("chains").insert({
@@ -762,15 +887,25 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function checkInChain(chain: Chain) {
     if (isChainCheckedToday(chain.id)) return;
-    const ok = await withWork(async () => {
-      const { error } = await supabase.from("chain_checkins").insert({
+    if (demo) {
+      setCheckins((current) => [{
+        id: newDemoId("checkin"),
         chain_id: chain.id,
         user_id: userId,
-        checkin_date: today
+        checkin_date: today,
+        created_at: new Date().toISOString()
+      }, ...current]);
+    } else {
+      const ok = await withWork(async () => {
+        const { error } = await supabase.from("chain_checkins").insert({
+          chain_id: chain.id,
+          user_id: userId,
+          checkin_date: today
+        });
+        return { error };
       });
-      return { error };
-    });
-    if (!ok) return;
+      if (!ok) return;
+    }
     setChainCelebration(chain.id);
     playUiSound("chain", soundEnabled);
     window.setTimeout(() => setChainCelebration((current) => current === chain.id ? null : current), 1250);
@@ -779,6 +914,12 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   async function undoChainCheckIn(chain: Chain) {
     const todayCheckin = checkins.find((checkin) => checkin.chain_id === chain.id && checkin.checkin_date === today);
     if (!todayCheckin) return;
+    if (demo) {
+      setCheckins((current) => current.filter((checkin) => checkin.id !== todayCheckin.id));
+      flash(t.chainUnlinked);
+      playUiSound("undo", soundEnabled);
+      return;
+    }
     const ok = await withWork(async () => {
       const { error } = await supabase.from("chain_checkins").delete().eq("id", todayCheckin.id);
       return { error };
@@ -787,6 +928,11 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   async function finishChain(chain: Chain) {
+    if (demo) {
+      setChains((current) => current.map((item) => item.id === chain.id ? { ...item, active: false } : item));
+      flash(t.saved);
+      return;
+    }
     await withWork(async () => {
       const { error } = await supabase.from("chains").update({ active: false }).eq("id", chain.id);
       return { error };
@@ -794,6 +940,11 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   async function restoreChain(chain: Chain) {
+    if (demo) {
+      setChains((current) => current.map((item) => item.id === chain.id ? { ...item, active: true } : item));
+      flash(t.restored);
+      return;
+    }
     await withWork(async () => {
       const { error } = await supabase.from("chains").update({ active: true }).eq("id", chain.id);
       return { error };
@@ -818,6 +969,22 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     if (!title || rewardCost.trim() === "" || !Number.isFinite(cost) || cost < 1) return;
 
     const xpRequired = totalXp + cost;
+    if (demo) {
+      setRewards((current) => [...current, {
+        id: newDemoId("reward"),
+        user_id: userId,
+        title,
+        xp_required: xpRequired,
+        claimed_at: null,
+        created_at: new Date().toISOString()
+      }].sort((a, b) => a.xp_required - b.xp_required));
+      formElement.reset();
+      setRewardCost("");
+      setSelectedRewardPreset(null);
+      flash(t.saved);
+      return;
+    }
+
     const ok = await withWork(async () => {
       const { error } = await supabase.from("rewards").insert({
         user_id: userId,
@@ -835,11 +1002,15 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function claimReward(reward: Reward) {
     if (reward.claimed_at || totalXp < reward.xp_required) return;
-    const ok = await withWork(async () => {
-      const { error } = await supabase.from("rewards").update({ claimed_at: new Date().toISOString() }).eq("id", reward.id);
-      return { error };
-    });
-    if (!ok) return;
+    if (demo) {
+      setRewards((current) => current.map((item) => item.id === reward.id ? { ...item, claimed_at: new Date().toISOString() } : item));
+    } else {
+      const ok = await withWork(async () => {
+        const { error } = await supabase.from("rewards").update({ claimed_at: new Date().toISOString() }).eq("id", reward.id);
+        return { error };
+      });
+      if (!ok) return;
+    }
     setRewardCelebration(reward.id);
     playUiSound("reward", soundEnabled);
     window.setTimeout(() => setRewardCelebration((current) => current === reward.id ? null : current), 1400);
@@ -847,6 +1018,12 @@ export default function Dashboard({ userId, email }: DashboardProps) {
 
   async function undoRewardClaim(reward: Reward) {
     if (!reward.claimed_at) return;
+    if (demo) {
+      setRewards((current) => current.map((item) => item.id === reward.id ? { ...item, claimed_at: null } : item));
+      flash(t.rewardUnclaimed);
+      playUiSound("undo", soundEnabled);
+      return;
+    }
     const ok = await withWork(async () => {
       const { error } = await supabase.from("rewards").update({ claimed_at: null }).eq("id", reward.id);
       return { error };
@@ -864,6 +1041,11 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   async function deleteReward(rewardId: string) {
+    if (demo) {
+      setRewards((current) => current.filter((reward) => reward.id !== rewardId));
+      flash(t.deleted);
+      return;
+    }
     await withWork(async () => {
       const { error } = await supabase.from("rewards").delete().eq("id", rewardId);
       return { error };
@@ -881,6 +1063,10 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   async function signOut() {
+    if (demo) {
+      router.push("/");
+      return;
+    }
     setWorking(true);
     try {
       const { error } = await supabase.auth.signOut();
@@ -896,12 +1082,50 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   }
 
   function requestSignOut() {
+    if (demo) {
+      router.push("/");
+      return;
+    }
     askForConfirmation({
       title: t.signOutTitle,
       message: t.signOutText,
       confirmLabel: t.signOut,
       danger: true,
       action: signOut
+    });
+  }
+
+  function exportAccountData() {
+    setProfileOpen(false);
+    window.location.assign("/api/account/export");
+  }
+
+  async function deleteAccount() {
+    setWorking(true);
+    try {
+      const response = await fetch("/api/account/delete", { method: "POST" });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null) as { error?: string } | null;
+        flash(`${t.deleteAccountFailed}${payload?.error ? ` ${payload.error}` : ""}`);
+        return;
+      }
+      await supabase.auth.signOut();
+      router.push("/");
+      router.refresh();
+    } catch {
+      flash(t.deleteAccountFailed);
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  function requestDeleteAccount() {
+    askForConfirmation({
+      title: t.deleteAccountTitle,
+      message: t.deleteAccountText,
+      confirmLabel: t.deleteAccountConfirm,
+      danger: true,
+      action: deleteAccount
     });
   }
 
@@ -987,7 +1211,20 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                   <div><strong>{t.account}</strong><span>{email}</span></div>
                 </div>
                 <button type="button" role="menuitem" onClick={() => { setTab("help"); setProfileOpen(false); }}>{t.openGuide}</button>
-                <button type="button" role="menuitem" className="danger-text" onClick={requestSignOut}>{t.signOut}</button>
+                {demo ? (
+                  <>
+                    <button type="button" role="menuitem" onClick={() => router.push("/login")}>{t.startOwn}</button>
+                    <button type="button" role="menuitem" onClick={() => router.push("/privacy")}>{t.privacy}</button>
+                    <button type="button" role="menuitem" className="danger-text" onClick={requestSignOut}>{t.leaveDemo}</button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" role="menuitem" onClick={exportAccountData}>{t.exportData}</button>
+                    <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); router.push("/privacy"); }}>{t.privacy}</button>
+                    <button type="button" role="menuitem" className="danger-text" onClick={requestDeleteAccount}>{t.deleteAccount}</button>
+                    <button type="button" role="menuitem" className="danger-text" onClick={requestSignOut}>{t.signOut}</button>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -997,6 +1234,12 @@ export default function Dashboard({ userId, email }: DashboardProps) {
       {notice && <div className="toast" role="status">{notice}</div>}
 
       <section className="content-shell">
+        {demo && (
+          <aside className="demo-mode-banner" aria-label={t.demoMode}>
+            <div><strong>{t.demoMode}</strong><span>{t.demoModeText}</span></div>
+            <button className="button button-primary" type="button" onClick={() => router.push("/login")}>{t.startOwn}</button>
+          </aside>
+        )}
         {tab === "today" && (
           <div className="page-stack today-page">
             <section className="today-heading">

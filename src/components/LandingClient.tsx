@@ -12,6 +12,9 @@ const copy = {
     title: "Преврати цель в квест, который хочется продолжать.",
     lead: "Получай XP за реальные действия, побеждай одного босса недели, собирай цепочки из повторяемых действий без обнуления и открывай награды по мере прогресса.",
     start: "Начать первый квест",
+    demo: "Посмотреть демо",
+    demoHint: "Без регистрации · данные не сохраняются",
+    privacy: "Конфиденциальность",
     how: "Как это работает",
     quest: "Квест",
     questExample: "Собрать портфолио",
@@ -33,6 +36,9 @@ const copy = {
     title: "Turn a goal into a quest you actually want to continue.",
     lead: "Earn XP for real actions, beat one weekly boss, build chains from repeating actions without resets and unlock rewards as your progress grows.",
     start: "Start your first quest",
+    demo: "View demo",
+    demoHint: "No sign-up · changes are not saved",
+    privacy: "Privacy",
     how: "How it works",
     quest: "Quest",
     questExample: "Build my portfolio",
@@ -57,7 +63,7 @@ export default function LandingClient() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const saved = window.localStorage.getItem("questframe-lang");
+      const saved = window.localStorage.getItem("lifequest-lang") ?? window.localStorage.getItem("questframe-lang");
       if (saved === "ru" || saved === "en") setLang(saved);
 
       const query = new URLSearchParams(window.location.search);
@@ -82,7 +88,7 @@ export default function LandingClient() {
   function toggleLanguage() {
     const next: Lang = lang === "ru" ? "en" : "ru";
     setLang(next);
-    window.localStorage.setItem("questframe-lang", next);
+    window.localStorage.setItem("lifequest-lang", next);
   }
 
   return (
@@ -90,7 +96,10 @@ export default function LandingClient() {
       <section className="landing-card">
         <div className="landing-topline">
           <BrandLockup />
-          <button className="lang-button" type="button" onClick={toggleLanguage} aria-label={lang === "ru" ? "Switch to English" : "Переключить на русский"}>{lang === "ru" ? "EN" : "RU"}</button>
+          <div className="landing-top-actions">
+            <Link className="text-link landing-privacy-link" href="/privacy">{t.privacy}</Link>
+            <button className="lang-button" type="button" onClick={toggleLanguage} aria-label={lang === "ru" ? "Switch to English" : "Переключить на русский"}>{lang === "ru" ? "EN" : "RU"}</button>
+          </div>
         </div>
 
         <div className="hero-copy">
@@ -99,10 +108,12 @@ export default function LandingClient() {
           <p className="hero-lead">{t.lead}</p>
         </div>
 
-        <div className="landing-actions">
+        <div className="landing-actions landing-actions-main">
           <Link className="button button-primary" href="/login">{t.start}</Link>
+          <Link className="button button-demo" href="/demo">{t.demo}<span aria-hidden="true">→</span></Link>
           <a className="button button-ghost" href="#rules">{t.how}</a>
         </div>
+        <p className="demo-hint">{t.demoHint}</p>
 
         <div className="mini-board" aria-label={t.how}>
           <div>

@@ -1,3 +1,14 @@
+## 0.11.0 — 2026-10-08
+
+- Added public interactive Demo Mode at `/demo` with realistic in-memory sample data and no registration.
+- Added account JSON export, public Privacy page and permanent account deletion.
+- Added server-only Supabase secret-key support for account deletion; the secret never reaches browser code.
+- Added Google OAuth launch configuration while preserving email magic-link login.
+- Added Playwright launch smoke tests for landing/demo, reward presets, outside-click account menu behavior and Privacy.
+- Completed code-facing Life Quest rebrand: package name, env examples, docs and portfolio/launch checklists.
+- Added portfolio case-study source material and a 1.0 launch checklist.
+- No database migration required.
+
 ## 0.10.1
 
 - Removed the reward formula block to reduce cognitive load.

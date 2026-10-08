@@ -1,63 +1,63 @@
 # Life Quest
 
-Life Quest is a calm gamified goal app: turn real-life goals into quests, break them into concrete steps and earn XP for the effort that actually moves you forward.
+Life Quest is a bilingual gamified goal app that turns real-life goals into quests, concrete actions, XP, levels, weekly bosses, repeatable chains and personal rewards.
 
-Version: **0.9.0**
+**Version: 0.11.0 — Portfolio & Launch Readiness**
 
+## What makes it portfolio-ready
 
-## 0.9.0 visual direction
-
-- Modern bento-style Today dashboard: level + weekly boss share the top row; quick quest actions + chains share the next row.
-- Header is no longer a full highlighted bar; brand, navigation and controls float as separate glass islands.
-- Modernized typography: display sans-serif replaces the old editorial serif treatment.
-- Denser action cards remove dead space while preserving the calm Glossy Game aesthetic.
-- Level is shown as a circular progress ring and active quests use richer compact cards.
-- Fixed the React purity lint error in XP feedback by replacing `Date.now()` IDs with a stable ref counter.
-- No database migration is required.
+- Real authentication with Supabase Auth and PostgreSQL persistence.
+- Row Level Security for every user-owned application table.
+- RU/EN interface and responsive desktop/mobile UI.
+- Interactive **Demo Mode** at `/demo` with realistic prefilled data and no registration.
+- XP, levels, weekly bosses, non-resetting chains and rewards.
+- Safe account UX: explicit sign-out, export, privacy page and permanent account deletion.
+- Google OAuth-ready login in addition to email magic links.
+- Playwright smoke/E2E coverage for public launch-critical flows.
+- Production-ready Next.js/Vercel structure.
 
 ## Core loop
 
-- **Quests** — a goal becomes a quest with small concrete steps.
-- **XP** — +1 regular step, +5 kept promise, +7 hardest/scariest action, +10 action you were procrastinating on.
+- **Quests** — turn a goal into concrete steps.
+- **XP** — +1 regular step, +5 kept promise, +7 hardest/scariest action, +10 action that had been procrastinated.
 - **Weekly boss** — one avoided task per week, +25 XP.
-- **Chains / Цепочки** — repeatable actions build overlapping polished-steel links; missed days become a visible broken link without deleting earlier progress or resetting the count.
-- **Today** — quick check-off for quest steps and repeating actions without opening their management pages; daily chain check-ins can be undone.
-- **Safe account actions** — the avatar opens an account menu; sign-out and destructive actions never happen from a single ambiguous click.
-- **Reversible organization** — archived quests and finished chains remain visible and can be restored.
-- **Auth UX** — magic-link requests have a 60-second resend cooldown and friendly handling for expired links and Supabase rate limits.
-- **Player Guide / Гид игрока** — XP rules, chain logic, boss/reward explanations and direct Email/Telegram contacts live outside the home dashboard.
-- **Rewards** — unlock personal rewards at total-XP milestones without spending XP.
-- **Levels** — global account level grows automatically from total XP.
-- **Glossy Game feedback** — polished button/card states, chain snap animation, XP bursts, reward/boss celebrations and optional procedural sounds.
-- **Accessibility** — sound can be disabled and decorative motion follows the operating system’s reduced-motion preference.
-
-The UI is deliberately restrained: no inventory, currencies, badges, avatars or punishment mechanics.
+- **Chains** — repeated actions create visible links; missed days create a break without erasing earlier progress.
+- **Rewards** — choose a small/regular/meaningful/big XP distance or enter custom XP.
+- **Levels** — derived automatically from lifetime completed XP.
 
 ## Stack
 
-- Next.js 16.3.8 / React 19 / TypeScript
-- Supabase Auth + PostgreSQL + Row Level Security (`@supabase/supabase-js` 2.117.2, `@supabase/ssr` 0.12.7)
-- One Supabase project only
-- Vercel-ready
-- RU / EN interface toggle
+- Next.js 16.3.8
+- React 19.2.8
+- TypeScript
+- Supabase Auth + PostgreSQL + RLS
+- Vercel
+- Playwright
 
-## Existing 0.6.0 project → update to 0.9.0
+## Routes
 
-Use `UPDATE_0.9.0_WINDOWS.md`. There are **no database changes** in 0.9.0, so no new Supabase SQL is required.
+- `/` — public landing
+- `/demo` — interactive no-sign-up demo
+- `/login` — email magic link / optional Google OAuth
+- `/app` — authenticated application
+- `/privacy` — public privacy notice
+- `/api/account/export` — authenticated JSON export
+- `/api/account/delete` — authenticated permanent account deletion
 
-If updating directly from 0.1.0, first make sure the existing 0.2.0 migration `supabase/migrations/202610070002_multi_chains_and_xp.sql` has already been applied.
+## Environment
 
-Do **not** create another Supabase project.
+Copy `.env.example` to `.env.local` and fill the values.
 
-## New clean installation
-
-Use `SETUP_WINDOWS.md` and run:
-
-```text
-supabase/bootstrap/questframe_initial.sql
+```env
+NEXT_PUBLIC_APP_NAME=Life Quest
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=false
+SUPABASE_SECRET_KEY=YOUR_SECRET_KEY
 ```
 
-in **Supabase → SQL Editor**.
+`SUPABASE_SECRET_KEY` is **server-only** and must never use a `NEXT_PUBLIC_` prefix.
 
 ## Quality checks
 
@@ -65,12 +65,25 @@ in **Supabase → SQL Editor**.
 npm run typecheck
 npm run lint
 npm run build
+npm run test:e2e
+```
+
+The first Playwright run may require:
+
+```powershell
+npx playwright install chromium
 ```
 
 ## Security model
 
-- Authentication is handled by Supabase Auth.
-- Every application table has RLS enabled.
-- Every row is scoped to `auth.uid()`.
-- Foreign ownership between quests/steps and chains/check-ins is enforced by RLS and database triggers.
-- Never expose a Supabase `service_role` key in `NEXT_PUBLIC_*` variables.
+- Application data is scoped by `auth.uid()` through RLS.
+- Cross-owner quest/step and chain/check-in relationships are additionally guarded by database triggers.
+- Account deletion is executed only on the server using the Supabase secret key after authenticating the current user.
+- The browser never receives the secret key.
+- Demo Mode uses local in-memory sample data and never writes to Supabase.
+
+## Upgrade
+
+For an existing 0.10.1 installation, follow `UPDATE_0.11.0_WINDOWS.md`.
+
+No database migration is required for 0.11.0.

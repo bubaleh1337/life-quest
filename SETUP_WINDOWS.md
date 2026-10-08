@@ -1,130 +1,86 @@
-# Life Quest 0.9.0 — Windows 11 setup
+# Life Quest 0.11.0 — Windows 11 setup
 
-These instructions assume PowerShell and a project folder such as `P:\Projects\questframe`.
+These instructions assume PowerShell and one Supabase project.
 
-## 1. Extract the archive
-
-Extract the ZIP so the project looks like:
-
-```text
-P:\Projects\questframe\
-  package.json
-  src\
-  supabase\
-  public\
-```
-
-Then open PowerShell in that folder:
+## 1. Install
 
 ```powershell
-cd P:\Projects\questframe
-```
-
-## 2. Install dependencies
-
-Recommended: Node.js 22 LTS or newer.
-
-Check:
-
-```powershell
-node -v
-npm -v
-```
-
-Install:
-
-```powershell
+cd P:\Projects\LifeQuest\life-quest
 npm install
 ```
 
-## 3. Create ONE Supabase project
+Recommended: Node.js 22 LTS or newer.
 
-Use one normal project for Life Quest. No `beta`, `dev` or duplicate project is needed.
+## 2. Supabase
 
-In Supabase:
+Create one project. In **SQL Editor**, run:
 
-1. Create a project, for example `questframe`.
-2. Open **SQL Editor**.
-3. Open the local file:
-   `supabase\bootstrap\questframe_initial.sql`
-4. Copy all SQL into SQL Editor.
-5. Click **Run**.
-6. Confirm the tables exist under **Table Editor**:
-   `profiles`, `quests`, `quest_steps`, `weekly_bosses`, `chains`, `chain_checkins`, `rewards`.
+```text
+supabase\bootstrap\questframe_initial.sql
+```
 
-## 4. Configure local environment
+The existing bootstrap filename is kept for upgrade compatibility; the product is branded **Life Quest**.
 
-Create `.env.local`:
+Expected tables:
+
+```text
+profiles
+quests
+quest_steps
+weekly_bosses
+chains
+chain_checkins
+rewards
+```
+
+## 3. Local environment
 
 ```powershell
 Copy-Item .env.example .env.local
 notepad .env.local
 ```
 
-Fill it like this:
+Fill:
 
-```dotenv
+```env
 NEXT_PUBLIC_APP_NAME=Life Quest
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=false
+SUPABASE_SECRET_KEY=YOUR_SECRET_KEY
 ```
 
-Where to get values:
+The secret key is used only by the server-side account-deletion endpoint. Never give it a `NEXT_PUBLIC_` prefix and never commit `.env.local`.
 
-- Supabase → **Project Settings → API** → Project URL
-- Supabase → **Project Settings → API** → Publishable key
-
-Use the **publishable** key only. Do not put `service_role` into `.env.local` under a `NEXT_PUBLIC_` name.
-
-## 5. Configure email magic-link login
+## 4. Email authentication
 
 Supabase → **Authentication → URL Configuration**:
 
+```text
 Site URL:
-
-```text
 http://localhost:3000
-```
 
-Add Redirect URL:
-
-```text
+Redirect URLs:
 http://localhost:3000/auth/callback
 ```
 
-Email login is enough for the first launch. Google can be enabled later.
-
-> **Important for testing/production:** Supabase's built-in email sender is intentionally rate-limited and is not suitable for repeated public sign-in traffic. Life Quest prevents rapid duplicate sends in the UI, but the backend quota still applies. Before a wider public launch, configure custom SMTP or enable a social provider such as Google. Do not try to work around a rate-limit response by repeatedly pressing Send.
-
-## 6. Run locally
+## 5. Run locally
 
 ```powershell
 npm run dev
 ```
 
-Open:
+Public routes:
 
 ```text
-http://localhost:3000
+http://localhost:3000/
+http://localhost:3000/demo
+http://localhost:3000/privacy
+http://localhost:3000/login
 ```
 
-Test in this order:
-
-1. Sign in by email magic link.
-2. Create one quest.
-3. Add four steps using different XP types and confirm the hard/scary option is +7 XP.
-4. Complete one step and verify XP changes.
-5. Undo it and verify XP goes back.
-6. Set the weekly boss and defeat it; verify +25 XP.
-7. Create at least two chains, check both in for today and refresh the page; both visual link histories must remain.
-8. Add a reward with a reachable XP threshold and claim it after it unlocks.
-9. Sign out and sign in again; all data must remain.
-
-## 7. Quality checks before Git/Vercel
-
-Stop the dev server with `Ctrl + C`, then run:
+## 6. Quality checks
 
 ```powershell
 npm run typecheck
@@ -132,151 +88,90 @@ npm run lint
 npm run build
 ```
 
-All three must finish without errors before deployment.
+Install the Playwright Chromium browser once:
 
-## 8. Git — first repository
-
-Create an empty GitHub repository named `questframe` first. Do not add README or `.gitignore` on GitHub because they already exist locally.
+```powershell
+npx playwright install chromium
+```
 
 Then:
 
 ```powershell
-git init
-git add .
-git commit -m "feat: launch Life Quest 0.9.0"
-git branch -M main
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/questframe.git
-git push -u origin main
+npm run test:e2e
 ```
 
-For later updates:
+## 7. Production environment in Vercel
 
-```powershell
-git status
-git add .
-git commit -m "feat: describe the change"
-git push
-```
-
-Useful rollback/check commands:
-
-```powershell
-git log --oneline -10
-git status
-git diff
-```
-
-## 9. Vercel deployment
-
-Install/login if needed:
-
-```powershell
-npx vercel login
-```
-
-From the project folder:
-
-```powershell
-npx vercel
-```
-
-When Vercel creates the project, add these Environment Variables in Vercel → Project → Settings → Environment Variables:
+Add:
 
 ```text
 NEXT_PUBLIC_APP_NAME=Life Quest
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
-NEXT_PUBLIC_APP_URL=https://YOUR-PRODUCTION-DOMAIN
+NEXT_PUBLIC_APP_URL=https://YOUR-STABLE-PRODUCTION-DOMAIN
 NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=false
+SUPABASE_SECRET_KEY=...
 ```
 
-Deploy production:
+Do not use a temporary Vercel deployment hostname for `NEXT_PUBLIC_APP_URL`.
+
+Deploy:
 
 ```powershell
 npx vercel --prod
 ```
 
-## 10. Add production callback to Supabase
+## 8. Production Supabase URLs
 
-After Vercel gives you the final production domain, Supabase → **Authentication → URL Configuration**.
-
-Set **Site URL** to the stable production alias:
+Supabase → **Authentication → URL Configuration**:
 
 ```text
-https://questframe.vercel.app
-```
+Site URL:
+https://YOUR-STABLE-PRODUCTION-DOMAIN
 
-Under **Redirect URLs**, keep these exact callbacks:
-
-```text
+Redirect URLs:
 http://localhost:3000/auth/callback
-https://questframe.vercel.app/auth/callback
+https://YOUR-STABLE-PRODUCTION-DOMAIN/auth/callback
 ```
 
-Do not use a one-off Vercel deployment hostname such as `questframe-xxxxx-asmdef.vercel.app` as the permanent Site URL. Life Quest uses `NEXT_PUBLIC_APP_URL` as the stable callback base in production.
+## 9. Google sign-in
 
-Then redeploy if you changed Vercel environment variables:
+The application code already supports Google OAuth.
 
-```powershell
-npx vercel --prod
+1. In Google Auth Platform create a Web application OAuth client.
+2. Add the stable production origin under Authorized JavaScript origins.
+3. Add the Supabase provider callback under Authorized redirect URIs:
+
+```text
+https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback
 ```
 
-## 11. Optional Google sign-in
+4. Supabase → Authentication → Providers → Google: add the Google Client ID and Client Secret and enable Google.
+5. Set locally and in Vercel:
 
-Do this only after email login works.
-
-1. Configure a Google OAuth app.
-2. Enable Google under Supabase → Authentication → Providers → Google.
-3. Add the callback URI shown by Supabase to the Google OAuth client.
-4. In local `.env.local` and Vercel set:
-
-```dotenv
+```env
 NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true
 ```
 
-5. Restart locally or redeploy production.
+6. Restart/redeploy and test from a private browser window.
 
-Local restart:
+## 10. Account-data test
 
-```powershell
-Ctrl + C
-npm run dev
-```
+Use a disposable account, not your main account.
 
-Production:
+1. Create a quest and a chain.
+2. Account menu → **Export data**. Confirm a JSON file downloads and contains only that account's rows.
+3. Account menu → **Delete account**. Confirm the destructive dialog.
+4. Confirm the account can no longer access `/app` and its rows are gone from Supabase.
 
-```powershell
-npx vercel --prod
-```
-
-## 12. Normal daily commands
-
-Start development:
-
-```powershell
-cd P:\Projects\questframe
-npm run dev
-```
-
-Check code:
-
-```powershell
-npm run typecheck
-npm run lint
-npm run build
-```
-
-Commit an update:
+## 11. Git + deploy
 
 ```powershell
 git status
 git add .
-git commit -m "feat: update Life Quest"
+git commit -m "feat: prepare Life Quest for public launch"
 git push
-```
-
-Deploy current source manually:
-
-```powershell
 npx vercel --prod
 ```
+
+See `LAUNCH_1.0_CHECKLIST.md` for the final repository/domain rename and release checklist.
