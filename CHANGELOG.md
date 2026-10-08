@@ -1,3 +1,10 @@
+## 1.0.2
+
+- Rebalanced Demo Mode across projects, health, home, learning and leisure instead of overcorrecting into household-only examples.
+- Restored neutral project examples such as “Собрать портфолио” and “Опубликовать первый проект”.
+- Replaced household-heavy chains, history and rewards with a broader everyday mix.
+- Updated landing examples and demo smoke test to match the balanced sample content.
+
 ## 1.0.1
 
 - Reworked the demo around ordinary household and everyday-life goals instead of job-search and portfolio examples.

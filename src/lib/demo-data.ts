@@ -25,17 +25,17 @@ function isoTimeOffset(days: number, hours = 12) {
 
 export function createDemoData(): DemoData {
   const userId = "demo-user";
+  const qPortfolio = "demo-quest-portfolio";
+  const qMovement = "demo-quest-movement";
   const qHome = "demo-quest-home";
-  const qCooking = "demo-quest-cooking";
-  const qRoutine = "demo-quest-routine";
 
   const quests: Quest[] = [
     {
-      id: qHome,
+      id: qPortfolio,
       user_id: userId,
-      title: "Разобрать квартиру по зонам",
-      description: "Не устраивать генеральную уборку за один день, а спокойно пройтись по одной зоне за раз.",
-      category: "Дом",
+      title: "Собрать портфолио",
+      description: "Собрать несколько сильных работ в одном месте и спокойно довести оформление до готового результата.",
+      category: "Проекты",
       accent: "#8b3e69",
       status: "active",
       target_date: isoDateOffset(45),
@@ -43,23 +43,23 @@ export function createDemoData(): DemoData {
       completed_at: null
     },
     {
-      id: qCooking,
+      id: qMovement,
       user_id: userId,
-      title: "Готовить дома чаще",
-      description: "Собрать несколько простых вариантов ужина и меньше зависеть от доставки.",
-      category: "Быт",
+      title: "Больше двигаться в течение недели",
+      description: "Добавить немного регулярного движения без жёсткого расписания и спортивных рекордов.",
+      category: "Здоровье",
       accent: "#5e7eb8",
       status: "active",
-      target_date: isoDateOffset(90),
+      target_date: isoDateOffset(60),
       created_at: isoTimeOffset(-25),
       completed_at: null
     },
     {
-      id: qRoutine,
+      id: qHome,
       user_id: userId,
-      title: "Сделать утро спокойнее",
-      description: "Подготовить простую утреннюю рутину, чтобы не начинать день в спешке.",
-      category: "Рутина",
+      title: "Разобрать накопившиеся мелочи дома",
+      description: "Закрыть несколько небольших бытовых дел, которые постоянно откладывались на потом.",
+      category: "Дом",
       accent: "#5c8b78",
       status: "completed",
       target_date: isoDateOffset(-3),
@@ -89,44 +89,46 @@ export function createDemoData(): DemoData {
   });
 
   const steps: QuestStep[] = [
-    step("s1", qHome, "Разобрать ящик с документами", 10, "procrastination", 0, 18),
-    step("s2", qHome, "Перебрать полку в ванной", 1, "step", 1, 14),
-    step("s3", qHome, "Отдать или выбросить 10 ненужных вещей", 5, "promise", 2, 8),
-    step("s4", qHome, "Разобрать самый захламлённый шкаф", 7, "hard", 3, 4),
-    step("s5", qHome, "Протереть кухонные полки", 1, "step", 4, null),
-    step("s6", qHome, "Помыть холодильник", 10, "procrastination", 5, null),
-    step("s7", qCooking, "Составить список из 5 быстрых ужинов", 1, "step", 0, 20),
-    step("s8", qCooking, "Купить продукты на три ужина", 5, "promise", 1, 11),
-    step("s9", qCooking, "Приготовить новое блюдо с нуля", 7, "hard", 2, null),
-    step("s10", qRoutine, "Подготовить одежду с вечера", 5, "promise", 0, 31),
-    step("s11", qRoutine, "Собрать простой завтрак заранее", 1, "step", 1, 7),
-    step("s12", qRoutine, "Не брать телефон первые 15 минут", 10, "procrastination", 2, 3),
-    step("s13", qRoutine, "Заправить кровать сразу после подъёма", 5, "promise", 3, 2),
-    step("s14", qRoutine, "Встать без повторного будильника три раза", 7, "hard", 4, 1),
-    step("s15", qRoutine, "Убрать чашку и посуду сразу после завтрака", 1, "step", 5, 1)
+    step("s1", qPortfolio, "Выбрать 3 работы для портфолио", 1, "step", 0, 18),
+    step("s2", qPortfolio, "Сделать аккуратные скриншоты проектов", 5, "promise", 1, 14),
+    step("s3", qPortfolio, "Коротко описать свою роль в каждом проекте", 1, "step", 2, 8),
+    step("s4", qPortfolio, "Опубликовать первый проект", 7, "hard", 3, 4),
+    step("s5", qPortfolio, "Проверить все ссылки и мобильную версию", 1, "step", 4, null),
+    step("s6", qPortfolio, "Довести страницу портфолио до финальной версии", 10, "procrastination", 5, null),
+
+    step("s7", qMovement, "Выбрать два удобных дня для активности", 1, "step", 0, 20),
+    step("s8", qMovement, "Выйти на прогулку минимум на 30 минут", 5, "promise", 1, 11),
+    step("s9", qMovement, "Сделать короткую тренировку дома", 7, "hard", 2, null),
+    step("s10", qMovement, "Не откладывать запланированную активность", 10, "procrastination", 3, null),
+
+    step("s11", qHome, "Разобрать ящик с документами", 10, "procrastination", 0, 31),
+    step("s12", qHome, "Собрать провода и зарядки в одном месте", 1, "step", 1, 7),
+    step("s13", qHome, "Разобрать аптечку", 5, "promise", 2, 3),
+    step("s14", qHome, "Разобрать самую захламлённую полку", 7, "hard", 3, 2),
+    step("s15", qHome, "Отнести пакет вещей на переработку или отдачу", 1, "step", 4, 1)
   ];
 
-  // Add a little ordinary-life history so the demo starts on level 3 rather than looking empty.
+  // A mixed history keeps the demo lively without implying that Life Quest is only for one area of life.
   const historyTitles = [
-    "Разобрать аптечку",
-    "Протереть зеркала",
-    "Сложить чистое бельё",
-    "Разобрать пакет с пакетами",
-    "Полить растения",
-    "Протереть рабочий стол",
-    "Сменить постельное бельё",
-    "Разобрать полку с кружками"
+    "Очистить папку со скриншотами",
+    "Обновить список покупок",
+    "Ответить на отложенное сообщение",
+    "Сохранить документы в облако",
+    "Прочитать 20 страниц книги",
+    "Пройти один урок языка",
+    "Заказать нужный расходник",
+    "Разобрать папку Downloads"
   ];
   const history: QuestStep[] = historyTitles.map((title, index) =>
-    step(`history-${index}`, qRoutine, title, 10, "procrastination", 20 + index, 18 - index)
+    step(`history-${index}`, qHome, title, 10, "procrastination", 20 + index, 18 - index)
   );
 
   const boss: WeeklyBoss = {
     id: "demo-boss",
     user_id: userId,
     week_start: isoDateLocal(startOfWeekLocal()),
-    title: "Разобрать шкаф под раковиной",
-    notes: "Вытащить всё, выбросить лишнее, протереть полку и вернуть только нужное.",
+    title: "Разобрать папку Downloads",
+    notes: "Удалить ненужное, разложить важные файлы по папкам и наконец закрыть этот цифровой завал.",
     xp_value: 25,
     completed_at: null,
     created_at: isoTimeOffset(-2)
@@ -134,18 +136,18 @@ export function createDemoData(): DemoData {
 
   const chains: Chain[] = [
     {
-      id: "chain-polish",
+      id: "chain-language",
       user_id: userId,
-      quest_id: qCooking,
-      title: "Готовить дома",
+      quest_id: null,
+      title: "10 минут иностранного языка",
       active: true,
       created_at: isoTimeOffset(-12)
     },
     {
-      id: "chain-morning",
+      id: "chain-walk",
       user_id: userId,
-      quest_id: null,
-      title: "10 минут уборки вечером",
+      quest_id: qMovement,
+      title: "Короткая прогулка после обеда",
       active: true,
       created_at: isoTimeOffset(-9)
     }
@@ -162,30 +164,30 @@ export function createDemoData(): DemoData {
     });
   };
 
-  [8, 7, 6, 5, 3, 2, 1].forEach((day) => addCheckin("chain-polish", day));
-  [7, 6, 5, 4, 3, 1].forEach((day) => addCheckin("chain-morning", day));
+  [8, 7, 6, 5, 3, 2, 1].forEach((day) => addCheckin("chain-language", day));
+  [7, 6, 5, 4, 3, 1].forEach((day) => addCheckin("chain-walk", day));
 
   const rewards: Reward[] = [
     {
-      id: "reward-coffee",
+      id: "reward-small",
       user_id: userId,
-      title: "Купить красивую кружку",
+      title: "Купить новую книгу или игру",
       xp_required: 100,
       claimed_at: isoTimeOffset(-5),
       created_at: isoTimeOffset(-26)
     },
     {
-      id: "reward-massage",
+      id: "reward-cafe",
       user_id: userId,
-      title: "Заказать любимую еду",
+      title: "Сходить в любимое кафе",
       xp_required: 250,
       claimed_at: null,
       created_at: isoTimeOffset(-4)
     },
     {
-      id: "reward-trip",
+      id: "reward-free-evening",
       user_id: userId,
-      title: "Устроить ленивый вечер с фильмом",
+      title: "Устроить вечер без дел и обязательств",
       xp_required: 350,
       claimed_at: null,
       created_at: isoTimeOffset(-2)
