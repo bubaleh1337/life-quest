@@ -2012,3 +2012,70 @@ body::after { display: none; }
 .landing-top-actions { display: flex; align-items: center; gap: 14px; }
 .landing-privacy-link { font-size: 12px; color: var(--muted); }
 .auth-footer-links { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+
+/* Life Quest 0.11.1 — account menu layering fix */
+.app-header {
+  z-index: 100 !important;
+  isolation: isolate;
+}
+.content-shell {
+  z-index: 1;
+}
+.header-actions {
+  position: relative;
+  z-index: 110;
+}
+.account-menu-wrap {
+  position: relative;
+  z-index: 120;
+}
+.account-menu {
+  z-index: 130;
+  top: calc(100% + 12px);
+  width: min(320px, calc(100vw - 28px));
+  padding: 10px;
+  border: 1px solid rgba(88, 58, 73, .12);
+  border-radius: 22px;
+  background: rgba(255, 252, 251, .97);
+  box-shadow:
+    0 24px 64px rgba(50, 32, 42, .18),
+    inset 0 1px 0 rgba(255,255,255,.98);
+  backdrop-filter: blur(26px) saturate(1.08);
+  -webkit-backdrop-filter: blur(26px) saturate(1.08);
+  overflow: hidden;
+}
+.account-menu-head {
+  padding: 11px 10px 13px;
+  margin-bottom: 5px;
+  border-bottom-color: rgba(94, 67, 80, .10);
+}
+.account-menu-head strong {
+  color: var(--text);
+  font-size: 13px;
+}
+.account-menu-head span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+.account-menu > button {
+  min-height: 42px;
+  padding: 10px 12px;
+  color: var(--text);
+  opacity: 1;
+}
+.account-menu > button:hover {
+  background: rgba(122, 59, 95, .07);
+}
+.account-menu > button.danger-text {
+  color: var(--danger);
+}
+
+@media (max-width: 760px) {
+  .app-header { z-index: 100 !important; }
+  .account-menu {
+    width: min(310px, calc(100vw - 20px));
+    right: -2px;
+  }
+}

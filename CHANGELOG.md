@@ -1,3 +1,9 @@
+## 0.11.1
+
+- Fixed the account dropdown stacking context so it always renders above dashboard cards.
+- Increased dropdown opacity and contrast while retaining the glass look.
+- Kept outside-click and Escape closing behaviour.
+
 ## 0.11.0 — 2026-10-08
 
 - Added public interactive Demo Mode at `/demo` with realistic in-memory sample data and no registration.
