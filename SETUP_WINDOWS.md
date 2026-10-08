@@ -1,4 +1,4 @@
-# Life Quest 1.1.0 — Windows 11 setup
+# Life Quest 1.1.2 — Windows 11 setup
 
 These instructions assume PowerShell and one Supabase project.
 
@@ -172,7 +172,7 @@ Use a disposable account, not your main account.
 ```powershell
 git status
 git add .
-git commit -m "feat: add Life Quest weekly League"
+git commit -m "fix: polish League profile and trophy sharing"
 git push
 npx vercel --prod
 ```

@@ -2,7 +2,7 @@
 
 Life Quest is a bilingual gamified goal tracker that turns real-life goals into quests, concrete actions, XP, levels, weekly bosses, repeatable chains and personal rewards.
 
-**Stable release: 1.1.0**
+**Stable release: 1.1.2**
 
 - Production: https://lifequest-game.vercel.app
 - Interactive demo: https://lifequest-game.vercel.app/demo
@@ -92,4 +92,4 @@ https://github.com/bubaleh1337/life-quest
 
 ## Weekly League
 
-League participation is optional. Members choose a public nickname and earn a separate weekly XP score from quest-step and weekly-boss XP. Every Monday the League starts fresh while lifetime XP and level stay untouched. The top three earn permanent gold, silver and bronze badges. Old weekly score rows are deleted after the podium is finalized; badges remain in the winner's account and can be shared as branded Life Quest cards.
+League participation is optional. Members choose a public nickname and earn a separate weekly XP score from quest-step and weekly-boss XP. Every Monday the League starts fresh while lifetime XP and level stay untouched. The top three earn permanent gold, silver and bronze badges. Old weekly score rows are deleted after the podium is finalized; badges remain in the winner's Profile and can be shared as vertical branded Life Quest story cards. League nickname editing and trophy history also live in Profile so the League screen stays focused on the current race.

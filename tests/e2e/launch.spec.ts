@@ -51,5 +51,11 @@ test("demo League is opt-in and shows weekly ranking after joining", async ({ pa
   await page.getByRole("button", { name: /Вступить в Лигу|Join the League/ }).click();
   await expect(page.getByText("#24")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Luna" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Твои трофеи|Your trophies/ })).toHaveCount(0);
+
+  await page.getByRole("button", { name: /Меню аккаунта|Account menu/ }).click();
+  await page.getByRole("menuitem", { name: /Профиль|Profile/ }).click();
+  await expect(page.getByRole("dialog", { name: /Профиль игрока|Player profile/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Твои трофеи|Your trophies/ })).toBeVisible();
   await expect(page.getByRole("button", { name: /Поделиться бейджем|Share badge/ }).first()).toBeVisible();
 });

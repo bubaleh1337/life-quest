@@ -16,7 +16,7 @@ Traditional habit trackers often punish missed days and goal apps can become pla
 - Chains show missed days as visible breaks but never erase previous progress.
 - Rewards unlock from lifetime XP without spending it.
 - Demo Mode lets reviewers experience the product without creating an account.
-- Optional League adds weekly social motivation without resetting lifetime XP; top-three podium badges are permanent and shareable.
+- Optional League adds weekly social motivation without resetting lifetime XP; top-three podium trophies are permanent, live in Player Profile and can be shared as vertical branded story cards.
 
 ## Engineering
 

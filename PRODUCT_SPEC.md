@@ -1,4 +1,4 @@
-# Life Quest — product spec 1.1.0
+# Life Quest — product spec 1.1.2
 
 ## Product promise
 
@@ -121,4 +121,6 @@ Manual release regression remains required for authenticated Supabase flows, acc
 - Lifetime XP and player level never reset.
 - Top 10 is shown to League participants; every participant also sees their own rank and XP needed to overtake the next place.
 - Top 3 receive permanent gold/silver/bronze badges. Weekly score rows are deleted after finalization; badges are retained.
+- Trophy history and League nickname editing live in Player Profile; the League screen is reserved for the active weekly race, podium, top 10 and personal placement.
+- Shared trophy artwork is a vertical 1080×1920 story card; the image carries Life Quest branding without a raw URL, while share text includes the production link.
 - Badge sharing generates a Life Quest branded image and includes the production URL.

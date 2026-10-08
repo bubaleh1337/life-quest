@@ -184,6 +184,12 @@ const copy = {
     rewardEmpty: "Добавь награду, которую действительно хочется заслужить.",
     account: "Аккаунт",
     accountMenu: "Меню аккаунта",
+    profile: "Профиль",
+    profileTitle: "Профиль игрока",
+    profileLead: "Трофеи и настройки Лиги — отдельно от самого недельного забега.",
+    profileClose: "Закрыть профиль",
+    profileLeagueInactive: "Вступи в Лигу, чтобы выбрать публичное имя и участвовать в недельных забегах.",
+    openLeague: "Открыть Лигу",
     openGuide: "Открыть гид игрока",
     exportData: "Экспортировать данные",
     privacy: "Конфиденциальность",
@@ -411,6 +417,12 @@ const copy = {
     rewardEmpty: "Add something you would genuinely enjoy earning.",
     account: "Account",
     accountMenu: "Account menu",
+    profile: "Profile",
+    profileTitle: "Player profile",
+    profileLead: "League trophies and settings live here, separate from the weekly race itself.",
+    profileClose: "Close profile",
+    profileLeagueInactive: "Join the League to choose a public name and take part in weekly runs.",
+    openLeague: "Open League",
     openGuide: "Open Player Guide",
     exportData: "Export my data",
     privacy: "Privacy",
@@ -491,8 +503,52 @@ const xpLabelKey: Record<string, "xpStep" | "xpHard" | "xpPromise" | "xpProcrast
   procrastination: "xpProcrastination"
 };
 
-function leaguePlaceMark(place: number) {
-  return place === 1 ? "✦" : place === 2 ? "◆" : "▲";
+function TrophyIcon({ place, className = "" }: { place: number; className?: string }) {
+  const tone = place === 1 ? "gold" : place === 2 ? "silver" : "bronze";
+  return (
+    <span className={`league-trophy-icon ${tone}${className ? ` ${className}` : ""}`} aria-hidden="true">
+      <svg viewBox="0 0 64 64" focusable="false">
+        <path d="M20 10h24v8c0 10-5 18-12 21-7-3-12-11-12-21v-8Z" fill="currentColor" />
+        <path d="M19 15H10v5c0 9 6 15 15 16M45 15h9v5c0 9-6 15-15 16" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+        <path d="M29 39h6v9H29zM21 48h22v7H21z" fill="currentColor" />
+        <path d="M17 55h30" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+      </svg>
+    </span>
+  );
+}
+
+function drawShareTrophy(context: CanvasRenderingContext2D, cx: number, cy: number, size: number, color: string) {
+  context.save();
+  context.fillStyle = color;
+  context.strokeStyle = color;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+
+  context.beginPath();
+  context.moveTo(cx - size * 0.24, cy - size * 0.28);
+  context.lineTo(cx + size * 0.24, cy - size * 0.28);
+  context.lineTo(cx + size * 0.2, cy - size * 0.02);
+  context.bezierCurveTo(cx + size * 0.16, cy + size * 0.15, cx + size * 0.08, cy + size * 0.22, cx, cy + size * 0.25);
+  context.bezierCurveTo(cx - size * 0.08, cy + size * 0.22, cx - size * 0.16, cy + size * 0.15, cx - size * 0.2, cy - size * 0.02);
+  context.closePath();
+  context.fill();
+
+  context.lineWidth = size * 0.055;
+  context.beginPath();
+  context.moveTo(cx - size * 0.23, cy - size * 0.2);
+  context.bezierCurveTo(cx - size * 0.43, cy - size * 0.2, cx - size * 0.42, cy + size * 0.06, cx - size * 0.18, cy + size * 0.08);
+  context.moveTo(cx + size * 0.23, cy - size * 0.2);
+  context.bezierCurveTo(cx + size * 0.43, cy - size * 0.2, cx + size * 0.42, cy + size * 0.06, cx + size * 0.18, cy + size * 0.08);
+  context.stroke();
+
+  context.fillRect(cx - size * 0.035, cy + size * 0.23, size * 0.07, size * 0.18);
+  context.beginPath();
+  context.roundRect(cx - size * 0.16, cy + size * 0.39, size * 0.32, size * 0.075, size * 0.035);
+  context.fill();
+  context.beginPath();
+  context.roundRect(cx - size * 0.24, cy + size * 0.46, size * 0.48, size * 0.075, size * 0.035);
+  context.fill();
+  context.restore();
 }
 
 function formatLeagueWeek(weekStart: string, lang: Lang) {
@@ -524,6 +580,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
   const [showQuestForm, setShowQuestForm] = useState(false);
   const [showBossForm, setShowBossForm] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [profilePanelOpen, setProfilePanelOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [xpBurst, setXpBurst] = useState<{ id: number; amount: number } | null>(null);
   const xpBurstCounter = useRef(0);
@@ -573,6 +630,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setProfileOpen(false);
+        setProfilePanelOpen(false);
         setConfirmAction(null);
       }
     }
@@ -688,6 +746,12 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
     const timer = window.setTimeout(() => { void loadLeague(); }, 0);
     return () => window.clearTimeout(timer);
   }, [tab, loadLeague]);
+
+  useEffect(() => {
+    if (!profilePanelOpen) return;
+    const timer = window.setTimeout(() => { void loadLeague(); }, 0);
+    return () => window.clearTimeout(timer);
+  }, [profilePanelOpen, loadLeague]);
 
   const weekStart = isoDateLocal(startOfWeekLocal());
   const currentBoss = bosses.find((boss) => boss.week_start === weekStart) ?? null;
@@ -856,52 +920,119 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
       : badge.place === 2
         ? (lang === "ru" ? "2 МЕСТО" : "2ND PLACE")
         : (lang === "ru" ? "3 МЕСТО" : "3RD PLACE");
+    const winnerLabel = lang === "ru" ? "ТРОФЕЙ НЕДЕЛИ" : "WEEKLY TROPHY";
+    const tagline = lang === "ru" ? "РЕАЛЬНАЯ ЖИЗНЬ · ИГРОВАЯ ЛОГИКА" : "REAL LIFE · GAME LOGIC";
     const url = "https://lifequest-game.vercel.app";
-    const shareText = `${t.leagueShareText}: ${placeLabel} · ${badge.weekly_xp} XP ✦ ${url}`;
+    const shareText = `${t.leagueShareText}: ${placeLabel} · ${badge.weekly_xp} XP 🏆 ${url}`;
 
     const canvas = document.createElement("canvas");
     canvas.width = 1080;
-    canvas.height = 1080;
+    canvas.height = 1920;
     const context = canvas.getContext("2d");
     if (!context) return;
 
-    const gradient = context.createLinearGradient(0, 0, 1080, 1080);
-    gradient.addColorStop(0, "#f8e8dc");
-    gradient.addColorStop(0.48, badge.place === 1 ? "#f7dfad" : badge.place === 2 ? "#e6e8ef" : "#e7c3ac");
-    gradient.addColorStop(1, "#d9e6f4");
+    const placeColor = badge.place === 1 ? "#d4a238" : badge.place === 2 ? "#929cab" : "#b97859";
+    const gradient = context.createLinearGradient(0, 0, 1080, 1920);
+    gradient.addColorStop(0, "#f9e5d6");
+    gradient.addColorStop(0.42, badge.place === 1 ? "#f6dfa7" : badge.place === 2 ? "#e4e7ef" : "#ebc8b3");
+    gradient.addColorStop(1, "#dce8f5");
     context.fillStyle = gradient;
-    context.fillRect(0, 0, 1080, 1080);
+    context.fillRect(0, 0, 1080, 1920);
 
-    context.fillStyle = "rgba(255,255,255,.82)";
+    const glow = context.createRadialGradient(850, 340, 30, 850, 340, 520);
+    glow.addColorStop(0, "rgba(255,255,255,.78)");
+    glow.addColorStop(1, "rgba(255,255,255,0)");
+    context.fillStyle = glow;
+    context.fillRect(0, 0, 1080, 1000);
+
+    const sparks = [
+      [150, 330, 9], [900, 430, 7], [190, 770, 5], [875, 825, 8],
+      [155, 1240, 6], [920, 1320, 5], [250, 1580, 7], [820, 1620, 9]
+    ];
+    context.fillStyle = "rgba(123,59,95,.19)";
+    for (const [x, y, radius] of sparks) {
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fill();
+    }
+
+    context.fillStyle = "rgba(255,255,255,.84)";
     context.beginPath();
-    context.roundRect(90, 90, 900, 900, 64);
+    context.roundRect(64, 72, 952, 1776, 72);
+    context.fill();
+    context.strokeStyle = "rgba(255,255,255,.72)";
+    context.lineWidth = 2;
+    context.stroke();
+
+    const logoGradient = context.createLinearGradient(118, 126, 206, 214);
+    logoGradient.addColorStop(0, "#a35d82");
+    logoGradient.addColorStop(1, "#71324f");
+    context.fillStyle = logoGradient;
+    context.beginPath();
+    context.roundRect(112, 124, 88, 88, 24);
+    context.fill();
+    context.fillStyle = "#f2cc7a";
+    context.beginPath();
+    context.moveTo(156, 143);
+    context.lineTo(162, 162);
+    context.lineTo(181, 168);
+    context.lineTo(162, 174);
+    context.lineTo(156, 193);
+    context.lineTo(150, 174);
+    context.lineTo(131, 168);
+    context.lineTo(150, 162);
+    context.closePath();
     context.fill();
 
+    context.textAlign = "left";
+    context.fillStyle = "#231b20";
+    context.font = "800 42px Arial";
+    context.fillText("LIFE QUEST", 228, 167);
+    context.fillStyle = "#8c7882";
+    context.font = "700 24px Arial";
+    context.fillText("LEAGUE", 228, 204);
+
     context.textAlign = "center";
-    context.fillStyle = "#7b3b5f";
-    context.font = "700 42px Arial";
-    context.fillText("LIFE QUEST · LEAGUE", 540, 210);
+    context.fillStyle = "#8c7882";
+    context.font = "800 28px Arial";
+    context.fillText(winnerLabel, 540, 340);
 
-    context.font = "700 150px Arial";
-    context.fillStyle = badge.place === 1 ? "#c99738" : badge.place === 2 ? "#8790a0" : "#b77b5f";
-    context.fillText(leaguePlaceMark(badge.place), 540, 400);
-
-    context.fillStyle = "#231b20";
-    context.font = "900 104px Arial";
-    context.fillText(placeLabel, 540, 545);
-    context.fillStyle = "#7b3b5f";
-    context.font = "800 70px Arial";
-    context.fillText(`${badge.weekly_xp} XP`, 540, 650);
+    context.save();
+    context.shadowColor = `${placeColor}55`;
+    context.shadowBlur = 40;
+    drawShareTrophy(context, 540, 575, 390, placeColor);
+    context.restore();
 
     context.fillStyle = "#231b20";
-    context.font = "700 40px Arial";
-    context.fillText(leagueSnapshot?.member?.nickname ?? "Life Quest player", 540, 730);
+    context.font = "900 118px Arial";
+    context.fillText(placeLabel, 540, 965);
+
+    context.fillStyle = "#7b3b5f";
+    context.font = "850 76px Arial";
+    context.fillText(`${badge.weekly_xp} XP`, 540, 1075);
+
+    context.fillStyle = "#231b20";
+    context.font = "800 50px Arial";
+    context.fillText(leagueSnapshot?.member?.nickname ?? (leagueNickname || "Life Quest player"), 540, 1245);
+
     context.fillStyle = "#756c71";
-    context.font = "500 34px Arial";
-    context.fillText(formatLeagueWeek(badge.week_start, lang), 540, 790);
+    context.font = "500 38px Arial";
+    context.fillText(formatLeagueWeek(badge.week_start, lang), 540, 1310);
+
+    context.fillStyle = "rgba(123,59,95,.08)";
+    context.beginPath();
+    context.roundRect(240, 1450, 600, 112, 56);
+    context.fill();
+    context.fillStyle = "#7b3b5f";
+    context.font = "800 28px Arial";
+    context.fillText(tagline, 540, 1519);
+
     context.fillStyle = "#231b20";
-    context.font = "700 34px Arial";
-    context.fillText("lifequest-game.vercel.app", 540, 900);
+    context.font = "800 34px Arial";
+    context.fillText("Life Quest", 540, 1702);
+    context.fillStyle = "#8c7882";
+    context.font = "500 24px Arial";
+    context.fillText(lang === "ru" ? "Продолжай свой квест." : "Keep your quest going.", 540, 1744);
 
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!blob) return;
@@ -1517,6 +1648,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
                   <span className="account-menu-avatar" aria-hidden="true">{email.slice(0, 1).toUpperCase() || "Q"}</span>
                   <div><strong>{t.account}</strong><span>{email}</span></div>
                 </div>
+                <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); setProfilePanelOpen(true); }}>{t.profile}</button>
                 <button type="button" role="menuitem" onClick={() => { setTab("help"); setProfileOpen(false); }}>{t.openGuide}</button>
                 {demo ? (
                   <>
@@ -1537,6 +1669,73 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
           </div>
         </div>
       </header>
+
+      {profilePanelOpen && (
+        <div className="dialog-backdrop profile-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !working) setProfilePanelOpen(false); }}>
+          <section className="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profile-dialog-title">
+            <header className="profile-dialog-head">
+              <div className="profile-identity">
+                <span className="profile-avatar" aria-hidden="true">{email.slice(0, 1).toUpperCase() || "Q"}</span>
+                <div>
+                  <p className="eyebrow">{t.account}</p>
+                  <h2 id="profile-dialog-title">{t.profileTitle}</h2>
+                  <span>{email}</span>
+                </div>
+              </div>
+              <button className="profile-close" type="button" aria-label={t.profileClose} title={t.profileClose} onClick={() => setProfilePanelOpen(false)}>×</button>
+            </header>
+            <p className="profile-lead">{t.profileLead}</p>
+
+            {leagueLoading && !leagueSnapshot ? (
+              <div className="profile-loading"><div className="spinner" /><span>{t.leagueLoading}</span></div>
+            ) : (
+              <>
+                <section className="profile-section profile-league-section">
+                  <div className="profile-section-head">
+                    <div><p className="eyebrow">{t.leagueProfileEyebrow}</p><h3>{t.leagueNickname}</h3></div>
+                  </div>
+                  {leagueSnapshot?.member?.active ? (
+                    <div className="league-name-edit profile-league-name">
+                      <input value={leagueNickname} onChange={(event) => setLeagueNickname(event.target.value.slice(0, 24))} minLength={2} maxLength={24} aria-label={t.leagueNickname} />
+                      <button className="button button-secondary" type="button" onClick={() => void saveLeagueNickname()} disabled={working || leagueNickname.trim().length < 2 || leagueNickname.trim() === (leagueSnapshot.member?.nickname ?? "")}>{t.leagueSaveName}</button>
+                    </div>
+                  ) : (
+                    <div className="profile-empty-row">
+                      <p>{t.profileLeagueInactive}</p>
+                      <button className="button button-secondary" type="button" onClick={() => { setProfilePanelOpen(false); setTab("league"); }}>{t.openLeague}</button>
+                    </div>
+                  )}
+                </section>
+
+                <section className="profile-section profile-trophies-section">
+                  <div className="profile-section-head">
+                    <div><p className="eyebrow">{t.leagueTrophiesEyebrow}</p><h3>{t.leagueBadges}</h3><p>{t.leagueBadgesLead}</p></div>
+                  </div>
+                  {!leagueSnapshot || leagueSnapshot.badges.length === 0 ? (
+                    <div className="profile-trophy-empty"><TrophyIcon place={1} /><p>{t.leagueNoBadges}</p></div>
+                  ) : (
+                    <div className="league-badge-grid profile-badge-grid">
+                      {leagueSnapshot.badges.map((badge) => {
+                        const badgeName = badge.place === 1 ? t.leagueBadgeGold : badge.place === 2 ? t.leagueBadgeSilver : t.leagueBadgeBronze;
+                        return (
+                          <article key={badge.id} className={`league-badge-card place-${badge.place}`}>
+                            <div className={`league-badge-emblem ${badge.place === 1 ? "gold" : badge.place === 2 ? "silver" : "bronze"}`}>
+                              <TrophyIcon place={badge.place} />
+                              <strong>{badge.place}</strong>
+                            </div>
+                            <div><p className="eyebrow">{formatLeagueWeek(badge.week_start, lang)}</p><h3>{badgeName}</h3><span>{badge.weekly_xp} XP</span></div>
+                            <button className="button button-ghost" type="button" onClick={() => void shareLeagueBadge(badge)}>{t.leagueShare}</button>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
+          </section>
+        </div>
+      )}
 
       {notice && <div className="toast" role="status">{notice}</div>}
 
@@ -1973,7 +2172,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
                       {leaguePodium.map((entry) => (
                         <article key={`${entry.rank}-${entry.nickname}`} className={`league-podium-card place-${entry.rank}${entry.is_me ? " is-me" : ""}`}>
                           <div className={`league-medal ${entry.rank === 1 ? "gold" : entry.rank === 2 ? "silver" : "bronze"}`}>
-                            <span>{leaguePlaceMark(entry.rank)}</span>
+                            <TrophyIcon place={entry.rank} />
                             <strong>{entry.rank}</strong>
                           </div>
                           <h3>{entry.nickname}</h3>
@@ -1989,7 +2188,7 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
                   <div className="league-board-list">
                     {leagueTop.map((entry) => (
                       <div key={`${entry.rank}-${entry.nickname}`} className={`league-board-row${entry.is_me ? " is-me" : ""}`}>
-                        <span className={`league-rank rank-${entry.rank}`}>{entry.rank <= 3 ? leaguePlaceMark(entry.rank) : `#${entry.rank}`}</span>
+                        <span className={`league-rank rank-${entry.rank}`}>{entry.rank <= 3 ? <span className="league-trophy-rank"><TrophyIcon place={entry.rank} /><b>{entry.rank}</b></span> : `#${entry.rank}`}</span>
                         <strong>{entry.nickname}</strong>
                         <span>{entry.weekly_xp} XP</span>
                       </div>
@@ -2008,44 +2207,12 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
                       </div>
                       <p>{leagueSnapshot.me.weekly_xp === 0 ? t.leagueNoXp : leagueSnapshot.me.rank === 1 ? t.leagueFirst : `${leagueSnapshot.me.xp_to_next} XP ${t.leagueToNext}`}</p>
                     </div>
+                    <div className="league-me-actions">
+                      <button className="button button-ghost danger-text" type="button" onClick={requestLeaveLeague} disabled={working}>{t.leagueLeave}</button>
+                    </div>
                   </section>
                 )}
 
-                <section className="league-trophies">
-                  <div className="subsection-heading">
-                    <div><p className="eyebrow">{t.leagueTrophiesEyebrow}</p><h2>{t.leagueBadges}</h2><p>{t.leagueBadgesLead}</p></div>
-                  </div>
-                  {leagueSnapshot.badges.length === 0 ? (
-                    <div className="empty-card"><p>{t.leagueNoBadges}</p></div>
-                  ) : (
-                    <div className="league-badge-grid">
-                      {leagueSnapshot.badges.map((badge) => {
-                        const badgeName = badge.place === 1 ? t.leagueBadgeGold : badge.place === 2 ? t.leagueBadgeSilver : t.leagueBadgeBronze;
-                        return (
-                          <article key={badge.id} className={`league-badge-card place-${badge.place}`}>
-                            <div className={`league-badge-emblem ${badge.place === 1 ? "gold" : badge.place === 2 ? "silver" : "bronze"}`}>
-                              <span>{leaguePlaceMark(badge.place)}</span><strong>{badge.place}</strong>
-                            </div>
-                            <div><p className="eyebrow">{formatLeagueWeek(badge.week_start, lang)}</p><h3>{badgeName}</h3><span>{badge.weekly_xp} XP</span></div>
-                            <button className="button button-ghost" type="button" onClick={() => void shareLeagueBadge(badge)}>{t.leagueShare}</button>
-                          </article>
-                        );
-                      })}
-                    </div>
-                  )}
-                </section>
-
-                <section className="league-settings-card">
-                  <div>
-                    <p className="eyebrow">{t.leagueProfileEyebrow}</p>
-                    <h2>{t.leagueNickname}</h2>
-                  </div>
-                  <div className="league-name-edit">
-                    <input value={leagueNickname} onChange={(event) => setLeagueNickname(event.target.value.slice(0, 24))} minLength={2} maxLength={24} />
-                    <button className="button button-secondary" type="button" onClick={() => void saveLeagueNickname()} disabled={working || leagueNickname.trim().length < 2 || leagueNickname.trim() === (leagueSnapshot.member?.nickname ?? "")}>{t.leagueSaveName}</button>
-                  </div>
-                  <button className="button button-ghost danger-text" type="button" onClick={requestLeaveLeague} disabled={working}>{t.leagueLeave}</button>
-                </section>
               </>
             )}
           </div>

@@ -1,3 +1,12 @@
+## 1.1.2
+
+- Simplified the League page by moving trophies and League-name editing into a dedicated Player Profile opened from the account menu.
+- Moved the existing Leave League action into the personal-rank card so the competition page stays focused.
+- Replaced abstract top-three symbols with trophy icons across podium, top-10 and trophy cards.
+- Rebuilt shared League badge artwork as a vertical 1080×1920 story card with cleaner Life Quest branding and no visible raw URL.
+- Kept the production link in the share text so shared trophies can still bring new players to Life Quest.
+- Updated Demo/E2E coverage for the new Profile flow.
+
 ## 1.1.1
 
 - Fixed the League E2E test to use an unambiguous accessible locator for the demo leaderboard.
