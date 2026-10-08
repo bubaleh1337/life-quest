@@ -117,10 +117,10 @@ const copy = {
     rewardTitle: "Награды за путь",
     rewardLead: "Награда открывается по общему XP и не списывает прогресс.",
     rewardPlaceholder: "Например: сходить на массаж",
-    xpNeeded: "Нужно XP",
-    rewardPlannerEyebrow: "ПРОСТАЯ ФОРМУЛА",
-    rewardPlannerTitle: "Сколько пути пройти до награды?",
-    rewardPlannerText: "XP здесь — не цена вещи. Это объём прогресса, который ты хочешь сделать перед наградой. Выбери готовый вариант — порог посчитается сам.",
+    xpNeeded: "Ещё XP",
+    rewardPlannerEyebrow: "БЫСТРЫЙ ВЫБОР",
+    rewardPlannerTitle: "Выбери масштаб награды",
+    rewardPlannerText: "Выбери готовый вариант или укажи своё количество XP при добавлении награды.",
     rewardNow: "Сейчас",
     rewardJourney: "До награды",
     rewardUnlockAt: "Откроется на",
@@ -129,7 +129,7 @@ const copy = {
     rewardMeaningful: "Значимая",
     rewardBig: "Большая",
     rewardRecommended: "Рекомендуем",
-    rewardCustom: "Своя цена",
+    rewardCustom: "Свой XP",
     rewardRemaining: "Осталось",
     addReward: "Добавить награду",
     unlocked: "Открыта",
@@ -291,10 +291,10 @@ const copy = {
     rewardTitle: "Rewards for the path",
     rewardLead: "A reward unlocks at total XP and never spends your progress.",
     rewardPlaceholder: "For example: book a massage",
-    xpNeeded: "XP required",
-    rewardPlannerEyebrow: "SIMPLE FORMULA",
-    rewardPlannerTitle: "How much progress before the reward?",
-    rewardPlannerText: "XP is not the price of the item. It is how much progress you want to make before earning it. Pick a preset and the unlock threshold is calculated for you.",
+    xpNeeded: "More XP",
+    rewardPlannerEyebrow: "QUICK PICK",
+    rewardPlannerTitle: "Choose the reward size",
+    rewardPlannerText: "Pick a preset or enter your own XP amount when adding the reward.",
     rewardNow: "Now",
     rewardJourney: "To reward",
     rewardUnlockAt: "Unlocks at",
@@ -303,7 +303,7 @@ const copy = {
     rewardMeaningful: "Meaningful",
     rewardBig: "Big",
     rewardRecommended: "Recommended",
-    rewardCustom: "Custom",
+    rewardCustom: "Custom XP",
     rewardRemaining: "Remaining",
     addReward: "Add reward",
     unlocked: "Unlocked",
@@ -400,7 +400,8 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
   const [chainCelebration, setChainCelebration] = useState<string | null>(null);
   const [rewardCelebration, setRewardCelebration] = useState<string | null>(null);
-  const [rewardCost, setRewardCost] = useState(50);
+  const [rewardCost, setRewardCost] = useState("");
+  const [selectedRewardPreset, setSelectedRewardPreset] = useState<number | null>(null);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
   const [questFilter, setQuestFilter] = useState<"active" | "completed" | "archived">("active");
 
@@ -814,7 +815,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     const form = new FormData(formElement);
     const title = String(form.get("title") ?? "").trim();
     const cost = Math.round(Number(rewardCost));
-    if (!title || !Number.isFinite(cost) || cost < 1) return;
+    if (!title || rewardCost.trim() === "" || !Number.isFinite(cost) || cost < 1) return;
 
     const xpRequired = totalXp + cost;
     const ok = await withWork(async () => {
@@ -827,7 +828,8 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     });
     if (ok) {
       formElement.reset();
-      setRewardCost(50);
+      setRewardCost("");
+      setSelectedRewardPreset(null);
     }
   }
 
@@ -1282,36 +1284,59 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                 <h2 id="reward-planner-title">{t.rewardPlannerTitle}</h2>
                 <p>{t.rewardPlannerText}</p>
               </div>
-              <div className="reward-formula" aria-live="polite">
-                <div><span>{t.rewardNow}</span><strong>{totalXp} XP</strong></div>
-                <b aria-hidden="true">+</b>
-                <div><span>{t.rewardJourney}</span><strong>{rewardCost} XP</strong></div>
-                <b aria-hidden="true">=</b>
-                <div className="reward-formula-result"><span>{t.rewardUnlockAt}</span><strong>{totalXp + rewardCost} XP</strong></div>
-              </div>
               <div className="reward-presets" role="group" aria-label={t.rewardPlannerTitle}>
                 {[
                   { value: 25, label: t.rewardSmall },
                   { value: 50, label: t.rewardRegular, recommended: true },
                   { value: 100, label: t.rewardMeaningful },
                   { value: 200, label: t.rewardBig }
-                ].map((option) => (
-                  <button key={option.value} className={rewardCost === option.value ? "reward-preset active" : "reward-preset"} type="button" onClick={() => setRewardCost(option.value)} aria-pressed={rewardCost === option.value}>
-                    <span>{option.label}{option.recommended ? <small>{t.rewardRecommended}</small> : null}</span>
-                    <strong>+{option.value} XP</strong>
-                  </button>
-                ))}
+                ].map((option) => {
+                  const active = selectedRewardPreset === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      className={active ? "reward-preset active" : "reward-preset"}
+                      type="button"
+                      onClick={() => {
+                        if (active) {
+                          setSelectedRewardPreset(null);
+                          setRewardCost("");
+                        } else {
+                          setSelectedRewardPreset(option.value);
+                          setRewardCost(String(option.value));
+                        }
+                      }}
+                      aria-pressed={active}
+                    >
+                      <span>{option.label}{option.recommended ? <small>{t.rewardRecommended}</small> : null}</span>
+                      <strong>+{option.value} XP</strong>
+                    </button>
+                  );
+                })}
               </div>
-              <label className="reward-custom-field">
-                <span>{t.rewardCustom}</span>
-                <input value={rewardCost} onChange={(event) => setRewardCost(Math.max(1, Math.min(1000000, Number(event.target.value) || 1)))} type="number" min={1} max={1000000} inputMode="numeric" />
-                <span>XP</span>
-              </label>
             </section>
             <form className="create-panel reward-form reward-form-simple" onSubmit={addReward}>
               <input name="title" required maxLength={180} placeholder={t.rewardPlaceholder} />
-              <div className="reward-form-threshold"><span>{t.rewardUnlockAt}</span><strong>{totalXp + rewardCost} XP</strong></div>
-              <button className="button button-primary" disabled={working} type="submit">{t.addReward}</button>
+              <label className="reward-inline-xp">
+                <span>{t.xpNeeded}</span>
+                <div>
+                  <input
+                    value={rewardCost}
+                    onChange={(event) => {
+                      setSelectedRewardPreset(null);
+                      setRewardCost(event.target.value.replace(/\D/g, "").slice(0, 7));
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="XP"
+                    aria-label={t.xpNeeded}
+                    required
+                  />
+                  <span>XP</span>
+                </div>
+              </label>
+              <button className="button button-primary" disabled={working || rewardCost.trim() === "" || Number(rewardCost) < 1} type="submit">{t.addReward}</button>
             </form>
             {rewards.length === 0 ? <div className="empty-card"><p>{t.rewardEmpty}</p></div> : (
               <div className="reward-list">

@@ -1,3 +1,11 @@
+## 0.10.1
+
+- Removed the reward formula block to reduce cognitive load.
+- Kept four quick XP presets: +25, +50, +100 and +200.
+- Restored the editable XP field beside the Add reward button.
+- Clicking a preset fills the XP field; clicking the same preset again clears it for custom input.
+- Typing custom XP automatically deselects the preset.
+
 ## 0.10.0
 
 - Reworked reward creation so users choose how much *additional progress* a reward should require instead of calculating an absolute lifetime XP threshold manually.
