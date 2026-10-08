@@ -59,3 +59,15 @@ test("demo League is opt-in and shows weekly ranking after joining", async ({ pa
   await expect(page.getByRole("heading", { name: /Твои трофеи|Your trophies/ })).toBeVisible();
   await expect(page.getByRole("button", { name: /Поделиться бейджем|Share badge/ }).first()).toBeVisible();
 });
+
+
+test("mobile landing and demo smoke", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.getByText("Life Quest", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Посмотреть демо|View demo/ })).toBeVisible();
+
+  await page.goto("/demo");
+  await expect(page.getByText(/Демо-режим|Demo mode/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Сегодня|Today/ })).toBeVisible();
+});

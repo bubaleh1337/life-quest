@@ -16,12 +16,21 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "Life Quest",
     title: "Life Quest — turn life into a quest",
-    description: "A bilingual gamified goal tracker with quests, XP, chains, weekly bosses, personal rewards and an optional weekly League."
+    description: "A bilingual gamified goal tracker with quests, XP, chains, weekly bosses, personal rewards and an optional weekly League.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Life Quest — turn real life into a quest"
+      }
+    ]
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Life Quest — turn life into a quest",
-    description: "A bilingual gamified goal tracker with quests, XP, chains, weekly bosses, personal rewards and an optional weekly League."
+    description: "A bilingual gamified goal tracker with quests, XP, chains, weekly bosses, personal rewards and an optional weekly League.",
+    images: ["/og-image.png"]
   }
 };
 
@@ -32,7 +41,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="ru" data-scroll-behavior="smooth">
       <body>{children}</body>
     </html>
   );

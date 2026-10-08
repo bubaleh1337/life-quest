@@ -1,3 +1,15 @@
+## 1.1.5
+
+- Final public/portfolio polish release.
+- Updated README release metadata and added a CI status badge.
+- Added a branded 1200×630 Open Graph/Twitter preview image and switched Twitter cards to large-image previews.
+- Corrected the server-rendered document language to Russian; the existing language toggle still updates it dynamically for English.
+- Removed the login route from the sitemap and marked it `noindex, nofollow`.
+- Added a mobile landing/demo smoke test.
+- Added GitHub Actions CI for production-dependency audit, typecheck, lint, production build and Playwright tests.
+- Removed old per-release Windows instruction files from the clean repository package.
+- No database changes.
+
 ## 1.1.4
 
 - Removed implementation-detail copy about deleting old League rankings after podium badges are awarded.

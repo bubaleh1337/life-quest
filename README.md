@@ -1,8 +1,10 @@
 # Life Quest
 
+[![CI](https://github.com/bubaleh1337/life-quest/actions/workflows/ci.yml/badge.svg)](https://github.com/bubaleh1337/life-quest/actions/workflows/ci.yml)
+
 Life Quest is a bilingual gamified goal tracker that turns real-life goals into quests, concrete actions, XP, levels, weekly bosses, repeatable chains and personal rewards.
 
-**Stable release: 1.1.2**
+**Stable release: 1.1.5**
 
 - Production: https://lifequest-game.vercel.app
 - Interactive demo: https://lifequest-game.vercel.app/demo
@@ -24,7 +26,8 @@ Life Quest is built around a simple loop: **choose a quest → take a concrete a
 - RU/EN responsive interface.
 - Account data export, privacy notice and permanent account deletion.
 - PostgreSQL Row Level Security for all user-owned application data.
-- Playwright launch smoke/E2E coverage.
+- Playwright launch smoke/E2E coverage, including a mobile viewport smoke test.
+- GitHub Actions CI for a production-dependency audit, typecheck, lint, production build and browser tests.
 
 ## XP model
 
