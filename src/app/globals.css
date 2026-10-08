@@ -1735,3 +1735,91 @@ body::after {
     transition: none !important;
   }
 }
+
+
+/* Life Quest 0.9.1 — visible ambient canvas + reliable menu layering */
+html { background: #f4ebe8; }
+body {
+  background-color: #f4ebe8;
+  background-image:
+    radial-gradient(ellipse 60% 48% at 4% 4%, rgba(244, 193, 154, .46) 0%, rgba(244, 193, 154, .18) 38%, transparent 68%),
+    radial-gradient(ellipse 50% 42% at 96% 8%, rgba(155, 91, 134, .34) 0%, rgba(155, 91, 134, .12) 42%, transparent 72%),
+    radial-gradient(ellipse 58% 50% at 84% 60%, rgba(143, 183, 216, .28) 0%, rgba(143, 183, 216, .10) 44%, transparent 72%),
+    radial-gradient(ellipse 54% 46% at 12% 82%, rgba(231, 193, 118, .27) 0%, rgba(231, 193, 118, .10) 42%, transparent 72%),
+    linear-gradient(135deg, #fbf7f4 0%, #f7eeec 38%, #f2edf3 68%, #eef3f6 100%);
+  background-attachment: fixed;
+}
+
+body::before,
+body::after { display: none; }
+
+.app-shell,
+.landing-shell,
+.auth-shell {
+  position: relative;
+}
+
+.app-shell::before,
+.landing-shell::before,
+.auth-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 17% 26%, rgba(255,255,255,.38) 0 4rem, transparent 17rem),
+    radial-gradient(circle at 78% 16%, rgba(255,255,255,.24) 0 3rem, transparent 14rem),
+    linear-gradient(115deg, transparent 0 44%, rgba(255,255,255,.16) 49%, transparent 56%);
+  mix-blend-mode: soft-light;
+}
+
+.app-header,
+.content-shell,
+.landing-card,
+.landing-rules,
+.auth-card {
+  position: relative;
+  z-index: 1;
+}
+
+.content-shell::before {
+  content: "";
+  position: fixed;
+  left: -120px;
+  top: 28vh;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: rgba(255, 205, 171, .12);
+  filter: blur(42px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.content-shell::after {
+  content: "";
+  position: fixed;
+  right: -140px;
+  bottom: 8vh;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: rgba(129, 160, 203, .11);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.account-menu-wrap { z-index: 46; }
+.account-menu { z-index: 60; }
+
+@media (max-width: 760px) {
+  body {
+    background-image:
+      radial-gradient(ellipse 85% 34% at 0% 0%, rgba(244, 193, 154, .40), transparent 68%),
+      radial-gradient(ellipse 78% 34% at 100% 14%, rgba(155, 91, 134, .28), transparent 70%),
+      radial-gradient(ellipse 90% 40% at 90% 84%, rgba(143, 183, 216, .22), transparent 72%),
+      linear-gradient(150deg, #fbf7f4 0%, #f6edef 52%, #eef3f6 100%);
+  }
+}

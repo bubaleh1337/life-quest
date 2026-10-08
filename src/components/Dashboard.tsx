@@ -371,6 +371,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [xpBurst, setXpBurst] = useState<{ id: number; amount: number } | null>(null);
   const xpBurstCounter = useRef(0);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
   const [chainCelebration, setChainCelebration] = useState<string | null>(null);
   const [rewardCelebration, setRewardCelebration] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
@@ -417,6 +418,21 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    if (!profileOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (!accountMenuRef.current?.contains(target)) {
+        setProfileOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [profileOpen]);
 
   function toggleLanguage() {
     const next: Lang = lang === "ru" ? "en" : "ru";
@@ -918,7 +934,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
         <div className="header-actions">
           <button className={soundEnabled ? "sound-button active" : "sound-button"} type="button" onClick={toggleSound} aria-pressed={soundEnabled} aria-label={soundEnabled ? t.soundOn : t.soundOff} title={soundEnabled ? t.soundOn : t.soundOff}><SoundIcon enabled={soundEnabled} /></button>
           <button className="lang-button" type="button" onClick={toggleLanguage}>{lang === "ru" ? "EN" : "RU"}</button>
-          <div className="account-menu-wrap">
+          <div className="account-menu-wrap" ref={accountMenuRef}>
             <button
               className="avatar-button"
               type="button"
@@ -931,7 +947,6 @@ export default function Dashboard({ userId, email }: DashboardProps) {
             >
               {email.slice(0, 1).toUpperCase() || "Q"}
             </button>
-            {profileOpen && <div className="account-menu-scrim" aria-hidden="true" onMouseDown={() => setProfileOpen(false)} />}
             {profileOpen && (
               <div className="account-menu" role="menu" aria-label={t.accountMenu}>
                 <div className="account-menu-head">

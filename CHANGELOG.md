@@ -1,3 +1,8 @@
+## 0.9.1
+
+- Make the application background visibly multi-tone with warm peach, berry, blue and champagne ambient zones instead of nearly flat beige.
+- Fix the account menu so it closes on any pointer click outside the menu, while preserving Escape and menu-item behavior.
+
 ## 0.9.0 — 2026-10-07
 
 - Added a subtle animated ambient background with warm pearl, berry and cool-blue light blooms.
