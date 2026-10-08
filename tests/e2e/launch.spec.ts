@@ -46,7 +46,7 @@ test("privacy page is public", async ({ page }) => {
 test("demo League is opt-in and shows weekly ranking after joining", async ({ page }) => {
   await page.goto("/demo");
   await page.getByRole("button", { name: /Лига|League/ }).click();
-  await expect(page.getByRole("heading", { name: /Лига Life Quest|Life Quest League/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Недельная лига|Weekly League/ })).toBeVisible();
   await page.getByRole("textbox", { name: /Имя в Лиге|League name/ }).fill("Comet");
   await page.getByRole("button", { name: /Вступить в Лигу|Join the League/ }).click();
   await expect(page.getByText("#24")).toBeVisible();

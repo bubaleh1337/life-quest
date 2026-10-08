@@ -90,8 +90,8 @@ const copy = {
     chainEyebrow: "БЕЗ ОБНУЛЕНИЯ",
     rewardsEyebrow: "НАГРАДЫ",
     leagueEyebrow: "ДРУЖЕСКОЕ СОРЕВНОВАНИЕ",
-    leagueTitle: "Лига Life Quest",
-    leagueLead: "Недельный забег для тех, кого заряжает лёгкая конкуренция. Личный XP и уровень никогда не сбрасываются.",
+    leagueTitle: "Недельная лига",
+    leagueLead: "Недельный забег для тех, кого заряжает лёгкая конкуренция.",
     leagueJoinTitle: "Хочешь немного игровой мотивации?",
     leagueJoinText: "Вступление добровольное. В Лиге видны только выбранное имя и XP текущей недели — без email, квестов и других личных данных.",
     leagueNickname: "Имя в Лиге",
@@ -323,8 +323,8 @@ const copy = {
     chainEyebrow: "NO RESET",
     rewardsEyebrow: "REWARDS",
     leagueEyebrow: "FRIENDLY COMPETITION",
-    leagueTitle: "Life Quest League",
-    leagueLead: "A weekly run for people who enjoy a little friendly competition. Your lifetime XP and level never reset.",
+    leagueTitle: "Weekly League",
+    leagueLead: "A weekly run for people who enjoy a little friendly competition.",
     leagueJoinTitle: "Want an extra game-like push?",
     leagueJoinText: "Joining is optional. The League shows only your chosen name and this week's XP — never your email, quests or other private data.",
     leagueNickname: "League name",
@@ -921,7 +921,6 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
         ? (lang === "ru" ? "2 МЕСТО" : "2ND PLACE")
         : (lang === "ru" ? "3 МЕСТО" : "3RD PLACE");
     const winnerLabel = lang === "ru" ? "ТРОФЕЙ НЕДЕЛИ" : "WEEKLY TROPHY";
-    const tagline = lang === "ru" ? "РЕАЛЬНАЯ ЖИЗНЬ · ИГРОВАЯ ЛОГИКА" : "REAL LIFE · GAME LOGIC";
     const url = "https://lifequest-game.vercel.app";
     const shareText = `${t.leagueShareText}: ${placeLabel} · ${badge.weekly_xp} XP 🏆 ${url}`;
 
@@ -1019,20 +1018,12 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
     context.font = "500 38px Arial";
     context.fillText(formatLeagueWeek(badge.week_start, lang), 540, 1310);
 
-    context.fillStyle = "rgba(123,59,95,.08)";
-    context.beginPath();
-    context.roundRect(240, 1450, 600, 112, 56);
-    context.fill();
-    context.fillStyle = "#7b3b5f";
-    context.font = "800 28px Arial";
-    context.fillText(tagline, 540, 1519);
-
     context.fillStyle = "#231b20";
     context.font = "800 34px Arial";
-    context.fillText("Life Quest", 540, 1702);
+    context.fillText("Life Quest", 540, 1608);
     context.fillStyle = "#8c7882";
     context.font = "500 24px Arial";
-    context.fillText(lang === "ru" ? "Продолжай свой квест." : "Keep your quest going.", 540, 1744);
+    context.fillText(lang === "ru" ? "Продолжай свой жизненный квест." : "Keep going with your life quest.", 540, 1650);
 
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!blob) return;
@@ -1040,11 +1031,11 @@ export default function Dashboard({ userId, email, demo = false }: DashboardProp
 
     try {
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
-        await navigator.share({ title: "Life Quest League", text: shareText, url, files: [file] });
+        await navigator.share({ title: "Life Quest · Weekly League", text: shareText, url, files: [file] });
         return;
       }
       if (navigator.share) {
-        await navigator.share({ title: "Life Quest League", text: shareText, url });
+        await navigator.share({ title: "Life Quest · Weekly League", text: shareText, url });
         return;
       }
     } catch (error) {

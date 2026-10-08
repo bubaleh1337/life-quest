@@ -1,3 +1,11 @@
+## 1.1.3
+
+- Renamed the League page heading to “Недельная лига” / “Weekly League”.
+- Removed redundant lifetime-XP reset copy from the League intro.
+- Simplified shared trophy artwork by removing the “real life · game logic” slogan.
+- Updated the trophy-card footer to “Продолжай свой жизненный квест.” / “Keep going with your life quest.”
+- No database changes.
+
 ## 1.1.2
 
 - Simplified the League page by moving trophies and League-name editing into a dedicated Player Profile opened from the account menu.
