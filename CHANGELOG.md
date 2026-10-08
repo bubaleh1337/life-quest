@@ -1,3 +1,9 @@
+## 0.10.0
+
+- Reworked reward creation so users choose how much *additional progress* a reward should require instead of calculating an absolute lifetime XP threshold manually.
+- Added reward presets (+25 / +50 / +100 / +200 XP), a live formula preview, custom XP cost and a clearer “XP remaining” label on reward cards.
+- Fixed the flat strip at the very top of the app by preventing the floating header margin from exposing the root canvas.
+
 ## 0.9.1
 
 - Make the application background visibly multi-tone with warm peach, berry, blue and champagne ambient zones instead of nearly flat beige.

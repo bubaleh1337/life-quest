@@ -1823,3 +1823,116 @@ body::after { display: none; }
       linear-gradient(150deg, #fbf7f4 0%, #f6edef 52%, #eef3f6 100%);
   }
 }
+
+
+/* Life Quest 0.10.0 — reward planner + top canvas fix */
+.app-shell {
+  padding-top: 10px;
+}
+.app-header {
+  margin-top: 0 !important;
+}
+
+.reward-planner {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid rgba(93, 61, 79, .10);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(153,82,115,.11), transparent 16rem),
+    linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,255,255,.68));
+  box-shadow: 0 18px 46px rgba(62,43,54,.055), inset 0 1px 0 rgba(255,255,255,.96);
+  backdrop-filter: blur(18px) saturate(1.12);
+}
+.reward-planner-copy h2 { margin: 0 0 7px; font-size: 22px; }
+.reward-planner-copy p:last-child { margin: 0; max-width: 650px; color: var(--muted); line-height: 1.55; }
+.reward-formula {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+}
+.reward-formula > div {
+  min-width: 112px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(94,63,79,.08);
+  background: rgba(255,255,255,.72);
+  display: grid;
+  gap: 3px;
+}
+.reward-formula > div span { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+.reward-formula > div strong { font-size: 18px; }
+.reward-formula > b { color: #a68e9b; font-size: 20px; font-weight: 600; }
+.reward-formula .reward-formula-result {
+  border-color: rgba(122,59,95,.18);
+  background: linear-gradient(145deg, rgba(248,237,243,.95), rgba(255,249,251,.88));
+}
+.reward-formula-result strong { color: var(--accent); }
+.reward-presets { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+.reward-preset {
+  min-height: 74px;
+  padding: 11px 12px;
+  border-radius: 17px;
+  border: 1px solid rgba(94,63,79,.10);
+  background: rgba(255,255,255,.64);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.reward-preset:hover { transform: translateY(-1px); border-color: rgba(122,59,95,.18); }
+.reward-preset.active {
+  border-color: rgba(122,59,95,.28);
+  background: linear-gradient(145deg, rgba(245,230,238,.95), rgba(255,250,252,.92));
+  box-shadow: 0 10px 24px rgba(100,48,76,.08), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.reward-preset > span { display: grid; gap: 3px; font-weight: 760; }
+.reward-preset small { color: var(--accent); font-size: 9px; text-transform: uppercase; letter-spacing: .06em; }
+.reward-preset strong { color: var(--accent); white-space: nowrap; }
+.reward-custom-field {
+  display: inline-grid;
+  grid-template-columns: auto 90px auto;
+  align-items: center;
+  justify-content: start;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 720;
+}
+.reward-custom-field input { padding: 9px 10px; border-radius: 12px; text-align: right; }
+.reward-form-simple { grid-template-columns: minmax(0,1fr) auto auto; align-items: center; }
+.reward-form-threshold {
+  display: grid;
+  gap: 1px;
+  min-width: 108px;
+  padding: 4px 4px 4px 10px;
+}
+.reward-form-threshold span { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+.reward-form-threshold strong { color: var(--accent); font-size: 15px; white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .app-shell { padding-top: 6px; }
+  .app-header { margin-top: 0 !important; }
+  .reward-presets { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .reward-formula { grid-template-columns: 1fr auto 1fr; width: 100%; }
+  .reward-formula > div { min-width: 0; }
+  .reward-formula > div:last-child { grid-column: 1 / -1; }
+  .reward-formula > b:nth-of-type(2) { display: none; }
+  .reward-form-simple { grid-template-columns: 1fr; }
+  .reward-form-threshold { padding-inline: 2px; }
+}
+
+@media (max-width: 520px) {
+  .reward-planner { padding: 18px; }
+  .reward-presets { grid-template-columns: 1fr; }
+  .reward-formula { grid-template-columns: 1fr; gap: 7px; }
+  .reward-formula > b { display: none; }
+  .reward-formula > div:last-child { grid-column: auto; }
+  .reward-custom-field { grid-template-columns: 1fr 86px auto; width: 100%; }
+}

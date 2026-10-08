@@ -118,6 +118,19 @@ const copy = {
     rewardLead: "Награда открывается по общему XP и не списывает прогресс.",
     rewardPlaceholder: "Например: сходить на массаж",
     xpNeeded: "Нужно XP",
+    rewardPlannerEyebrow: "ПРОСТАЯ ФОРМУЛА",
+    rewardPlannerTitle: "Сколько пути пройти до награды?",
+    rewardPlannerText: "XP здесь — не цена вещи. Это объём прогресса, который ты хочешь сделать перед наградой. Выбери готовый вариант — порог посчитается сам.",
+    rewardNow: "Сейчас",
+    rewardJourney: "До награды",
+    rewardUnlockAt: "Откроется на",
+    rewardSmall: "Небольшая",
+    rewardRegular: "Обычная",
+    rewardMeaningful: "Значимая",
+    rewardBig: "Большая",
+    rewardRecommended: "Рекомендуем",
+    rewardCustom: "Своя цена",
+    rewardRemaining: "Осталось",
     addReward: "Добавить награду",
     unlocked: "Открыта",
     locked: "Закрыта",
@@ -279,6 +292,19 @@ const copy = {
     rewardLead: "A reward unlocks at total XP and never spends your progress.",
     rewardPlaceholder: "For example: book a massage",
     xpNeeded: "XP required",
+    rewardPlannerEyebrow: "SIMPLE FORMULA",
+    rewardPlannerTitle: "How much progress before the reward?",
+    rewardPlannerText: "XP is not the price of the item. It is how much progress you want to make before earning it. Pick a preset and the unlock threshold is calculated for you.",
+    rewardNow: "Now",
+    rewardJourney: "To reward",
+    rewardUnlockAt: "Unlocks at",
+    rewardSmall: "Small",
+    rewardRegular: "Regular",
+    rewardMeaningful: "Meaningful",
+    rewardBig: "Big",
+    rewardRecommended: "Recommended",
+    rewardCustom: "Custom",
+    rewardRemaining: "Remaining",
     addReward: "Add reward",
     unlocked: "Unlocked",
     locked: "Locked",
@@ -374,6 +400,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
   const [chainCelebration, setChainCelebration] = useState<string | null>(null);
   const [rewardCelebration, setRewardCelebration] = useState<string | null>(null);
+  const [rewardCost, setRewardCost] = useState(50);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
   const [questFilter, setQuestFilter] = useState<"active" | "completed" | "archived">("active");
 
@@ -786,18 +813,22 @@ export default function Dashboard({ userId, email }: DashboardProps) {
     const formElement = event.currentTarget;
     const form = new FormData(formElement);
     const title = String(form.get("title") ?? "").trim();
-    const xpRequired = Number(form.get("xp_required") ?? 0);
-    if (!title || !Number.isFinite(xpRequired) || xpRequired < 1) return;
+    const cost = Math.round(Number(rewardCost));
+    if (!title || !Number.isFinite(cost) || cost < 1) return;
 
+    const xpRequired = totalXp + cost;
     const ok = await withWork(async () => {
       const { error } = await supabase.from("rewards").insert({
         user_id: userId,
         title,
-        xp_required: Math.round(xpRequired)
+        xp_required: xpRequired
       });
       return { error };
     });
-    if (ok) formElement.reset();
+    if (ok) {
+      formElement.reset();
+      setRewardCost(50);
+    }
   }
 
   async function claimReward(reward: Reward) {
@@ -1245,9 +1276,41 @@ export default function Dashboard({ userId, email }: DashboardProps) {
         {tab === "rewards" && (
           <div className="page-stack narrow-stack">
             <div className="section-heading"><div><p className="eyebrow">{t.rewardsEyebrow}</p><h1>{t.rewardTitle}</h1><p>{t.rewardLead}</p></div></div>
-            <form className="create-panel reward-form" onSubmit={addReward}>
+            <section className="reward-planner" aria-labelledby="reward-planner-title">
+              <div className="reward-planner-copy">
+                <p className="eyebrow">{t.rewardPlannerEyebrow}</p>
+                <h2 id="reward-planner-title">{t.rewardPlannerTitle}</h2>
+                <p>{t.rewardPlannerText}</p>
+              </div>
+              <div className="reward-formula" aria-live="polite">
+                <div><span>{t.rewardNow}</span><strong>{totalXp} XP</strong></div>
+                <b aria-hidden="true">+</b>
+                <div><span>{t.rewardJourney}</span><strong>{rewardCost} XP</strong></div>
+                <b aria-hidden="true">=</b>
+                <div className="reward-formula-result"><span>{t.rewardUnlockAt}</span><strong>{totalXp + rewardCost} XP</strong></div>
+              </div>
+              <div className="reward-presets" role="group" aria-label={t.rewardPlannerTitle}>
+                {[
+                  { value: 25, label: t.rewardSmall },
+                  { value: 50, label: t.rewardRegular, recommended: true },
+                  { value: 100, label: t.rewardMeaningful },
+                  { value: 200, label: t.rewardBig }
+                ].map((option) => (
+                  <button key={option.value} className={rewardCost === option.value ? "reward-preset active" : "reward-preset"} type="button" onClick={() => setRewardCost(option.value)} aria-pressed={rewardCost === option.value}>
+                    <span>{option.label}{option.recommended ? <small>{t.rewardRecommended}</small> : null}</span>
+                    <strong>+{option.value} XP</strong>
+                  </button>
+                ))}
+              </div>
+              <label className="reward-custom-field">
+                <span>{t.rewardCustom}</span>
+                <input value={rewardCost} onChange={(event) => setRewardCost(Math.max(1, Math.min(1000000, Number(event.target.value) || 1)))} type="number" min={1} max={1000000} inputMode="numeric" />
+                <span>XP</span>
+              </label>
+            </section>
+            <form className="create-panel reward-form reward-form-simple" onSubmit={addReward}>
               <input name="title" required maxLength={180} placeholder={t.rewardPlaceholder} />
-              <input name="xp_required" required type="number" min={1} max={1000000} placeholder={t.xpNeeded} />
+              <div className="reward-form-threshold"><span>{t.rewardUnlockAt}</span><strong>{totalXp + rewardCost} XP</strong></div>
               <button className="button button-primary" disabled={working} type="submit">{t.addReward}</button>
             </form>
             {rewards.length === 0 ? <div className="empty-card"><p>{t.rewardEmpty}</p></div> : (
@@ -1259,7 +1322,7 @@ export default function Dashboard({ userId, email }: DashboardProps) {
                     <article key={reward.id} className={`${reward.claimed_at ? "reward-card claimed" : "reward-card"}${rewardCelebration === reward.id ? " reward-celebrating" : ""}`}>
                       <div className="reward-head"><div><span className={unlocked ? "status-pill unlocked" : "status-pill"}>{reward.claimed_at ? t.claimed : unlocked ? t.unlocked : t.locked}</span><h2>{reward.title}</h2></div><strong>{reward.xp_required} XP</strong></div>
                       <div className="progress-track"><span style={{ width: `${percent}%` }} /></div>
-                      <div className="reward-actions"><span>{Math.min(totalXp, reward.xp_required)} / {reward.xp_required} XP</span><div><button className="button button-secondary" type="button" disabled={!unlocked || working} onClick={() => reward.claimed_at ? undoRewardClaim(reward) : requestClaimReward(reward)}>{reward.claimed_at ? t.undoClaim : t.claim}</button><button className="icon-button danger" type="button" title={t.remove} aria-label={t.remove} onClick={() => requestDeleteReward(reward.id)} disabled={working}>×</button></div></div>
+                      <div className="reward-actions"><span>{unlocked ? `${reward.xp_required} / ${reward.xp_required} XP` : `${t.rewardRemaining}: ${Math.max(0, reward.xp_required - totalXp)} XP · ${totalXp} / ${reward.xp_required} XP`}</span><div><button className="button button-secondary" type="button" disabled={!unlocked || working} onClick={() => reward.claimed_at ? undoRewardClaim(reward) : requestClaimReward(reward)}>{reward.claimed_at ? t.undoClaim : t.claim}</button><button className="icon-button danger" type="button" title={t.remove} aria-label={t.remove} onClick={() => requestDeleteReward(reward.id)} disabled={working}>×</button></div></div>
                     </article>
                   );
                 })}
